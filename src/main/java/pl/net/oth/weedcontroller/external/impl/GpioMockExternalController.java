@@ -47,24 +47,24 @@ public class GpioMockExternalController implements GpioExternalController{
 		gpioPinDigitalOutput=new HashMap<Integer, SwitchState>();
 		List<Integer> switches=switchService.getSwitchesConfiguration();
 		for (Integer integer : switches) {			
-			 gpioPinDigitalOutput.put(integer,SwitchState.OFF);
+			 gpioPinDigitalOutput.put(integer.intValue(),SwitchState.OFF);
 			 LOGGER.info("Ustawienie pinu "+integer+" pomyślne.");
 		}
 		
 	}
 
 	public SwitchState getState(int gpioNumber) {		
-		return gpioPinDigitalOutput.get(new Integer(gpioNumber));		
+		return gpioPinDigitalOutput.get(gpioNumber);		
 	}
 	
 	public boolean setState(int gpioNumber, SwitchState switchState) {
-		if(switchState==getState(gpioNumber)){
+		if(switchState.equals(getState(gpioNumber))){
 			return false ;
 		}
-		if(switchState==SwitchState.OFF){
-			gpioPinDigitalOutput.put(new Integer(gpioNumber), SwitchState.ON);
+		if(switchState.equals(SwitchState.ON)){
+			gpioPinDigitalOutput.put(gpioNumber, SwitchState.ON);
 		}else{
-			gpioPinDigitalOutput.put(new Integer(gpioNumber), SwitchState.OFF);
+			gpioPinDigitalOutput.put(gpioNumber, SwitchState.OFF);
 		}
 		
 		return true;

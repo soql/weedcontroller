@@ -68,9 +68,9 @@ public class GpioPiExternalController implements GpioExternalController{
 			return false ;
 		}
 		if(switchState==SwitchState.OFF){
-			gpioPinDigitalOutput.get(new Integer(gpioNumber)).low();
+			gpioPinDigitalOutput.get(gpioNumber).low();
 		}else{
-			gpioPinDigitalOutput.get(new Integer(gpioNumber)).high();
+			gpioPinDigitalOutput.get(gpioNumber).high();
 		}
 		
 		return true;

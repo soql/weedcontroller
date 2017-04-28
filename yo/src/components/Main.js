@@ -10,8 +10,7 @@ import 'react-block-ui/style.css';
 class Main extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {temperature:0, humidity:0, lastReadTimeElapse: 0,blocking: false, switches: []}
-    this.toggleBlocking = this.toggleBlocking.bind(this);
+    this.state = {temperature:0, humidity:0, lastReadTimeElapse: 0,blocking: false, switches: []}    
   }
   componentWillUnmount () {
     clearInterval(this.timer)
@@ -58,25 +57,17 @@ class Main extends React.Component {
 	  this.setState({switches: switches});
   }
   
-  toggleBlocking() {	  
-	    this.setState({blocking: !this.state.blocking});
+  toggleBlocking(block_) {	  
+	    this.setState({blocking: block_});
 	  }
   componentWillMount(){
 	  this.tick();
 	  this.startTimer();
   }
-  sleep(milliseconds) {
-	  var start = new Date().getTime();
-	  for (var i = 0; i < 1e7; i++) {
-	    if ((new Date().getTime() - start) > milliseconds){
-	      break;
-	    }
-	  }
-  }
+
   onButtonClick(element) {	  
-	 this.toggleBlocking();
-	 console.log('blokuje '+this.state.blocking);
-	 this.sleep(2000);
+	 this.toggleBlocking(true);
+	 console.log('blokuje '+this.state.blocking);	 
 	  let sendState='';
 	 if(element.state=='ON'){
 		 sendState='OFF';
@@ -87,7 +78,7 @@ class Main extends React.Component {
 	 axios.get('setState?switchNumber='+element.gpioNumber+'&switchState='+sendState);
 	 this.tickSwitches();
 	 console.log('Odblokuje');
-	 this.toggleBlocking();
+	 this.toggleBlocking(false);
 	 console.log('Odblokuje '+this.state.blocking);
   }
   
@@ -109,8 +100,7 @@ class Main extends React.Component {
   
   renderSwitches(){
 	  console.log('renderSwitches');
-	  let rows=[];	  
-	  this.state.switches=[{gpioNumber: 11, name: "LAMPA", state: "ON"}];
+	  let rows=[];	  	  
 	  this.state.switches.forEach((element) => {
 		  rows.push(this.renderSwitch(element));
 	  });
@@ -133,8 +123,7 @@ class Main extends React.Component {
       <div>
       <BlockUi tag="div" blocking={this.state.blocking}>
         {this.renderSwitches()}
-      </BlockUi>
-      <Button onClick={this.toggleBlocking()} color="primary">Toggle Block</Button>
+      </BlockUi>     
       </div>
     </div>     
     
