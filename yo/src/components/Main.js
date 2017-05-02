@@ -125,6 +125,7 @@ class Main extends React.Component {
         {this.renderSwitches()}
       </BlockUi>     
       </div>
+      <a href="<c:url value="/logout" />">Logout</a>
     </div>     
     
     )
