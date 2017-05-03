@@ -127,12 +127,14 @@
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
-				<configuration>
+				<configuration>				
 					<webResources>
 						<resource>
 							<directory>yo/dist</directory>
+							<directory>WebContent</directory>
 						</resource>
 					</webResources>
+					
 				</configuration>
 				<executions>
 					<execution>
