@@ -129,9 +129,11 @@
 				<version>2.2</version>
 				<configuration>				
 					<webResources>
+						<resource>						
+							<directory>WebContent</directory>
+						</resource>
 						<resource>
 							<directory>yo/dist</directory>
-							<directory>WebContent</directory>
 						</resource>
 					</webResources>
 					
