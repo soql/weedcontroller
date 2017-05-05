@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pl.net.oth.weedcontroller.dao.SensorResultDAO;
 import pl.net.oth.weedcontroller.dao.SwitchDAO;
-import pl.net.oth.weedcontroller.model.SensorResult;
+import pl.net.oth.weedcontroller.model.SensorResultLog;
 import pl.net.oth.weedcontroller.model.Switch;
 
 @Component
@@ -15,7 +15,7 @@ public class SensorResultService {
 	private SensorResultDAO sensorResultDAO;
 
 	@Transactional
-	public void add(SensorResult s) {
+	public void add(SensorResultLog s) {
 		sensorResultDAO.persist(s);
 	}
 }

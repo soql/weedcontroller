@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import pl.net.oth.weedcontroller.dao.SensorResultDAO;
-import pl.net.oth.weedcontroller.model.SensorResult;
+import pl.net.oth.weedcontroller.model.SensorResultLog;
 import pl.net.oth.weedcontroller.model.SensorResultDTO;
 import pl.net.oth.weedcontroller.service.SensorResultService;
 
@@ -24,7 +24,7 @@ public class HistoryTask {
 		SensorResultDTO sensorResultDTO=sensorTask.getLastSensorResult();
 		if(sensorResultDTO==null)
 			return;
-		SensorResult sensorResult=new SensorResult();
+		SensorResultLog sensorResult=new SensorResultLog();
 		sensorResult.setDate(sensorResultDTO.getLastSuccesfullRead());
 		sensorResult.setTemperature(sensorResultDTO.getTemperature());
 		sensorResult.setHumidity(sensorResultDTO.getHumidity());
