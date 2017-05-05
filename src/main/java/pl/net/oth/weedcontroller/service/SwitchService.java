@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.dao.SwitchDAO;
 import pl.net.oth.weedcontroller.dao.UserDAO;
+import pl.net.oth.weedcontroller.event.ChangeSwitchStateEvent;
 import pl.net.oth.weedcontroller.external.GpioExternalController;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.SwitchDTO;
@@ -27,6 +29,10 @@ import pl.net.oth.weedcontroller.model.User;
 public class SwitchService {
 	
 	private final static Log LOGGER = LogFactory.getLog(SwitchService.class);
+	
+	@Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
 	
 	@Autowired
 	private SwitchDAO switchDAO;
@@ -67,18 +73,19 @@ public class SwitchService {
 	public Boolean setSwitchState(Integer switchNumber, SwitchState state){
 		
 		LOGGER.info("Rzadanie zmiany przel. nr "+switchNumber+" na "+state+" przez uzytkownika "+getUser().getFullName());
-		logSwitchChange(switchNumber,state);
+		publishEvent(switchDAO.getSwitchByNumber(switchNumber), state, getUser());
+		/*logSwitchChange(switchNumber,state);*/
 		return gpioExternalController.setState(switchNumber.intValue(), state);		
 	}
-	@Transactional
-	private void logSwitchChange(Integer switchNumber, SwitchState state) {
-		SwitchLog switchLog=new SwitchLog();
-		switchLog.setSwitch_(switchDAO.getSwitchByNumber(switchNumber));
-		switchLog.setDate(new Date());		
-		switchLog.setUser(getUser());
-		switchLog.setState(state);
-		switchDAO.persist(switchLog);		
+	
+	
+	
+	private void publishEvent(Switch switch_, SwitchState state, User user) {		
+		ChangeSwitchStateEvent csse=new ChangeSwitchStateEvent(this, switch_, state, user);
+		applicationEventPublisher.publishEvent(csse);
 	}
+
+
 	private User getUser(){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    String name = auth.getName(); 

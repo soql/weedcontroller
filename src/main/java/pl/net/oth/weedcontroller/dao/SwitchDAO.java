@@ -23,12 +23,7 @@ public class SwitchDAO {
 	@Transactional
 	public void persist(Switch switch_) {
 		em.persist(switch_);
-	}
-	
-	@Transactional
-	public void persist(SwitchLog switchLog){
-		em.persist(switchLog);
-	}
+	}	
 	
 	public List<Switch> getAllSwitches(){
 		Query query=em.createQuery("SELECT e FROM Switch e");

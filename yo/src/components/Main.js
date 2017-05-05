@@ -29,6 +29,7 @@ class Main extends React.Component {
   }
   
   tickSwitches(){
+	  console.log('tick switches');
 	  axios.get('getSwitches').then(res => {
 	    	this.setSwitches(res.data);
 	    });
@@ -65,20 +66,24 @@ class Main extends React.Component {
 	  this.startTimer();
   }
 
-  onButtonClick(element) {	  
+  onButtonClick(element) {		 
+	 console.log('blokuje '+this.state.blocking);
 	 this.toggleBlocking(true);
-	 console.log('blokuje '+this.state.blocking);	 
-	  let sendState='';
+	 let sendState='';
 	 if(element.state=='ON'){
 		 sendState='OFF';
 	 }else{
 		 sendState='ON';
 	 }
 	 console.log('clicked '+element.gpioNumber+" "+element.state);
-	 axios.get('setState?switchNumber='+element.gpioNumber+'&switchState='+sendState);
-	 this.tickSwitches();
-	 console.log('Odblokuje');
-	 this.toggleBlocking(false);
+	 axios.get('setState?switchNumber='+element.gpioNumber+'&switchState='+sendState).then(response => 
+	 {
+		  this.tickSwitches()
+	 }).then(response => {
+		 this.toggleBlocking(false);
+	 });
+	 
+	 console.log('Odblokuje');	 
 	 console.log('Odblokuje '+this.state.blocking);
   }
   
@@ -98,8 +103,7 @@ class Main extends React.Component {
 			  );
   }
   
-  renderSwitches(){
-	  console.log('renderSwitches');
+  renderSwitches(){	  
 	  let rows=[];	  	  
 	  this.state.switches.forEach((element) => {
 		  rows.push(this.renderSwitch(element));
@@ -120,10 +124,10 @@ class Main extends React.Component {
       </table>
       <br/>
       <br/>
-      <div>
+      <div>      
       <BlockUi tag="div" blocking={this.state.blocking}>
-        {this.renderSwitches()}
-      </BlockUi>     
+        {this.renderSwitches()}  
+      </BlockUi> 
       </div>
       <a href="logout">Logout</a>
     </div>     
