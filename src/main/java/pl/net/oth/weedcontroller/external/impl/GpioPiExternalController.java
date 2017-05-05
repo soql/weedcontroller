@@ -57,9 +57,9 @@ public class GpioPiExternalController implements GpioExternalController{
 	public SwitchState getState(int gpioNumber) {		
 		PinState pinState=gpioPinDigitalOutput.get(new Integer(gpioNumber)).getState();
 		if(pinState.isHigh()){
-			return SwitchState.ON;			
+			return SwitchState.OFF;			
 		}else{
-			return SwitchState.OFF;
+			return SwitchState.ON;
 		}
 	}
 	
@@ -67,7 +67,7 @@ public class GpioPiExternalController implements GpioExternalController{
 		if(switchState==getState(gpioNumber)){
 			return false ;
 		}
-		if(switchState==SwitchState.OFF){
+		if(switchState==SwitchState.ON){
 			gpioPinDigitalOutput.get(gpioNumber).low();
 		}else{
 			gpioPinDigitalOutput.get(gpioNumber).high();
