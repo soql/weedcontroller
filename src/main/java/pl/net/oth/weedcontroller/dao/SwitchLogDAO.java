@@ -26,7 +26,7 @@ public class SwitchLogDAO {
 	}
 	
 	public List<SwitchLog> getSwitchLog(){
-		Query query=em.createQuery("SELECT e FROM SwitchLog e");
+		Query query=em.createQuery("SELECT e FROM SwitchLog e order by e.date desc");
 		return (List<SwitchLog>)query.getResultList();
 	}			
 }

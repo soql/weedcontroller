@@ -9,6 +9,12 @@
 	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>2.4.11</version>
+		</dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
@@ -96,14 +102,14 @@
 			<artifactId>javax.annotation-api</artifactId>
 			<version>1.2</version>
 		</dependency>
-	 	<dependency>
+		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
 			<version>4.0.1.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
+			<artifactId>spring-security-config</artifactId>
 			<version>4.0.1.RELEASE</version>
 		</dependency>
 	</dependencies>
@@ -116,7 +122,7 @@
 				<version>2.2</version>
 				<configuration>
 					<url>http://zjc.oth.net.pl/manager/text</url>
-					<!-- <url>http://192.168.1.168:8080/manager/text</url>-->
+					<!-- <url>http://192.168.1.168:8080/manager/text</url> -->
 					<user>deployer</user>
 					<password>deployer</password>
 					<server>tomcat-zjc</server>
@@ -127,17 +133,17 @@
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
-				<configuration>		
-				<failOnMissingWebXml>false</failOnMissingWebXml>		
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<webResources>
-						<resource>						
+						<resource>
 							<directory>WebContent</directory>
 						</resource>
 						<resource>
 							<directory>yo/dist</directory>
 						</resource>
 					</webResources>
-					
+
 				</configuration>
 				<executions>
 					<execution>

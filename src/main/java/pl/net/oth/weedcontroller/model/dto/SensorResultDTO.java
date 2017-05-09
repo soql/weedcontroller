@@ -1,4 +1,4 @@
-package pl.net.oth.weedcontroller.model;
+package pl.net.oth.weedcontroller.model.dto;
 
 import java.util.Date;
 

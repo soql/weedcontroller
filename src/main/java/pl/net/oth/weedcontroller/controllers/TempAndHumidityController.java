@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import pl.net.oth.weedcontroller.model.SensorResultDTO;
-import pl.net.oth.weedcontroller.model.SensorResultJson;
+import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
+import pl.net.oth.weedcontroller.model.dto.SensorResultJson;
 import pl.net.oth.weedcontroller.task.SensorTask;
 
 @Controller

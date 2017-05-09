@@ -16,13 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.dao.SwitchDAO;
+import pl.net.oth.weedcontroller.dao.SwitchLogDAO;
 import pl.net.oth.weedcontroller.dao.UserDAO;
 import pl.net.oth.weedcontroller.event.ChangeSwitchStateEvent;
 import pl.net.oth.weedcontroller.external.GpioExternalController;
 import pl.net.oth.weedcontroller.model.Switch;
-import pl.net.oth.weedcontroller.model.SwitchDTO;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.User;
+import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
+import pl.net.oth.weedcontroller.model.dto.SwitchLogDTO;
 
 @Component
 @EnableTransactionManagement
@@ -37,6 +39,9 @@ public class SwitchService {
 	@Autowired
 	private SwitchDAO switchDAO;
 
+	@Autowired
+	private SwitchLogDAO SwitchLogDAO;
+	
 	@Autowired
 	private UserDAO userDAO;
 	
@@ -61,6 +66,14 @@ public class SwitchService {
 		return result;
 	}
 	
+	public Switch getSwitchByName(String name){
+		return switchDAO.getSwitchByName(name);
+	}
+	public SwitchState getStateByName(String name){
+		Switch switch1=getSwitchByName(name);
+		return gpioExternalController.getState(switch1.getGpioNumber());		
+	}
+	
 	public List<Integer> getSwitchesConfiguration(){
 		List<Switch> switches=switchDAO.getAllSwitches();
 		List<Integer> result=new ArrayList<Integer>();
@@ -70,18 +83,24 @@ public class SwitchService {
 		return result;
 	}
 	
-	public Boolean setSwitchState(Integer switchNumber, SwitchState state){
-		
-		LOGGER.info("Rzadanie zmiany przel. nr "+switchNumber+" na "+state+" przez uzytkownika "+getUser().getFullName());
-		publishEvent(switchDAO.getSwitchByNumber(switchNumber), state, getUser());
+	public Boolean setSwitchState(Integer switchNumber, SwitchState state){		
+		LOGGER.info("Rzadanie zmiany przel. nr "+switchNumber+" na "+state+" przez uzytkownika "+getUser().getFullName());		
+		publishEvent(switchDAO.getSwitchByNumber(switchNumber), state, getUser(), null);
 		/*logSwitchChange(switchNumber,state);*/
 		return gpioExternalController.setState(switchNumber.intValue(), state);		
 	}
 	
 	
+	public Boolean setSwitchState(Integer switchNumber, SwitchState state, String ruleUser){		
+		LOGGER.info("Rzadanie zmiany przel. nr "+switchNumber+" na "+state+" przez rolę  "+ruleUser);		
+		publishEvent(switchDAO.getSwitchByNumber(switchNumber), state, null, ruleUser);
+		/*logSwitchChange(switchNumber,state);*/
+		return gpioExternalController.setState(switchNumber.intValue(), state);		
+	}
 	
-	private void publishEvent(Switch switch_, SwitchState state, User user) {		
-		ChangeSwitchStateEvent csse=new ChangeSwitchStateEvent(this, switch_, state, user);
+	
+	private void publishEvent(Switch switch_, SwitchState state, User user, String ruleUser) {		
+		ChangeSwitchStateEvent csse=new ChangeSwitchStateEvent(this, switch_, state, user, ruleUser);
 		applicationEventPublisher.publishEvent(csse);
 	}
 
@@ -89,7 +108,17 @@ public class SwitchService {
 	private User getUser(){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    String name = auth.getName(); 
-		return userDAO.findByLogin(name);
-		
+		return userDAO.findByLogin(name);		
 	}
+	
+	public List<SwitchLogDTO> getLogs(int number){
+		List<SwitchLog> switchLogs=SwitchLogDAO.getSwitchLog();
+		List<SwitchLogDTO> result=new ArrayList<SwitchLogDTO>();
+		for (SwitchLog switchLog : switchLogs) {
+			String userName=switchLog.getUser()!=null?switchLog.getUser().getFullName():switchLog.getRuleUser();
+			result.add(new SwitchLogDTO(userName, switchLog.getSwitch_().getName(), switchLog.getState(), switchLog.getDate()));
+		}
+		return result;
+	}
+	
 }

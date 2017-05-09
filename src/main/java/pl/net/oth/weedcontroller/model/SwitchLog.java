@@ -2,17 +2,19 @@ package pl.net.oth.weedcontroller.model;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import pl.net.oth.weedcontroller.SwitchState;
 
 @Entity
+@Table(indexes={@Index(columnList="date", name="SwitchLog_date")})
 public class SwitchLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -20,6 +22,9 @@ public class SwitchLog {
 	
 	@ManyToOne
 	private User user;
+	
+	@Column
+	private String ruleUser;
 	
 	@ManyToOne
 	private Switch switch_;
@@ -57,6 +62,12 @@ public class SwitchLog {
 	}
 	public void setSwitch_(Switch switch_) {
 		this.switch_ = switch_;
+	}
+	public String getRuleUser() {
+		return ruleUser;
+	}
+	public void setRuleUser(String ruleUser) {
+		this.ruleUser = ruleUser;
 	}
 	
 	

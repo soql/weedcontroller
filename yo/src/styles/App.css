@@ -5,7 +5,14 @@ body {
 }
 
 .header1 {
-	font-size: 42px;
+	font-size: 40px;
+	font-weight: bold;
+	color: #FFFFF0;
+	text-align: center;
+}
+
+.log1 {
+	font-size: 22px;
 	font-weight: bold;
 	color: #FFFFF0;
 	text-align: center;
@@ -39,8 +46,21 @@ body {
 	text-align: center;
 }
 
+.logTable{
+	border-collapse: collapse;
+}
+.logTableTd{
+	border: 1px solid black;
+}
+.logTableTr{
+	border: 1px solid black;
+}
 .checkbox {
 	display: none
+}
+
+.switchTd {
+	padding-right: 20px;
 }
 
 .switch {

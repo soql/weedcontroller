@@ -1,11 +1,13 @@
 require('normalize.css/normalize.css');
 require('styles/App.css');
+require('styles/simplegrid.css');
 
 import React from 'react';
 import axios from 'axios';
 import BlockUi from 'react-block-ui';
 import {Button} from 'reactstrap';
 import 'react-block-ui/style.css';
+import LogTable from './LogTable';
 
 class Main extends React.Component {
   constructor (props) {
@@ -96,7 +98,7 @@ class Main extends React.Component {
 	  return (
 			  <tr>
 			  <td className="switchText">{element.name}</td>
-			  <td>			  	
+			  <td className="switchTd">			  	
 			  		<div id={element.gpioNumber} className={classNameStr} onClick={this.onButtonClick.bind(this, element)}></div>			  		
 			  </td>			  
 			  </tr>
@@ -114,24 +116,30 @@ class Main extends React.Component {
   }
   
   render () {
-    return (
-    		
-    <div>
-      <table>
-        <tr><td className="header1">Temp:</td><td className="temp">{this.state.temperature} &#8451;</td></tr>
-        <tr><td className="header1">Wilg:</td><td className="humidity">{this.state.humidity} %</td></tr>
-        <tr><td className="header1">Odczyt:</td><td className="lastRead">{this.state.lastReadTimeElapse} sek.</td></tr>
-      </table>
-      <br/>
-      <br/>
-      <div>      
-      <BlockUi tag="div" blocking={this.state.blocking}>
-        {this.renderSwitches()}  
-      </BlockUi> 
-      </div>
-      <a href="logout">Logout</a>
-    </div>     
-    
+    return (    		
+    <div className="grid grid-pad">
+    	<div className="col-1-3">
+    		<div className="content">
+	    		<table>
+	    			<tr><td className="header1">Temp:</td><td className="temp">{this.state.temperature} &#8451;</td></tr>
+	    			<tr><td className="header1">Wilg:</td><td className="humidity">{this.state.humidity} %</td></tr>
+	    			<tr><td className="header1">Odczyt:</td><td className="lastRead">{this.state.lastReadTimeElapse} sek.</td></tr>
+	    		</table>
+	    	</div>
+	    </div>
+    	<div className="col-1-3">
+    		<div className="content">
+    			<BlockUi tag="div" blocking={this.state.blocking}>
+    				{this.renderSwitches()}  
+    			</BlockUi>
+    		</div>
+    	</div>
+    	<div className="col-1-3">
+  			<div className="content">
+      			<LogTable />
+      		</div>
+      	</div>       
+    </div>        
     )
   }
  

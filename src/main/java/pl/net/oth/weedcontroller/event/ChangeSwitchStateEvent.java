@@ -16,12 +16,14 @@ public class ChangeSwitchStateEvent extends ApplicationEvent{
 	private Switch switch_;
 	private SwitchState state;
 	private User user;	
+	private String ruleUser;
 	
-	public ChangeSwitchStateEvent(Object source, Switch switch_, SwitchState state, User user) {
+	public ChangeSwitchStateEvent(Object source, Switch switch_, SwitchState state, User user, String ruleUser) {
 		super(source);
 		this.switch_ = switch_;
 		this.state = state;
 		this.user = user;
+		this.ruleUser = ruleUser;
 	}
 	
 	public Switch getSwitch() {
@@ -43,6 +45,14 @@ public class ChangeSwitchStateEvent extends ApplicationEvent{
 	}
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public String getRuleUser() {
+		return ruleUser;
+	}
+
+	public void setRuleUser(String ruleUser) {
+		this.ruleUser = ruleUser;
 	}
 	
 	

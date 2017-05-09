@@ -17,7 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import pl.net.oth.weedcontroller.external.impl.SensorExternalController;
-import pl.net.oth.weedcontroller.model.SensorResultDTO;
+import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
 import pl.net.oth.weedcontroller.service.SwitchService;
 
 @Configuration
@@ -33,7 +33,7 @@ public class SensorTask {
 		
 	private SensorResultDTO lastSensorResult;
 	
-	@Scheduled(fixedDelay = 10000)
+	@Scheduled(fixedDelay = 30000)
 	public void check() {
 		lastSensorResult=sensorExternalController.check();
 		if(lastSensorResult!=null)

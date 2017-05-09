@@ -21,7 +21,6 @@ public class ChangeSwitchStateListener implements ApplicationListener<ChangeSwit
 	private SwitchLogDAO switchLogDAO;
 	
 	private final static Log LOGGER = LogFactory.getLog(ChangeSwitchStateListener.class);
-	@Override
 	public void onApplicationEvent(ChangeSwitchStateEvent event) {
 		
 		LOGGER.info("Odebrano rządanie asynchroniczne");		
@@ -33,6 +32,7 @@ public class ChangeSwitchStateListener implements ApplicationListener<ChangeSwit
 		SwitchLog switchLog=new SwitchLog();
 		switchLog.setSwitch_(event.getSwitch());		
 		switchLog.setUser(event.getUser());
+		switchLog.setRuleUser(event.getRuleUser());
 		switchLog.setState(event.getState());
 		switchLog.setDate(new Date());		
 		switchLogDAO.persist(switchLog);		

@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import pl.net.oth.weedcontroller.dao.SensorResultDAO;
 import pl.net.oth.weedcontroller.model.SensorResultLog;
-import pl.net.oth.weedcontroller.model.SensorResultDTO;
+import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
 import pl.net.oth.weedcontroller.service.SensorResultService;
 
 @Configuration
@@ -19,7 +19,7 @@ public class HistoryTask {
 	@Autowired
 	private SensorResultService sensorResultService;
 	
-	@Scheduled(fixedDelay = 10000)
+	@Scheduled(fixedDelay = 30000)
 	public void putSensorDataToDatabase(){
 		SensorResultDTO sensorResultDTO=sensorTask.getLastSensorResult();
 		if(sensorResultDTO==null)

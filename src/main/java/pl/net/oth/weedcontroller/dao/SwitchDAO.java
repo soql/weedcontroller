@@ -33,6 +33,12 @@ public class SwitchDAO {
 	public Switch getSwitchByNumber(Integer number){
 		return em.find(Switch.class, number);
 	}
+
+	public Switch getSwitchByName(String name) {
+		Query query=em.createQuery("SELECT e FROM Switch e where e.name=:name");
+		query.setParameter("name", name);
+		return (Switch) query.getResultList().get(0);
+	}
 	
 	
 }

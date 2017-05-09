@@ -15,6 +15,8 @@ public class User {
 	private String password;
 	@Column
 	private Boolean enabled;
+	@Column
+	private String phoneNumber;
 	public String getLogin() {
 		return login;
 	}
@@ -39,5 +41,10 @@ public class User {
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
-	
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}	
 }

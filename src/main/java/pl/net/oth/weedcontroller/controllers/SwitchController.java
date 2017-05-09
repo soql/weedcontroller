@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import pl.net.oth.weedcontroller.SwitchState;
-import pl.net.oth.weedcontroller.model.SensorResultDTO;
-import pl.net.oth.weedcontroller.model.SwitchDTO;
+import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
+import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
 import pl.net.oth.weedcontroller.service.SwitchService;
 
 @Controller
