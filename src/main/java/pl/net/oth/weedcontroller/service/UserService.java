@@ -1,7 +1,8 @@
 package pl.net.oth.weedcontroller.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import pl.net.oth.weedcontroller.dao.UserDAO;
@@ -13,9 +14,12 @@ public class UserService {
 	@Autowired
 	private UserDAO userDAO;
 	
-	public User findByLogin(String login) {
-		
+	public User findByLogin(String login) {		
 		return userDAO.findByLogin(login);
+	}
+	
+	public List<User> getAllSMSUsers(){
+		return userDAO.getAllSMSUsers();
 	}
 
 }

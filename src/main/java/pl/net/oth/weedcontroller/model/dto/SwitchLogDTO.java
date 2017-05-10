@@ -1,5 +1,6 @@
 package pl.net.oth.weedcontroller.model.dto;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import pl.net.oth.weedcontroller.SwitchState;
@@ -8,14 +9,19 @@ public class SwitchLogDTO {
 	private String userName;
 	private String switchName;
 	private SwitchState switchState;		
-	private Date date;
+	private String date;
 	
+	private static SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			
+	public SwitchLogDTO() {
+		
+	}
 	public SwitchLogDTO(String userName, String switchName, SwitchState switchState, Date date) {
 		super();
 		this.userName = userName;
 		this.switchName = switchName;
 		this.switchState = switchState;
-		this.date = date;
+		this.date = sdf.format(date);
 	}
 	public String getUserName() {
 		return userName;
@@ -35,12 +41,10 @@ public class SwitchLogDTO {
 	public void setSwitchState(SwitchState switchState) {
 		this.switchState = switchState;
 	}
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
-	}
-	
-	
+	}	
 }

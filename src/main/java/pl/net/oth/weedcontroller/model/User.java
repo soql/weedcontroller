@@ -17,6 +17,9 @@ public class User {
 	private Boolean enabled;
 	@Column
 	private String phoneNumber;
+	@Column
+	private Boolean sendSMS;
+	
 	public String getLogin() {
 		return login;
 	}
@@ -46,5 +49,12 @@ public class User {
 	}
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
-	}	
+	}
+	public Boolean getSendSMS() {
+		return sendSMS;
+	}
+	public void setSendSMS(Boolean sendSMS) {
+		this.sendSMS = sendSMS;
+	}
+	
 }

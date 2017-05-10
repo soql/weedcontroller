@@ -25,11 +25,11 @@ class LogTable extends React.Component {
   }
   renderLog(element){
   	return (
-  			<tr className="logTableTr">
-  			<td className="logTableTd">{element.userName}</td>
+  			<tr className="logTableTr">  			
   			<td className="logTableTd">{element.switchName}</td>
   			<td className="logTableTd">{element.switchState}</td>
   			<td className="logTableTd">{element.date}</td>
+  			<td className="logTableTd">{element.userName}</td>
   			</tr>);
   }
   

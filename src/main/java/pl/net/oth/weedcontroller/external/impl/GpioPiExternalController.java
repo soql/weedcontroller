@@ -48,7 +48,7 @@ public class GpioPiExternalController implements GpioExternalController{
 		gpioPinDigitalOutput=new HashMap<Integer, GpioPinDigitalOutput>();
 		List<Integer> switches=switchService.getSwitchesConfiguration();
 		for (Integer integer : switches) {			
-			 gpioPinDigitalOutput.put(integer, gpio.provisionDigitalOutputPin(PinHelper.getInstance().getPin(integer), PinState.LOW));
+			 gpioPinDigitalOutput.put(integer, gpio.provisionDigitalOutputPin(PinHelper.getInstance().getPin(integer)));
 			 LOGGER.info("Ustawienie pinu "+integer+" pomyślne.");
 		}
 		

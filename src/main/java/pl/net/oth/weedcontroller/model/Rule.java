@@ -1,5 +1,7 @@
 package pl.net.oth.weedcontroller.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +19,8 @@ public class Rule {
 	private String condition_;
 	@Column
 	private String expression_;
+	@Column
+	private Date nextTimeExecution;
 	
 	public Integer getId() {
 		return id;
@@ -41,6 +45,12 @@ public class Rule {
 	}
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+	public Date getNextTimeExecution() {
+		return nextTimeExecution;
+	}
+	public void setNextTimeExecution(Date nextTimeExecution) {
+		this.nextTimeExecution = nextTimeExecution;
 	}
 	
 	

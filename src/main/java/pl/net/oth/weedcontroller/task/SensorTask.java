@@ -33,7 +33,7 @@ public class SensorTask {
 		
 	private SensorResultDTO lastSensorResult;
 	
-	@Scheduled(fixedDelay = 30000)
+	@Scheduled(fixedDelay = 15000)
 	public void check() {
 		lastSensorResult=sensorExternalController.check();
 		if(lastSensorResult!=null)
