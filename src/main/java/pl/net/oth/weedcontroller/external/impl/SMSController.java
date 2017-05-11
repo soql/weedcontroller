@@ -22,7 +22,7 @@ public class SMSController {
 	public boolean sendSMS(String phoneNumber, String text){
 		Process process;
 		try {
-			process = new ProcessBuilder("echo \""+text+"\" | gammu-smsd-inject text "+phoneNumber).start();				
+			process = new ProcessBuilder("/bin/sh", "-c", "echo \""+text+"\" | gammu-smsd-inject text "+phoneNumber).start();				
 			if(process.exitValue()!=0){
 				LOGGER.error("Błąd przy wysyłce SMS");
 				return false;

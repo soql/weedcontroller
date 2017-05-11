@@ -11,7 +11,7 @@ public class SwitchLogDTO {
 	private SwitchState switchState;		
 	private String date;
 	
-	private static SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static SimpleDateFormat sdf=new SimpleDateFormat("MM-dd HH:mm:ss");
 			
 	public SwitchLogDTO() {
 		

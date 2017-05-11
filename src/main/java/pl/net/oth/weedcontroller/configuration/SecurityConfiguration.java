@@ -24,7 +24,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
       http.authorizeRequests()
-        .antMatchers("/**").access("hasRole('ADMIN')")        
+        .antMatchers("/putSMS").permitAll().antMatchers("/**").access("hasRole('ADMIN')")        
         .and().formLogin().and().httpBasic()
         .and().csrf()
         .and().exceptionHandling().accessDeniedPage("/Access_Denied");
