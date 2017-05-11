@@ -3,26 +3,22 @@ require('styles/App.css');
 
 import React from 'react';
 import axios from 'axios';
+import AppActions from '../actions/AppActions';
+import LogStore from '../stores/LogStore';
 
 class LogTable extends React.Component {
   constructor (props) {
     super(props) ;
     this.state = {logs: []};
   }
-  
-  getLogs(){
-	  axios.get('getLogs').then(res => {
-	    	this.setLogs(res.data);
-	    });
-  }
-  
-  setLogs(logs){
-	  this.setState({logs: logs});
-  }
-  
+     
   componentWillMount(){
-	  this.getLogs();
+	  LogStore.addChangeListener('STORE_LOG_CHANGED', this.logChanged.bind(this));
   }
+  
+  logChanged(){		  
+	  this.setState({logs: LogStore.getLogs()});	 
+  } 
   renderLog(element){
   	return (
   			<tr className="logTableTr">  			
@@ -46,6 +42,7 @@ class LogTable extends React.Component {
   render(){
 	  return this.renderLogs()      	
   }
+  
  
 }
 

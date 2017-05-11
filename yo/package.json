@@ -68,6 +68,7 @@
     "react-block-ui": "^0.2.6",
     "react-dom": "^15.5.4",
     "axios": "^0.16.1",
-    "reactstrap": "^4.5.0"
+    "reactstrap": "^4.5.0",
+    "flux": "^3.1.2"
   }
 }

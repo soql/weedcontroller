@@ -3,90 +3,58 @@ require('styles/App.css');
 require('styles/simplegrid.css');
 
 import React from 'react';
-import axios from 'axios';
 import BlockUi from 'react-block-ui';
 import {Button} from 'reactstrap';
+import axios from 'axios';
 import 'react-block-ui/style.css';
 import LogTable from './LogTable';
+import AppActions from '../actions/AppActions';
+import SwitchStore from '../stores/SwitchStore';
+import SensorStore from '../stores/SensorStore';
 
 class Main extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {temperature:0, humidity:0, lastReadTimeElapse: 0,blocking: false, switches: []}    
+    this.state = {blocking: false, 
+    	switches: SwitchStore.getSwitches(), 
+    	temperature: SensorStore.getTemperature(), 
+    	lastReadTimeElapse: SensorStore.getLastReadTimeElapse(), 
+    	humidity: SensorStore.getHumidity()
+    	};
+    }  
+     
+  componentWillMount(){
+	  SwitchStore.addChangeListener('STORE_SWITCH_CHANGED', this.switchChanged.bind(this));	  
+	  SwitchStore.addChangeListener('STORE_SENSOR_CHANGED', this.sensorChanged.bind(this));	  
   }
-  componentWillUnmount () {
-    clearInterval(this.timer)
-  }
-  tick () {
-    axios.get('tempAndHumidity').then(res => { 
-    	const temperature=res.data.temperature;
-    	const humiditiy=res.data.humidity;
-    	const lastReadTimeElapse=res.data.lastReadTimeElapse;
-    	this.setTemperature(temperature);
-    	this.setHumidity(humiditiy);
-    	this.setLastReadTimeElapse(lastReadTimeElapse);
-    	});  
-    
-    this.tickSwitches();
-  }
-  
-  tickSwitches(){
-	  console.log('tick switches');
-	  axios.get('getSwitches').then(res => {
-	    	this.setSwitches(res.data);
-	    });
-  }
-  
-  startTimer () {
-    clearInterval(this.timer)
-    this.timer = setInterval(this.tick.bind(this), 5000)
-  }
-  
-  stopTimer () {
-    clearInterval(this.timer)
-  }
-  
-  setTemperature(temperature){
-	  this.setState({temperature: temperature});
-  }
-  
-  setHumidity(humidity){
-	  this.setState({humidity: humidity});
-  }  
-  setLastReadTimeElapse(lastReadTimeElapse){
-	  this.setState({lastReadTimeElapse: lastReadTimeElapse});
-  }
-  setSwitches(switches){
-	  this.setState({switches: switches});
+ 
+  switchChanged(){	
+	  this.toggleBlocking(false);
+	  this.setState({switches: SwitchStore.getSwitches()});	 
+  }   
+
+  sensorChanged(){
+	  this.setState({
+		  temperature: SensorStore.getTemperature(), 
+		  lastReadTimeElapse: SensorStore.getLastReadTimeElapse(), 
+		  humidity: SensorStore.getHumidity()
+	  })
   }
   
   toggleBlocking(block_) {	  
 	    this.setState({blocking: block_});
 	  }
-  componentWillMount(){
-	  this.tick();
-	  this.startTimer();
-  }
 
-  onButtonClick(element) {		 
-	 console.log('blokuje '+this.state.blocking);
-	 this.toggleBlocking(true);
+
+  onButtonClick(element) {		 	 	 
 	 let sendState='';
 	 if(element.state=='ON'){
 		 sendState='OFF';
 	 }else{
 		 sendState='ON';
 	 }
-	 console.log('clicked '+element.gpioNumber+" "+element.state);
-	 axios.get('setState?switchNumber='+element.gpioNumber+'&switchState='+sendState).then(response => 
-	 {
-		  this.tickSwitches()
-	 }).then(response => {
-		 this.toggleBlocking(false);
-	 });
-	 
-	 console.log('Odblokuje');	 
-	 console.log('Odblokuje '+this.state.blocking);
+	 this.toggleBlocking(true);
+	 AppActions.switchChange({switchState: sendState, gpioNumber:element.gpioNumber});	 			 
   }
   
   
@@ -115,7 +83,7 @@ class Main extends React.Component {
 			 );  
   }
   
-  render () {
+  render () {	   
     return (    		
     <div className="grid grid-pad">
     	<div className="col-1-3">
