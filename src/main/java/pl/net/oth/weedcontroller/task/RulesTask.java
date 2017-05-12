@@ -71,14 +71,19 @@ public class RulesTask {
 	
 	@Scheduled(fixedDelay = 15000)
 	private void checkAndExecuteRules() {
+		nowRuleTime=new Date();
 		if(sensorTask.getLastSuccesfullSensorResult()==null){
 			LOGGER.info("Brak rezultatów z sensora - przetwarznie reguł wstrzymane");
 			return;
 		}
+		if(lastRuleTime==null){
+			LOGGER.info("Brak czasu poprzedniego wykonania - przetwarznie reguł wstrzymane");
+			lastRuleTime=nowRuleTime;
+		}
 		gs.setVariable("TEMP", sensorTask.getLastSuccesfullSensorResult().getTemperature());
 		gs.setVariable("HUMI", sensorTask.getLastSuccesfullSensorResult().getHumidity());
 		LOGGER.info("Weryfikacja taskow "+lastRuleTime);
-		nowRuleTime=new Date();		
+				
 		List<Rule> rules=ruleService.getAllActiveRules();
 		for (Rule rule : rules) {
 			LOGGER.info("Weryfikacja warunków reguły nr "+rule.getId());
@@ -116,9 +121,7 @@ public class RulesTask {
 		return switchService.setSwitchState(s.getGpioNumber(), targetState, userName);		
 	}	
 	
-	public boolean cron(String secounds, String minutes, String hours, String dayOfMonth, String month, String dayOfWeek){
-		if(lastRuleTime==null)
-			return false;
+	public boolean cron(String secounds, String minutes, String hours, String dayOfMonth, String month, String dayOfWeek){		
 		Calendar prevCalendar=GregorianCalendar.getInstance();
 		prevCalendar.setTime(lastRuleTime);
 		int[] patern=new int[]{

@@ -1,5 +1,8 @@
+require('bootstrap/dist/css/bootstrap.css');
 require('normalize.css/normalize.css');
 require('styles/App.css');
+
+
 
 import React from 'react';
 import axios from 'axios';

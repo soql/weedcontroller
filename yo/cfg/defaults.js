@@ -51,6 +51,10 @@ function getDefaultModules() {
       {
         test: /\.(mp4|ogg|svg)$/,
         loader: 'file-loader'
+      },
+      {
+        test   : /\.(ttf|eot|svg|woff2)(\?[a-z0-9]+)?$/,
+        loader : 'file-loader'
       }
     ]
   };
