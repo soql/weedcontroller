@@ -25,8 +25,9 @@ public class SwitchLogDAO {
 		em.persist(switchLog);
 	}
 	
-	public List<SwitchLog> getSwitchLog(){
+	public List<SwitchLog> getSwitchLog(int number){
 		Query query=em.createQuery("SELECT e FROM SwitchLog e order by id desc");
+		query.setMaxResults(number);
 		return (List<SwitchLog>)query.getResultList();
 	}			
 }

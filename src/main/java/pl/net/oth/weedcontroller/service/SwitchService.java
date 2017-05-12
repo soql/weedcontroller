@@ -112,7 +112,7 @@ public class SwitchService {
 	}
 	
 	public List<SwitchLogDTO> getLogs(int number){
-		List<SwitchLog> switchLogs=SwitchLogDAO.getSwitchLog();
+		List<SwitchLog> switchLogs=SwitchLogDAO.getSwitchLog(number);
 		List<SwitchLogDTO> result=new ArrayList<SwitchLogDTO>();
 		for (SwitchLog switchLog : switchLogs) {
 			String userName=switchLog.getUser()!=null?switchLog.getUser().getFullName():switchLog.getRuleUser();

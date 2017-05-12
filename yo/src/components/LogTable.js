@@ -3,6 +3,7 @@ require('styles/App.css');
 
 import React from 'react';
 import axios from 'axios';
+import {Button} from 'reactstrap';
 import AppActions from '../actions/AppActions';
 import LogStore from '../stores/LogStore';
 
@@ -35,8 +36,14 @@ class LogTable extends React.Component {
 		  rows.push(this.renderLog(element));				  
 	  });
 	  return (
-			  <table className="logTable">{rows}</table>
+			  <table className="logTable">
+			    {rows}
+			  	<tr><td colSpan="4"><Button color="primary" size="1g" block onClick={this.showMoreLogs.bind(this)}>...</Button></td></tr>
+			  </table>
 			 );   	    	  
+  }
+  showMoreLogs(){
+	  AppActions.showMoreLogs();
   }
   
   render(){

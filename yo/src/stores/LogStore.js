@@ -8,7 +8,7 @@ class LogStore extends EventEmitter {
     constructor() {
         super();
         this.dispatchToken = AppDispatcher.register(this.dispatcherCallback.bind(this))        
-        this.state = {logs: []};
+        this.state = {logs: [], numberOfLogs: 5};
         this.tick();
     }        
       
@@ -29,15 +29,21 @@ class LogStore extends EventEmitter {
         switch (action.actionType) {
         case 'SWITCH_CHANGED':
             this.tick();                
-            break;                      
-        }
-
+            break;   
+        case 'SHOW_MORE_LOGS':
+      	  this.state.numberOfLogs=this.state.numberOfLogs+10;
+            this.tick();                
+            break;     
+        }    
         this.emitChange('STORE_' + action.actionType);
 
         return true;
-    }
+      }
+
+       
+    
     tick() {
-    	axios.get('getLogs').then(res => {
+    	axios.get('getLogs?number='+this.state.numberOfLogs).then(res => {
 	    	this._logs = res.data;
 	    }).then(res => {
     	  	    	AppActions.logChanged();

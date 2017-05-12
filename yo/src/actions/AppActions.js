@@ -26,6 +26,12 @@ class AppActions {
             value: data
         });
     }
+    showMoreLogs(data){
+    AppDispatcher.dispatch({
+            actionType: 'SHOW_MORE_LOGS',
+            value: data
+        });
+    }
 }
 
 export default new AppActions() 

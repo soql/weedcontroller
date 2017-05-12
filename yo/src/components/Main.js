@@ -4,7 +4,6 @@ require('styles/simplegrid.css');
 
 import React from 'react';
 import BlockUi from 'react-block-ui';
-import {Button} from 'reactstrap';
 import axios from 'axios';
 import 'react-block-ui/style.css';
 import LogTable from './LogTable';
