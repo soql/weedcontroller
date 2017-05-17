@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -21,8 +22,8 @@ public class WeedControllerConfiguration extends WebMvcConfigurerAdapter {
 	public ViewResolver viewResolver() {
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
 		viewResolver.setViewClass(JstlView.class);
-		viewResolver.setPrefix("/WEB-INF");
-		viewResolver.setSuffix(".jsp");
+		/*viewResolver.setPrefix("/WEB-INF");
+		viewResolver.setSuffix(".jsp");*/
 
 		return viewResolver;
 	}
@@ -31,8 +32,11 @@ public class WeedControllerConfiguration extends WebMvcConfigurerAdapter {
      * Configure ResourceHandlers to serve static resources like CSS/ Javascript etc...
      *
      */
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    @Override    
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {    	
         registry.addResourceHandler("/assets/**").addResourceLocations("/assets/");
+        registry.setOrder(-1);
+        
+        
     }
 }

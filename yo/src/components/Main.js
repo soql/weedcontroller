@@ -1,11 +1,13 @@
 require('normalize.css/normalize.css');
 require('styles/App.css');
+require('styles/burger-menu.css');
 require('styles/simplegrid.css');
 
 import React from 'react';
 import BlockUi from 'react-block-ui';
 import axios from 'axios';
 import 'react-block-ui/style.css';
+
 import LogTable from './LogTable';
 import AppActions from '../actions/AppActions';
 import SwitchStore from '../stores/SwitchStore';
@@ -83,8 +85,10 @@ class Main extends React.Component {
   }
   
   render () {	   
-    return (    		
+    return (  
+    		    	
     <div className="grid grid-pad">
+	
     	<div className="col-1-3">
     		<div className="content">
 	    		<table>
@@ -106,7 +110,8 @@ class Main extends React.Component {
       			<LogTable />
       		</div>
       	</div>       
-    </div>        
+    </div>  
+    
     )
   }
  

@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pl.net.oth</groupId>
-	<artifactId>weedcontroller</artifactId>
+	<artifactId>wcr</artifactId>
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>weedcontroller Maven Webapp</name>
@@ -113,10 +113,20 @@
 			<version>4.0.1.RELEASE</version>
 		</dependency>
 		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.19</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp.jstl</groupId>
+			<artifactId>javax.servlet.jsp.jstl-api</artifactId>
+			<version>1.2.1</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -132,7 +142,7 @@
 					<user>deployer</user>
 					<password>deployer</password>
 					<server>tomcat-zjc</server>
-					<path>/weedcontroller</path>
+					<path>/</path>
 					<update>true</update>
 				</configuration>
 			</plugin>

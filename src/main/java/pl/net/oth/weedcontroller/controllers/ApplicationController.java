@@ -20,5 +20,8 @@ public class ApplicationController {
         }
         return "welcome";
      }
-
+	 @RequestMapping(value="/**", method=RequestMethod.GET)
+	 public String index(){
+	     return "index.jsp";
+	 }
 }
