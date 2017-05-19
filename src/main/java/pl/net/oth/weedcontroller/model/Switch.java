@@ -12,6 +12,8 @@ public class Switch {
 	private int gpioNumber;
 	@Column
 	private String name;		
+	@Column
+	private Boolean revert;
 
 	public int getGpioNumber() {
 		return gpioNumber;
@@ -28,5 +30,16 @@ public class Switch {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public Boolean getRevert() {
+		return revert;
+	}
+
+	public void setRevert(Boolean revert) {
+		this.revert = revert;
+	}
+
+	
+	
 
 }

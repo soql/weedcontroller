@@ -53,12 +53,12 @@ public class GpioMockExternalController implements GpioExternalController{
 		
 	}
 
-	public SwitchState getState(int gpioNumber) {		
+	public SwitchState getState(int gpioNumber, boolean revert) {		
 		return gpioPinDigitalOutput.get(gpioNumber);		
 	}
 	
-	public boolean setState(int gpioNumber, SwitchState switchState) {
-		if(switchState.equals(getState(gpioNumber))){
+	public boolean setState(int gpioNumber, SwitchState switchState, boolean revert) {
+		if(switchState.equals(getState(gpioNumber, revert))){
 			return false ;
 		}
 		if(switchState.equals(SwitchState.ON)){

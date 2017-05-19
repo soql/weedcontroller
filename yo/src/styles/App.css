@@ -1,6 +1,6 @@
 /* Base Application Styles */
 body {
-	color: #fff;
+	
 	background: #222;
 }
 
@@ -51,6 +51,7 @@ body {
 }
 .logTableTd{
 	border: 1px solid black;
+	color: #fff;
 }
 .logTableTr{
 	border: 1px solid black;
@@ -115,10 +116,6 @@ body {
 
 .switchOn:after {
 	left: 21px !important;
-}
-
-table {
-	width: 100%;
 }
 
 td {

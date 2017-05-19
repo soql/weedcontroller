@@ -60,7 +60,7 @@ public class SwitchService {
 			SwitchDTO switchDTO=new SwitchDTO();
 			switchDTO.setGpioNumber(switch_.getGpioNumber());
 			switchDTO.setName(switch_.getName());
-			switchDTO.setState(gpioExternalController.getState(switch_.getGpioNumber()));
+			switchDTO.setState(gpioExternalController.getState(switch_.getGpioNumber(), switch_.getRevert().booleanValue()));
 			result.add(switchDTO);
 		}
 		return result;
@@ -71,7 +71,7 @@ public class SwitchService {
 	}
 	public SwitchState getStateByName(String name){
 		Switch switch1=getSwitchByName(name);
-		return gpioExternalController.getState(switch1.getGpioNumber());		
+		return gpioExternalController.getState(switch1.getGpioNumber(), switch1.getRevert().booleanValue());		
 	}
 	
 	public List<Integer> getSwitchesConfiguration(){
@@ -84,18 +84,20 @@ public class SwitchService {
 	}
 	
 	public Boolean setSwitchState(Integer switchNumber, SwitchState state){		
-		LOGGER.info("Rzadanie zmiany przel. nr "+switchNumber+" na "+state+" przez uzytkownika "+getUser().getFullName());		
-		publishEvent(switchDAO.getSwitchByNumber(switchNumber), state, getUser(), null);
+		LOGGER.info("Rzadanie zmiany przel. nr "+switchNumber+" na "+state+" przez uzytkownika "+getUser().getFullName());
+		Switch switch_=switchDAO.getSwitchByNumber(switchNumber);
+		publishEvent(switch_, state, getUser(), null);
 		/*logSwitchChange(switchNumber,state);*/
-		return gpioExternalController.setState(switchNumber.intValue(), state);		
+		return gpioExternalController.setState(switchNumber.intValue(), state, switch_.getRevert().booleanValue());		
 	}
 	
 	
 	public Boolean setSwitchState(Integer switchNumber, SwitchState state, String ruleUser){		
 		LOGGER.info("Rzadanie zmiany przel. nr "+switchNumber+" na "+state+" przez rolę  "+ruleUser);		
-		publishEvent(switchDAO.getSwitchByNumber(switchNumber), state, null, ruleUser);
+		Switch switch_=switchDAO.getSwitchByNumber(switchNumber);
+		publishEvent(switch_, state, null, ruleUser);
 		/*logSwitchChange(switchNumber,state);*/
-		return gpioExternalController.setState(switchNumber.intValue(), state);		
+		return gpioExternalController.setState(switchNumber.intValue(), state, switch_.getRevert().booleanValue());		
 	}
 	
 	

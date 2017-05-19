@@ -9,6 +9,6 @@ import javax.annotation.PreDestroy;
 import pl.net.oth.weedcontroller.SwitchState;
 
 public interface GpioExternalController {
-	public SwitchState getState(int gpioNumber) ;	
-	public boolean setState(int gpioNumber, SwitchState switchState);	
+	public SwitchState getState(int gpioNumber, boolean revert) ;	
+	public boolean setState(int gpioNumber, SwitchState switchState, boolean revert);	
 }
