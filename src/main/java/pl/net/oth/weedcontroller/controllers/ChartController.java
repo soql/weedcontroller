@@ -7,11 +7,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -82,7 +82,7 @@ public class ChartController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		 
-		return Base64.getEncoder().encodeToString(imagebuffer.toByteArray());		
+		return "data:image/png;base64,"+DatatypeConverter.printBase64Binary(imagebuffer.toByteArray());		
 	}
 	private XYDataset createDataset(List<SensorResultLog> sensorResultLogs ) {
 		TimeSeriesCollection timeSeriesCollection=new TimeSeriesCollection();		

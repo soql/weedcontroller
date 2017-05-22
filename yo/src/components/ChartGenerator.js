@@ -7,7 +7,6 @@ require('react-date-picker/base.css');
 require('styles/simplegrid.css');
 import axios from 'axios';
 import React from 'react';
-import { Image } from 'react-native';
 
 import { DateField, DatePicker, Calendar } from 'react-date-picker'
 import 'react-date-picker/index.css'
@@ -71,9 +70,12 @@ class ChartGenerator extends React.Component {
 	        		  </td></tr>
 	        		  <tr><td>
 	        		  <Button color="primary" block onClick={this.generateChart.bind(this)}>Generuj</Button>
-	        		  </td></tr>	        		  
+	        		  </td></tr>
+	        		  <tr><td>	        		  
+	        		  <img className='image-preview' src={this.state.image} />
+	        		  </td></tr>
 	        		  </table>
-	        		  <Image style={{width: 50, height: 50}} source={{uri: this.state.image}}/>
+	        		  
         		</div>
         	</div>
         	      

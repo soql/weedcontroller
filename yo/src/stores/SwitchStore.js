@@ -9,8 +9,7 @@ class SwitchStore extends EventEmitter {
         super();
         this.dispatchToken = AppDispatcher.register(this.dispatcherCallback.bind(this))
         this._switches = [];
-        this.tick();
-  	  	this.startTimer();
+        this.tick();  	  	
     }      
       
     emitChange(eventName) {
@@ -60,7 +59,10 @@ class SwitchStore extends EventEmitter {
           
       getSwitches(){
     	  return this._switches;
-      }     
+      }  
+      stopTimer(){
+           clearInterval(this.timer);
+       }
 }
 
 export default new SwitchStore();

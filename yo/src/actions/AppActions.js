@@ -31,7 +31,14 @@ class AppActions {
             actionType: 'SHOW_MORE_LOGS',
             value: data
         });
-    }
+    }    
+    
+    imageLoaded(data){
+    AppDispatcher.dispatch({
+            actionType: 'IMAGE_LOADED',
+            value: data
+        });
+    }    
 }
 
 export default new AppActions() 

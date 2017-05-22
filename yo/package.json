@@ -72,8 +72,7 @@
     "react-addons-transition-group": "^15.5.2",
     "react-block-ui": "^0.2.6",
     "react-date-picker": "^5.3.28",
-    "react-dom": "^15.5.4",
-    "react-native": "^0.44.0",
+    "react-dom": "^15.5.4",    
     "react-router-dom": "^4.1.1",
     "reactstrap": "^4.5.0"
   }
