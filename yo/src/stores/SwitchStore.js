@@ -54,7 +54,7 @@ class SwitchStore extends EventEmitter {
     }
     startTimer () {
         clearInterval(this.timer)
-        this.timer = setInterval(this.tick.bind(this), 5000)
+        this.timer = setInterval(this.tick.bind(this), 5000)        
       }
           
       getSwitches(){

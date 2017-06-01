@@ -8,8 +8,7 @@ class LiveViewStore extends EventEmitter {
     constructor() {
         super();
         this.dispatchToken = AppDispatcher.register(this.dispatcherCallback.bind(this));
-        this._image = null;
-        this.tick();  	  	
+        this._image = null;          	  	
     }      
       
     emitChange(eventName) {
@@ -41,6 +40,7 @@ class LiveViewStore extends EventEmitter {
     startTimer () {
         clearInterval(this.timer)
         this.timer = setInterval(this.tick.bind(this), 10000)
+        this.tick();
       }
           
    

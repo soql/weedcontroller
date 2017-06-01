@@ -27,7 +27,8 @@ class Main extends React.Component {
   componentWillMount(){
 	  SwitchStore.startTimer();
 	  SwitchStore.addChangeListener('STORE_SWITCH_CHANGED', this.switchChanged.bind(this));	  
-	  SwitchStore.addChangeListener('STORE_SENSOR_CHANGED', this.sensorChanged.bind(this));	  
+	  SwitchStore.addChangeListener('STORE_SENSOR_CHANGED', this.sensorChanged.bind(this));	  	  
+	  SwitchStore.tick();
   }
  
   componentWillUnmount(){
