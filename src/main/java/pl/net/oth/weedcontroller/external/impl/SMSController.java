@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
+import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
 import pl.net.oth.weedcontroller.task.SensorTask;
 
@@ -22,7 +23,8 @@ public class SMSController {
 	public boolean sendSMS(String phoneNumber, String text){
 		Process process;
 		try {
-			process = new ProcessBuilder("/bin/sh", "-c", "echo \""+text+"\" | gammu-smsd-inject text "+phoneNumber).start();				
+			process = new ProcessBuilder("/bin/sh", "-c", "echo \""+text+"\" | gammu-smsd-inject text "+phoneNumber).start();
+			process.waitFor();
 			if(process.exitValue()!=0){
 				LOGGER.error("Błąd przy wysyłce SMS");
 				return false;
@@ -30,7 +32,10 @@ public class SMSController {
 
 		} catch (IOException e) {
 			LOGGER.error("Błąd krytyczny przy wysyłce SMS"); 
-			e.printStackTrace();			
+			LOGGER.error(Helper.STACK_TRACE,e);			
+		} catch (InterruptedException e) {
+			LOGGER.error("Błąd krytyczny przy oczekiwaniu na wysyłkę SMS"); 
+			LOGGER.error(Helper.STACK_TRACE,e);
 		}
 		return true;
 	}
