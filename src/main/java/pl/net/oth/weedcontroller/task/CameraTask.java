@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.Configuration;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 
@@ -40,8 +41,7 @@ public class CameraTask {
 			LOGGER.debug("Zdjęcie zrobione pomyślnie");
 			removeOldFiles(true);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(Helper.STACK_TRACE, e);
 		}
 	}
 	private void removeOldFiles(boolean realDelete) {

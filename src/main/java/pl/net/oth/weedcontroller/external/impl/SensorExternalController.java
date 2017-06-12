@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Configuration;
 
+import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
 import pl.net.oth.weedcontroller.task.SensorTask;
 
@@ -45,7 +46,7 @@ public class SensorExternalController {
 
 		} catch (IOException e) {
 			LOGGER.error("Nieudane pobranie wartości z DHT22"); 
-			e.printStackTrace();			
+			LOGGER.error(Helper.STACK_TRACE, e);
 		}
 		return null;
 	}

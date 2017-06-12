@@ -94,8 +94,7 @@ public class RulesTask {
 				}
 			}catch(Exception e){
 				LOGGER.error("Błąd podczas weryfikacji/wykonania warunku reguly nr "+rule.getId());
-				LOGGER.error(Helper.STACK_TRACE,e);
-				e.printStackTrace();
+				LOGGER.error(Helper.STACK_TRACE,e);				
 				continue;
 			}
 			LOGGER.info("Wynik reguły "+rule.getId()+" = "+condition);

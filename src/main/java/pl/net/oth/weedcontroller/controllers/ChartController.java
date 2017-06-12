@@ -12,6 +12,8 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
@@ -28,12 +30,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.SensorResultLog;
 import pl.net.oth.weedcontroller.service.SensorResultService;
 import pl.net.oth.weedcontroller.service.SwitchService;
+import pl.net.oth.weedcontroller.task.CameraTask;
 
 @Controller
 public class ChartController {
+	private final static Log LOGGER=LogFactory.getLog(ChartController.class);
+	
 	@Autowired
 	private SwitchService switchService;
 
@@ -85,8 +91,7 @@ public class ChartController {
 		 try {
 			ImageIO.write(image, "png", imagebuffer);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(Helper.STACK_TRACE, e);
 		}		 
 		return "data:image/png;base64,"+DatatypeConverter.printBase64Binary(imagebuffer.toByteArray());		
 	}

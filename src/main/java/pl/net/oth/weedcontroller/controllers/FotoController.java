@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.SensorResultLog;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.SensorResultService;
@@ -55,8 +56,7 @@ public class FotoController {
 			imagebuffer = new ByteArrayOutputStream();
 			ImageIO.write(image, "jpg", imagebuffer);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(Helper.STACK_TRACE, e);
 		}
 		return "data:image/png;base64," + DatatypeConverter.printBase64Binary(imagebuffer.toByteArray());
 	}
