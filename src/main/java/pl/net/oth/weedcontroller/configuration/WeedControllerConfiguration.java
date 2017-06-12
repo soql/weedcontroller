@@ -15,15 +15,13 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "pl.net.oth.weedcontroller")
-@ImportResource("WEB-INF/applicationContext.xml")
+@ImportResource("classpath:applicationContext.xml")
 public class WeedControllerConfiguration extends WebMvcConfigurerAdapter {
 	
 	@Bean(name="HelloWorld")
 	public ViewResolver viewResolver() {
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
 		viewResolver.setViewClass(JstlView.class);
-		/*viewResolver.setPrefix("/WEB-INF");
-		viewResolver.setSuffix(".jsp");*/
 
 		return viewResolver;
 	}

@@ -22,6 +22,7 @@ import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,9 +48,18 @@ public class ChartController {
 		System.out.println("DateFrom "+dateFrom);
 		System.out.println("DateTo "+dateTo);
 		List<SensorResultLog> sensorResultLogs=sensorResultService.getResultsForDate(new Date(dateFrom), new Date(dateTo));
+		float min=Float.MIN_VALUE;
+		float max=Float.MAX_VALUE;
 		for (SensorResultLog sensorResultLog : sensorResultLogs) {
-			System.out.println(sensorResultLog.getDate()+" "+sensorResultLog.getHumidity()+" "+sensorResultLog.getTemperature());
+			System.out.println(sensorResultLog.getTemperature());
+			if(min==Float.MIN_VALUE || sensorResultLog.getTemperature()<min){
+				min=sensorResultLog.getTemperature();
+			}
+			if(max==Float.MAX_VALUE || sensorResultLog.getTemperature()>max){
+				max=sensorResultLog.getTemperature();
+			}
 		}
+		System.out.println("MIN "+min+" MAX "+max);
 		
 		 JFreeChart xylineChart = ChartFactory.createTimeSeriesChart(
 		         "WCR",		         
@@ -68,12 +78,10 @@ public class ChartController {
 		 axis.setDateFormatOverride(new SimpleDateFormat("MM-dd hh:mm:ss"));
 		 
 		 NumberAxis angeAxis = (NumberAxis) plot.getRangeAxis();
-		 angeAxis.setRange(0, 100);
+		 angeAxis.setRange(min, max);
 		 angeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 		 angeAxis.setNumberFormatOverride(new DecimalFormat("##.#"));
-		 
-		 String fileName=System.getProperty("java.io.tmpdir")+"/wykres"+new Date().getTime()+".jpg";
-		 
+		 		 		 
 		 BufferedImage image=xylineChart.createBufferedImage(1920,1080);
 		 ByteArrayOutputStream imagebuffer = new ByteArrayOutputStream();
 		 try {
@@ -88,7 +96,7 @@ public class ChartController {
 		TimeSeriesCollection timeSeriesCollection=new TimeSeriesCollection();		
 		 final TimeSeries temperature = new TimeSeries( "Temperatura" );  
 	      for (SensorResultLog sensorResultLog : sensorResultLogs) {
-	    	  temperature.addOrUpdate(new Second(sensorResultLog.getDate()), (int)sensorResultLog.getTemperature());	    	  
+	    	  temperature.addOrUpdate(new Second(sensorResultLog.getDate()), sensorResultLog.getTemperature());	    	  
 	      }	    
 	      timeSeriesCollection.addSeries(temperature);
 	      return timeSeriesCollection; 
