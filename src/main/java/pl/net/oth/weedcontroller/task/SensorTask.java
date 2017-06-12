@@ -24,7 +24,7 @@ import pl.net.oth.weedcontroller.service.SwitchService;
 @EnableScheduling
 public class SensorTask {
 	private final static Log LOGGER=LogFactory.getLog(SensorTask.class);
-	private static final String ERROR_MESSAGE = "Failed to get reading. Try again!";
+	
 	private static final int MAX_ERROR_TEMP=5;
 		
 	@Autowired
@@ -39,6 +39,7 @@ public class SensorTask {
 	@Scheduled(fixedDelay = 15000)
 	public void check() {
 		lastSensorResult=sensorExternalController.check();
+		
 		if(lastSensorResult!=null){			
 			if(!checkErrors(previousSuccessfullSensorResult, lastSensorResult)){
 				lastSuccesfullSensorResult=lastSensorResult;
@@ -52,6 +53,9 @@ public class SensorTask {
 
 
 	private boolean checkErrors(SensorResultDTO previousSuccessfullSensorResult, SensorResultDTO lastSensorResult) {
+		if(previousSuccessfullSensorResult==null){
+			return false;
+		}
 		if(Math.abs(previousSuccessfullSensorResult.getTemperature()-lastSensorResult.getTemperature())>MAX_ERROR_TEMP)
 			return true;
 		return false;
