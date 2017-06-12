@@ -21,7 +21,7 @@ import pl.net.oth.weedcontroller.service.ConfigurationService;
 @EnableScheduling
 public class CameraTask {	
 	private final static Log LOGGER=LogFactory.getLog(CameraTask.class);
-	public static final String IMAGE_FOLDER="/opt/camera";
+	public static final String IMAGE_FOLDER="/opt/camera/";
 	/*In hours*/
 	public static final long IMAGE_TIME_TO_KEEP=24;
 	@Autowired
