@@ -19,10 +19,7 @@ import pl.net.oth.weedcontroller.service.SwitchService;
 
 @Configuration
 public class Command {
-	private final static Log LOGGER=LogFactory.getLog(Command.class);
-	
-	@Autowired
-	private SwitchService switchService;
+	private final static Log LOGGER=LogFactory.getLog(Command.class);	
 	
 	@Autowired
 	private SMSController smsController;
@@ -34,7 +31,10 @@ public class Command {
 	private UserDAO userDAO;	
 	
 	@Autowired
-	private RuleService ruleService;		
+	private RuleService ruleService;	
+	
+	@Autowired
+	private SwitchService switchService;	
 	
 	public SwitchState css(String switchName){
 		return checkSwitchState(switchName);
@@ -50,6 +50,17 @@ public class Command {
 		Switch s=switchService.getSwitchByName(switchName);				
 		return switchService.setSwitchState(s.getGpioNumber(), targetState, userName);		
 	}	
+	
+	public boolean csnc(String switchName, SwitchState state){
+		return checkSwitchNowChange(switchName, state);
+	}
+	
+	public boolean checkSwitchNowChange(String switchName, SwitchState state){
+		if(rulesTask.getNowSwitchStates().get(switchName).equals(state) && !rulesTask.getLastSwitchStates().get(switchName).equals(state)){
+			return true;
+		}
+		return false;
+	}
 	
 	public boolean cron(String secounds, String minutes, String hours, String dayOfMonth, String month, String dayOfWeek){		
 		Calendar prevCalendar=GregorianCalendar.getInstance();

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -29,17 +30,23 @@ import pl.net.oth.weedcontroller.helpers.PinHelper;
 import pl.net.oth.weedcontroller.model.Rule;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.User;
+import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
 import pl.net.oth.weedcontroller.service.RuleService;
 import pl.net.oth.weedcontroller.service.SensorResultService;
 import pl.net.oth.weedcontroller.service.SwitchService;
 import pl.net.oth.weedcontroller.task.SensorTask;
 
+/**
+ * @author psokolowski
+ *
+ */
 @Configuration
 @EnableScheduling
 public class RulesTask {
 	private final static Log LOGGER=LogFactory.getLog(RulesTask.class);
 	
-	private GroovyShell gs;
+	@Autowired
+	private SwitchService switchService;	
 		
 	@Autowired
 	private SensorTask sensorTask;
@@ -54,7 +61,13 @@ public class RulesTask {
 	
 	private Date nowRuleTime=null;
 	
-	private Integer actualRuleId=null;
+	private Integer actualRuleId=null;	
+	
+	private Map<String, SwitchState> nowSwitchStates=null;
+	
+	private Map<String, SwitchState> lastSwitchStates=null;
+	
+	private GroovyShell gs;
 		
 	private static final SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
 	
@@ -79,6 +92,9 @@ public class RulesTask {
 		}
 		gs.setVariable("TEMP", sensorTask.getLastSuccesfullSensorResult().getTemperature());
 		gs.setVariable("HUMI", sensorTask.getLastSuccesfullSensorResult().getHumidity());
+		
+		nowSwitchStates=buildSwitchStateMap();		
+		
 		LOGGER.info("Weryfikacja taskow. Poprzedni czas: "+sdf.format(lastRuleTime)+" Aktualny czas: "+sdf.format(nowRuleTime));
 				
 		List<Rule> rules=ruleService.getAllActiveRules();
@@ -100,9 +116,19 @@ public class RulesTask {
 			LOGGER.info("Wynik reguły "+rule.getId()+" = "+condition);
 		}
 		lastRuleTime=nowRuleTime;
+		lastSwitchStates=nowSwitchStates;
 	}	
 	
 	
+	private Map<String, SwitchState> buildSwitchStateMap() {
+		Map<String, SwitchState> result=new HashMap<String, SwitchState>();
+		List<SwitchDTO> switches=switchService.getAllSwitchesWithStates();
+		for (SwitchDTO switchDTO : switches) {
+			result.put(switchDTO.getName(), switchDTO.getState());
+		}
+		return result;
+	}
+
 	public Integer getActualRuleId() {
 		return actualRuleId;
 	}	
@@ -113,5 +139,14 @@ public class RulesTask {
 	
 	public Date getNowRuleTime() {
 		return nowRuleTime;
-	}	
+	}
+
+	public Map<String, SwitchState> getNowSwitchStates() {
+		return nowSwitchStates;
+	}
+
+	public Map<String, SwitchState> getLastSwitchStates() {
+		return lastSwitchStates;
+	}
+	
 }
