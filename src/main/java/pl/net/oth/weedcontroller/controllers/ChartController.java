@@ -54,22 +54,20 @@ public class ChartController {
 		List<SensorResultLog> sensorResultLogs=sensorResultService.getResultsForDate(new Date(dateFrom), new Date(dateTo));
 		float min=Float.MIN_VALUE;
 		float max=Float.MAX_VALUE;
-		for (SensorResultLog sensorResultLog : sensorResultLogs) {
-			System.out.println(sensorResultLog.getTemperature());
+		for (SensorResultLog sensorResultLog : sensorResultLogs) {			
 			if(min==Float.MIN_VALUE || sensorResultLog.getTemperature()<min){
 				min=sensorResultLog.getTemperature();
 			}
 			if(max==Float.MAX_VALUE || sensorResultLog.getTemperature()>max){
 				max=sensorResultLog.getTemperature();
 			}
-		}
-		System.out.println("MIN "+min+" MAX "+max);
+		}				
 		
 		 JFreeChart xylineChart = ChartFactory.createTimeSeriesChart(
 		         "WCR",		         
 		         "Time" ,
 		         "Value",
-		         createDataset(sensorResultLogs) ,		         
+		         createDataset(sensorResultLogs, min, max) ,		         
 		         true , true , false);
 		 xylineChart.setBackgroundPaint(Color.white);
 		 XYPlot plot=xylineChart.getXYPlot();
@@ -95,13 +93,20 @@ public class ChartController {
 		}		 
 		return "data:image/png;base64,"+DatatypeConverter.printBase64Binary(imagebuffer.toByteArray());		
 	}
-	private XYDataset createDataset(List<SensorResultLog> sensorResultLogs ) {
+	private XYDataset createDataset(List<SensorResultLog> sensorResultLogs, float min, float max ) {
 		TimeSeriesCollection timeSeriesCollection=new TimeSeriesCollection();		
-		 final TimeSeries temperature = new TimeSeries( "Temperatura" );  
+		  final TimeSeries temperature = new TimeSeries( "Temperatura" );  
 	      for (SensorResultLog sensorResultLog : sensorResultLogs) {
 	    	  temperature.addOrUpdate(new Second(sensorResultLog.getDate()), sensorResultLog.getTemperature());	    	  
 	      }	    
 	      timeSeriesCollection.addSeries(temperature);
+	      final TimeSeries humidity = new TimeSeries( "Wilgotność" );  
+	      for (SensorResultLog sensorResultLog : sensorResultLogs) {
+	    	  System.out.println(sensorResultLog.getHumidity());
+	    	  humidity.addOrUpdate(new Second(sensorResultLog.getDate()), sensorResultLog.getHumidity()*max/100);	    	  
+	      }		      
+	    		  
+	      timeSeriesCollection.addSeries(humidity);
 	      return timeSeriesCollection; 
 	}
 }
