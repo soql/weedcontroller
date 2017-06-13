@@ -56,6 +56,8 @@ public class Command {
 	}
 	
 	public boolean checkSwitchNowChange(String switchName, SwitchState state){
+		if(rulesTask.getLastSwitchStates()==null)
+			return false;
 		if(rulesTask.getNowSwitchStates().get(switchName).equals(state) && !rulesTask.getLastSwitchStates().get(switchName).equals(state)){
 			return true;
 		}

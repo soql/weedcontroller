@@ -36,9 +36,13 @@ public class SensorTask {
 	
 	private SensorResultDTO previousSuccessfullSensorResult;
 	
+	public void readFromExternal(){
+		lastSensorResult=sensorExternalController.check();
+	}
+	
 	@Scheduled(fixedDelay = 15000)
 	public void check() {
-		lastSensorResult=sensorExternalController.check();
+		readFromExternal();
 		
 		if(lastSensorResult!=null){			
 			if(!checkErrors(previousSuccessfullSensorResult, lastSensorResult)){
@@ -70,6 +74,12 @@ public class SensorTask {
 	public SensorResultDTO getLastSuccesfullSensorResult() {
 		return lastSuccesfullSensorResult;
 	}
+
+
+	public void setLastSensorResult(SensorResultDTO lastSensorResult) {
+		this.lastSensorResult = lastSensorResult;
+	}
+	
 
 
 	
