@@ -1,6 +1,8 @@
 package pl.net.oth.weedcontroller.task.ruletask;
 
+import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -12,8 +14,10 @@ import org.springframework.context.annotation.Configuration;
 import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.dao.UserDAO;
 import pl.net.oth.weedcontroller.external.impl.SMSController;
+import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.User;
+import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.RuleService;
 import pl.net.oth.weedcontroller.service.SwitchService;
 
@@ -34,7 +38,10 @@ public class Command {
 	private RuleService ruleService;	
 	
 	@Autowired
-	private SwitchService switchService;	
+	private SwitchService switchService;
+	
+	@Autowired
+	private ConfigurationService configurationService;
 	
 	public SwitchState css(String switchName){
 		return checkSwitchState(switchName);
@@ -62,6 +69,20 @@ public class Command {
 			return true;
 		}
 		return false;
+	}
+	
+	public int getNumberOfDays(){
+		pl.net.oth.weedcontroller.model.Configuration configuration=configurationService.getByKey("START_DATE");
+		if(configuration==null){
+			return 0;
+		}
+		try {
+			Date startDate=Helper.START_DATE_FORMAT.parse(configuration.getValue());
+			return (int) ((new Date().getTime()-startDate.getTime())/1000/60/60/24);
+		} catch (ParseException e) {
+			LOGGER.error(Helper.STACK_TRACE, e);
+			return 0;
+		}			
 	}
 	
 	public boolean cron(String secounds, String minutes, String hours, String dayOfMonth, String month, String dayOfWeek){		
@@ -94,15 +115,15 @@ public class Command {
 		for (int i=0; i < patern.length; i++) {
 			if(patern[i]==-1)
 				continue;
-			LOGGER.info("pr przeskoku:"+previousRead[i]+"   "+patern[i]+"     "+nowRead[i]);
+			LOGGER.debug("pr przeskoku:	"+previousRead[i]+"   "+patern[i]+"     "+nowRead[i]);
 			/*Obsługa przeskoków np sekundy z 56 na 4 (nowa minuta)*/
 			if(nowRead[i]<previousRead[i]){
 				nowRead[i]+=previousRead[i];
 				if(patern[i]<previousRead[i])
 					patern[i]+=previousRead[i];
 			}
-			LOGGER.info("po przeskoku:"+previousRead[i]+"   "+patern[i]+"     "+nowRead[i]);
-			if(patern[i]>=previousRead[i] && patern[i]<=nowRead[i]){
+			LOGGER.debug("po przeskoku:	"+previousRead[i]+"   "+patern[i]+"     "+nowRead[i]);
+			if(patern[i]>=previousRead[i] && patern[i]<nowRead[i]){
 				
 			}else{
 				return false;
@@ -111,9 +132,11 @@ public class Command {
 		}
 		return true;
 	}
+	
 	public void delayRule(int minutes){
 		ruleService.setNextTimeExecution(rulesTask.getActualRuleId(), minutes);
 	}
+	
 	public void sendSMS(String text){
 		List<User> users=userDAO.getAllSMSUsers();
 		for (User user : users) {

@@ -21,6 +21,7 @@ public class SMSController {
 	private final static Log LOGGER = LogFactory.getLog(SensorTask.class);
 		
 	public boolean sendSMS(String phoneNumber, String text){
+		LOGGER.debug("Wysyłka SMS o treści \""+text+"\" na numer "+phoneNumber);
 		Process process;
 		try {
 			process = new ProcessBuilder("/bin/sh", "-c", "echo \""+text+"\" | gammu-smsd-inject text "+phoneNumber).start();
