@@ -11,12 +11,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import pl.net.oth.weedcontroller.configuration.WeedControllerConfiguration;
+import pl.net.oth.weedcontroller.dao.ConfigurationDAO;
 import pl.net.oth.weedcontroller.external.impl.SensorExternalController;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
+import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.task.SensorTask;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={SensorTask.class, SensorExternalController.class})
+@ContextConfiguration(classes={TestConfig.class, ConfigurationDAO.class, ConfigurationService.class, SensorTask.class, SensorExternalController.class})
 @ActiveProfiles(profiles = "DEV")
 
 public class SensorTest {
