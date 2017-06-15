@@ -18,17 +18,23 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import pl.net.oth.weedcontroller.external.impl.SensorExternalController;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
+import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.SwitchService;
 
 @Configuration
 @EnableScheduling
 public class SensorTask {
-	private final static Log LOGGER=LogFactory.getLog(SensorTask.class);
-	
-	private static final int MAX_ERROR_TEMP=5;
+	private final static Log LOGGER=LogFactory.getLog(SensorTask.class);	
 		
 	@Autowired
 	private SensorExternalController sensorExternalController;
+	
+	@Autowired
+	private ConfigurationService configurationService;
+	
+	public static final String MAX_TEMP_ERROR_KEY="MAX_TEMP_ERROR_KEY";
+	
+	public static final String MAX_HUMI_ERROR_KEY="MAX_HUMI_ERROR_KEY";
 	
 	private SensorResultDTO lastSuccesfullSensorResult;
 		
@@ -60,7 +66,13 @@ public class SensorTask {
 		if(previousSuccessfullSensorResult==null){
 			return false;
 		}
-		if(Math.abs(previousSuccessfullSensorResult.getTemperature()-lastSensorResult.getTemperature())>MAX_ERROR_TEMP)
+		if(!configurationService.isConfigurationExist(MAX_TEMP_ERROR_KEY, MAX_HUMI_ERROR_KEY))
+			return false;
+		int maxErrorTemp=Integer.parseInt(configurationService.getByKey(MAX_TEMP_ERROR_KEY).getValue());
+		if(Math.abs(previousSuccessfullSensorResult.getTemperature()-lastSensorResult.getTemperature())>maxErrorTemp)
+			return true;
+		int maxErrorHumi=Integer.parseInt(configurationService.getByKey(MAX_HUMI_ERROR_KEY).getValue());
+		if(Math.abs(previousSuccessfullSensorResult.getHumidity()-lastSensorResult.getHumidity())>maxErrorHumi)
 			return true;
 		return false;
 	}

@@ -50,9 +50,11 @@ public class Command {
 	public SwitchState checkSwitchState(String switchName){
 		return switchService.getStateByName(switchName);		
 	}
+	
 	public boolean sss(String switchName, SwitchState targetState){			
 		return setSwitchState(switchName, targetState, "REG:"+rulesTask.getActualRuleId());		
 	}	
+	
 	public boolean setSwitchState(String switchName, SwitchState targetState, String userName){
 		Switch s=switchService.getSwitchByName(switchName);				
 		return switchService.setSwitchState(s.getGpioNumber(), targetState, userName);		
@@ -60,6 +62,14 @@ public class Command {
 	
 	public boolean csnc(String switchName, SwitchState state){
 		return checkSwitchNowChange(switchName, state);
+	}
+	
+	public String glsscu(String switchName, SwitchState state){
+		return getLastSwitchStateChangeUser(switchName, state);
+	}
+	
+	public String getLastSwitchStateChangeUser(String switchName, SwitchState state){
+		return switchService.getLastSwitchStateChangeUser(switchName, state);
 	}
 	
 	public boolean checkSwitchNowChange(String switchName, SwitchState state){
@@ -123,7 +133,7 @@ public class Command {
 					patern[i]+=previousRead[i];
 			}
 			LOGGER.debug("po przeskoku:	"+previousRead[i]+"   "+patern[i]+"     "+nowRead[i]);
-			if(patern[i]>=previousRead[i] && patern[i]<nowRead[i]){
+			if((patern[i]>=previousRead[i] && patern[i]<nowRead[i]) || (patern[i]==nowRead[i] && patern[i]==previousRead[i])){
 				
 			}else{
 				return false;

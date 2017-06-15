@@ -122,5 +122,10 @@ public class SwitchService {
 		}
 		return result;
 	}
+
+	public String getLastSwitchStateChangeUser(String switchName, SwitchState state) {
+		Switch switch_=getSwitchByName(switchName);
+		return switchDAO.getLastSwitchStateChangeUser(switch_, state);
+	}
 	
 }

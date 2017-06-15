@@ -33,7 +33,8 @@ public class StartDateTest {
 	
 	@Test
 	public void test() {
-		System.out.println(command.getNumberOfDays());
+		/*System.out.println(command.getNumberOfDays());*/
+		System.out.println("ELO "+command.getLastSwitchStateChangeUser("LAMPA", SwitchState.ON));
 
 	}
 }

@@ -24,7 +24,14 @@ public class ConfigurationService {
 
 	@Transactional
 	public void save(Configuration r) {
-		configurationDAO.save(r);
-		
+		configurationDAO.save(r);		
+	}
+	
+	public boolean isConfigurationExist(String...keys){
+		for (String string : keys) {
+			if(getByKey(string)==null)
+				return false;
+		}
+		return true;
 	}
 }
