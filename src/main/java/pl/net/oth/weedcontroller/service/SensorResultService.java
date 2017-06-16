@@ -25,4 +25,10 @@ public class SensorResultService {
 	public List<SensorResultLog> getResultsForDate(Date dateFrom, Date dateTo){
 		return sensorResultDAO.getResultsForDate(dateFrom, dateTo);
 	}
+
+	public float getAggregatedValue(String type, String func, Date dateFrom, Date dateTo) {	
+		return sensorResultDAO.getAggregatedValue(type, func, dateFrom, dateTo);
+	}
+	
+	
 }

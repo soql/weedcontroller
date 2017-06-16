@@ -3,6 +3,7 @@ package pl.net.oth.weedcontroller.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,10 +24,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-      http.authorizeRequests()
-        .antMatchers("/putSMS").permitAll().antMatchers("/**").access("hasRole('ADMIN')")        
+    	http.authorizeRequests()
+      	.antMatchers("/putSMS").permitAll()
+      	.and().authorizeRequests().antMatchers("/**").access("hasRole('ADMIN')")        
         .and().formLogin().and().httpBasic()
-        .and().csrf()
-        .and().exceptionHandling().accessDeniedPage("/Access_Denied");
+        .and().exceptionHandling().accessDeniedPage("/Access_Denied")
+        .and().csrf().disable();
+            	
     }
 }

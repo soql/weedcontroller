@@ -19,6 +19,7 @@ import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.RuleService;
+import pl.net.oth.weedcontroller.service.SensorResultService;
 import pl.net.oth.weedcontroller.service.SwitchService;
 
 @Configuration
@@ -42,6 +43,9 @@ public class Command {
 	
 	@Autowired
 	private ConfigurationService configurationService;
+	
+	@Autowired
+	private SensorResultService sensorResultService;
 	
 	public SwitchState css(String switchName){
 		return checkSwitchState(switchName);
@@ -71,6 +75,26 @@ public class Command {
 	public String getLastSwitchStateChangeUser(String switchName, SwitchState state){
 		return switchService.getLastSwitchStateChangeUser(switchName, state);
 	}
+	
+	public String ga(String type, String func, int hours){
+		return getAggregatedValue(type, func, hours);
+	}
+	
+	public String getAggregatedValue(String type, String func, int hours){
+		if(type.equals("TEMP")){
+			type="temperature";
+		}else if(type.equals("HUMI")){
+			type="humidity";
+		}else{
+			LOGGER.error("Brak sensora dla "+type);
+			return null;
+		}
+		Date dateFrom=new Date(new Date().getTime()-(1000*60*60*hours));
+		Date dateTo=new Date();
+		return String.valueOf(sensorResultService.getAggregatedValue(type, func,dateFrom, dateTo));
+	}
+	
+
 	
 	public boolean checkSwitchNowChange(String switchName, SwitchState state){
 		if(rulesTask.getLastSwitchStates()==null)

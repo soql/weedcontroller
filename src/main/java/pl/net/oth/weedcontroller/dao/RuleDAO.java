@@ -20,10 +20,16 @@ public class RuleDAO {
 	private EntityManager em;
 	
 	public List<Rule> getAllActiveRules(){
-		Query query=em.createQuery("SELECT e FROM Rule e where e.active=true and (e.nextTimeExecution is null or e.nextTimeExecution<:nowDate)");
+		Query query=em.createQuery("SELECT e FROM Rule e where e.sms=false and e.active=true and (e.nextTimeExecution is null or e.nextTimeExecution<:nowDate)");
 		query.setParameter("nowDate", new Date());
 		return (List<Rule>)query.getResultList();
 	}
+	
+	public List<Rule> getAllActiveSMSRules(){
+		Query query=em.createQuery("SELECT e FROM Rule e where e.sms=true and e.active=true");		
+		return (List<Rule>)query.getResultList();
+	}
+
 
 	public Rule getRuleById(Integer actualRuleId) {
 		return em.find(Rule.class, actualRuleId);		
@@ -31,7 +37,6 @@ public class RuleDAO {
 
 	@Transactional
 	public void update(Rule r) {
-		em.merge(r);
-		
+		em.merge(r);		
 	}
 }

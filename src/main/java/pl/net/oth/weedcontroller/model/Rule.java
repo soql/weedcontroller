@@ -15,12 +15,14 @@ public class Rule {
 	private Integer id;
 	@Column
 	private Boolean active;
-	@Column
+	@Column(length=1000)
 	private String condition_;
-	@Column
+	@Column(length=1000)	
 	private String expression_;
 	@Column
 	private Date nextTimeExecution;
+	@Column
+	private Boolean sms;
 	
 	public Integer getId() {
 		return id;
@@ -52,8 +54,10 @@ public class Rule {
 	public void setNextTimeExecution(Date nextTimeExecution) {
 		this.nextTimeExecution = nextTimeExecution;
 	}
-	
-	
-	
-	
+	public Boolean getSms() {
+		return sms;
+	}
+	public void setSms(Boolean sms) {
+		this.sms = sms;
+	}				
 }

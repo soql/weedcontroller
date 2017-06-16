@@ -68,10 +68,10 @@ public class SensorTask {
 		}
 		if(!configurationService.isConfigurationExist(MAX_TEMP_ERROR_KEY, MAX_HUMI_ERROR_KEY))
 			return false;
-		int maxErrorTemp=Integer.parseInt(configurationService.getByKey(MAX_TEMP_ERROR_KEY).getValue());
+		float maxErrorTemp=Float.parseFloat(configurationService.getByKey(MAX_TEMP_ERROR_KEY).getValue());
 		if(Math.abs(previousSuccessfullSensorResult.getTemperature()-lastSensorResult.getTemperature())>maxErrorTemp)
 			return true;
-		int maxErrorHumi=Integer.parseInt(configurationService.getByKey(MAX_HUMI_ERROR_KEY).getValue());
+		float maxErrorHumi=Float.parseFloat(configurationService.getByKey(MAX_HUMI_ERROR_KEY).getValue());
 		if(Math.abs(previousSuccessfullSensorResult.getHumidity()-lastSensorResult.getHumidity())>maxErrorHumi)
 			return true;
 		return false;
