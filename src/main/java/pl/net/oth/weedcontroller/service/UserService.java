@@ -22,4 +22,8 @@ public class UserService {
 		return userDAO.getAllSMSUsers();
 	}
 
+	public boolean validatePhoneNumber(String phoneNumber) {		
+		return userDAO.isExistPhoneNumber(phoneNumber);
+	}
+
 }

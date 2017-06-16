@@ -28,6 +28,7 @@ import pl.net.oth.weedcontroller.external.impl.SMSController;
 import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.helpers.PinHelper;
 import pl.net.oth.weedcontroller.model.Rule;
+import pl.net.oth.weedcontroller.model.SMSMessage;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
@@ -66,17 +67,12 @@ public class RulesTask {
 	private Map<String, SwitchState> nowSwitchStates=null;
 	
 	private Map<String, SwitchState> lastSwitchStates=null;
-	
-	private GroovyShell gs;
 		
 	private static final SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
 	
 	@PostConstruct
 	public void init() {
-		gs=new GroovyShell();
-		gs.setVariable("r", command);
-		gs.setVariable("ON", SwitchState.ON);
-		gs.setVariable("OFF", SwitchState.OFF);			
+					
 	}
 	
 	@Scheduled(fixedDelay = 15000)
@@ -90,8 +86,8 @@ public class RulesTask {
 			LOGGER.info("Brak czasu poprzedniego wykonania - przetwarznie reguł wstrzymane");
 			lastRuleTime=nowRuleTime;
 		}
-		gs.setVariable("TEMP", sensorTask.getLastSuccesfullSensorResult().getTemperature());
-		gs.setVariable("HUMI", sensorTask.getLastSuccesfullSensorResult().getHumidity());
+		GroovyShell gs=new GroovyShell();
+		fillGroovyShell(gs);
 		
 		nowSwitchStates=buildSwitchStateMap();		
 		
@@ -119,7 +115,24 @@ public class RulesTask {
 		lastSwitchStates=nowSwitchStates;
 	}	
 	
-	
+	private void fillGroovyShell(GroovyShell gs) {
+		gs.setVariable("r", command);
+		gs.setVariable("ON", SwitchState.ON);
+		gs.setVariable("OFF", SwitchState.OFF);
+		gs.setVariable("TEMP", sensorTask.getLastSuccesfullSensorResult().getTemperature());
+		gs.setVariable("HUMI", sensorTask.getLastSuccesfullSensorResult().getHumidity());				
+	}
+
+	public void handleSMS(SMSMessage message) {
+		LOGGER.info("Odpalono handleSMS dla "+message.getPhoneNumber()+" / "+message.getText());
+		List<Rule> rules=ruleService.getAllActiveSMSRules();
+		GroovyShell gs=new GroovyShell();
+		fillGroovyShell(gs);
+		for (Rule rule : rules) {
+			
+		}
+		
+	}
 	private Map<String, SwitchState> buildSwitchStateMap() {
 		Map<String, SwitchState> result=new HashMap<String, SwitchState>();
 		List<SwitchDTO> switches=switchService.getAllSwitchesWithStates();
@@ -148,5 +161,7 @@ public class RulesTask {
 	public Map<String, SwitchState> getLastSwitchStates() {
 		return lastSwitchStates;
 	}
+
+	
 	
 }

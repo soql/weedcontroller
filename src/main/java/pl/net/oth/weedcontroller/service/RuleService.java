@@ -17,6 +17,9 @@ public class RuleService {
 	public List<Rule> getAllActiveRules(){
 		return ruleDAO.getAllActiveRules();
 	}
+	public List<Rule> getAllActiveSMSRules(){
+		return ruleDAO.getAllActiveSMSRules();
+	}
 	@Transactional
 	public void setNextTimeExecution(Integer actualRuleId, int minutes) {
 		Rule r=ruleDAO.getRuleById(actualRuleId);

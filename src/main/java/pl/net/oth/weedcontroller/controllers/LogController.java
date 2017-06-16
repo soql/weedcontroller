@@ -15,7 +15,7 @@ import pl.net.oth.weedcontroller.model.dto.SwitchLogDTO;
 import pl.net.oth.weedcontroller.service.SwitchService;
 
 @Controller
-public class LogController {
+public class LogController {	
 	@Autowired
 	private SwitchService switchService;
 	@RequestMapping(value = "/getLogs", method = RequestMethod.GET, produces = "application/json")
