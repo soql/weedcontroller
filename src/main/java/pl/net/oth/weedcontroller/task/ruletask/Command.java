@@ -177,4 +177,9 @@ public class Command {
 			smsController.sendSMS(user.getPhoneNumber(), text);
 		}
 	}
+	public void sendSMS(String text, String ...phoneNumbers){		
+		for (String phoneNumber : phoneNumbers) {
+			smsController.sendSMS(phoneNumber, text);
+		}
+	}
 }

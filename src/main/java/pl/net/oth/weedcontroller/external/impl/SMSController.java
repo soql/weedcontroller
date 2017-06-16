@@ -18,7 +18,7 @@ import pl.net.oth.weedcontroller.task.SensorTask;
 
 @Component
 public class SMSController {
-	private final static Log LOGGER = LogFactory.getLog(SensorTask.class);
+	private final static Log LOGGER = LogFactory.getLog(SMSController.class);
 		
 	public boolean sendSMS(String phoneNumber, String text){
 		LOGGER.debug("Wysyłka SMS o treści \""+text+"\" na numer "+phoneNumber);

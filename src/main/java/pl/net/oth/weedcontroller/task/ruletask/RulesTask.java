@@ -7,6 +7,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
@@ -129,7 +131,19 @@ public class RulesTask {
 		GroovyShell gs=new GroovyShell();
 		fillGroovyShell(gs);
 		for (Rule rule : rules) {
-			
+			Pattern p=Pattern.compile(rule.getCondition_());
+			Matcher m=p.matcher(message.getText());
+			if(m.matches()){
+				try{
+					gs.evaluate(rule.getExpression_());
+				}catch(Exception e){
+					LOGGER.error("Błąd podczas weryfikacji/wykonania warunku reguly SMS nr "+rule.getId());
+					LOGGER.error(Helper.STACK_TRACE,e);				
+					continue;
+				}
+				return;	
+			}
+			command.sendSMS("Nie rozpoznano komendy.", message.getPhoneNumber());
 		}
 		
 	}
