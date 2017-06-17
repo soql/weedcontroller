@@ -33,7 +33,7 @@ public class RecieveSMSController {
 	
 	@RequestMapping(value = "/putSMS", method = RequestMethod.POST, produces = "application/json")
 	public @ResponseBody boolean putSMS(@RequestBody SMSMessage jsonString) {
-		LOGGER.info("Odebrano SMS od"+jsonString.getPhoneNumber()+ " o treści: "+jsonString.getText());
+		LOGGER.info("Odebrano SMS od:"+jsonString.getPhoneNumber()+ " o treści: "+jsonString.getText());
 		if(!userService.validatePhoneNumber(jsonString.getPhoneNumber())){
 			LOGGER.error("Numer "+jsonString.getPhoneNumber()+" nie znaleziony w bazie danych.");
 			return false;

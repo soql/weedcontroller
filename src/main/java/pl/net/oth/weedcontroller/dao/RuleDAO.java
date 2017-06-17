@@ -20,7 +20,7 @@ public class RuleDAO {
 	private EntityManager em;
 	
 	public List<Rule> getAllActiveRules(){
-		Query query=em.createQuery("SELECT e FROM Rule e where e.sms=false and e.active=true and (e.nextTimeExecution is null or e.nextTimeExecution<:nowDate)");
+		Query query=em.createQuery("SELECT e FROM Rule e where (e.sms is null or e.sms=false) and e.active=true and (e.nextTimeExecution is null or e.nextTimeExecution<:nowDate)");
 		query.setParameter("nowDate", new Date());
 		return (List<Rule>)query.getResultList();
 	}

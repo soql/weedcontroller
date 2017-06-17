@@ -25,10 +25,17 @@ public class CameraTask {
 	public static final String IMAGE_FOLDER="/opt/camera/";
 	/*In hours*/
 	public static final long IMAGE_TIME_TO_KEEP=24;
+	
+	public static final String CAMERA_ON="CAMERA_ON";
 	@Autowired
 	private ConfigurationService configurationService;
 	@Scheduled(fixedDelay = 30000)		
 	public void takeFoto(){
+		Configuration cameraOn=configurationService.getByKey(CAMERA_ON);
+		if(cameraOn==null || cameraOn.getValue().equals("OFF")){
+			LOGGER.debug("Kamera wyłączona konfiguracyjnie");
+			return;
+		}
 		Process process;
 		try {		
 			String time=String.valueOf(new Date().getTime());

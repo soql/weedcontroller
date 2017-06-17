@@ -1,5 +1,6 @@
 package pl.net.oth.weedcontroller.task.ruletask;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -76,11 +77,11 @@ public class Command {
 		return switchService.getLastSwitchStateChangeUser(switchName, state);
 	}
 	
-	public String ga(String type, String func, int hours){
+	public String ga(String type, String func, Integer hours){
 		return getAggregatedValue(type, func, hours);
 	}
 	
-	public String getAggregatedValue(String type, String func, int hours){
+	public String getAggregatedValue(String type, String func, Integer hours){
 		if(type.equals("TEMP")){
 			type="temperature";
 		}else if(type.equals("HUMI")){
@@ -89,9 +90,9 @@ public class Command {
 			LOGGER.error("Brak sensora dla "+type);
 			return null;
 		}
-		Date dateFrom=new Date(new Date().getTime()-(1000*60*60*hours));
+		Date dateFrom=new Date(new Date().getTime()-(1000*60*60*hours.intValue()));
 		Date dateTo=new Date();
-		return String.valueOf(sensorResultService.getAggregatedValue(type, func,dateFrom, dateTo));
+		return String.valueOf(new DecimalFormat("0.00##").format(sensorResultService.getAggregatedValue(type, func,dateFrom, dateTo)));
 	}
 	
 

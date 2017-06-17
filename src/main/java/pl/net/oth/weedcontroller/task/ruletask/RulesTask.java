@@ -130,18 +130,19 @@ public class RulesTask {
 		List<Rule> rules=ruleService.getAllActiveSMSRules();
 		GroovyShell gs=new GroovyShell();
 		fillGroovyShell(gs);
+		gs.setVariable("PHONE", message.getPhoneNumber());
 		for (Rule rule : rules) {
 			Pattern p=Pattern.compile(rule.getCondition_());
-			Matcher m=p.matcher(message.getText());
+			Matcher m=p.matcher(message.getText().toUpperCase());
 			if(m.matches()){
 				try{
 					gs.evaluate(rule.getExpression_());
+					return;
 				}catch(Exception e){
 					LOGGER.error("Błąd podczas weryfikacji/wykonania warunku reguly SMS nr "+rule.getId());
 					LOGGER.error(Helper.STACK_TRACE,e);				
 					continue;
-				}
-				return;	
+				}					
 			}
 			command.sendSMS("Nie rozpoznano komendy.", message.getPhoneNumber());
 		}
