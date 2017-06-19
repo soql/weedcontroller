@@ -45,7 +45,7 @@ public class ChartTest{
 	@Test
 	public void test(){
 		
-		String data=chartController.generateChart(new Date().getTime()-1000*60*60*48, new Date().getTime());
+		String data=chartController.generateChart(new Date().getTime()-1000*60*60*480, new Date().getTime());
 		System.out.println(data);
 	}
 }

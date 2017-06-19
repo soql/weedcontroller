@@ -35,7 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
       	.antMatchers("/putSMS").permitAll()
       	.and().authorizeRequests().antMatchers("/**").access("hasRole('ADMIN')")        
         .and().formLogin().successHandler(loginSuccessHandler).and().httpBasic()
-        .and().exceptionHandling().accessDeniedPage("/Access_Denied")
+        .and().logout().logoutSuccessHandler(loginSuccessHandler).and().exceptionHandling().accessDeniedPage("/Access_Denied")
         .and().csrf().disable();
             	
     }

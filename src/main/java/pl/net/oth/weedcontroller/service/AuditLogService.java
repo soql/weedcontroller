@@ -32,7 +32,7 @@ public class AuditLogService {
 		List result=new ArrayList<AuditLogDTO>();
 		List<AuditLog> auditLogs=auditLogDAO.getAuditLog(number);
 		for (AuditLog auditLog : auditLogs) {			
-			result.add(new AuditLogDTO(auditLog.getUser().getFullName(), auditLog.getIp(), auditLog.getOperaion(), auditLog.getTime()));
+			result.add(new AuditLogDTO(auditLog.getUser().getFullName(), auditLog.getIp(), auditLog.getOperation(), auditLog.getTime()));
 		}
 		return result;
 	}	

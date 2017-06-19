@@ -23,7 +23,7 @@ public class AuditLog {
 	@Column
 	private String ip;
 	@Column
-	private AuditOperation operaion;
+	private AuditOperation operation;
 	
 	public Integer getId() {
 		return id;
@@ -49,11 +49,11 @@ public class AuditLog {
 	public void setIp(String ip) {
 		this.ip = ip;
 	}
-	public AuditOperation getOperaion() {
-		return operaion;
+	public AuditOperation getOperation() {
+		return operation;
 	}
-	public void setOperaion(AuditOperation operaion) {
-		this.operaion = operaion;
+	public void setOperaion(AuditOperation operation) {
+		this.operation = operation;
 	}
 	
 	

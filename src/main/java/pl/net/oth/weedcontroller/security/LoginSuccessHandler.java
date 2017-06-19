@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import pl.net.oth.weedcontroller.AuditOperation;
@@ -24,7 +25,7 @@ import pl.net.oth.weedcontroller.service.AuditLogService;
 import pl.net.oth.weedcontroller.service.UserService;
 
 @Component
-public class LoginSuccessHandler implements AuthenticationSuccessHandler{
+public class LoginSuccessHandler implements AuthenticationSuccessHandler, LogoutSuccessHandler{
 	private final static Log LOGGER = LogFactory.getLog(LoginSuccessHandler.class);
 	
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
@@ -38,20 +39,27 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler{
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {	
-		User user=(User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user=(User)authentication.getPrincipal();
 		LOGGER.debug("Zalogowano "+user);		
-		logToDB(request, user);
+		logToDB(request, user, AuditOperation.LOGIN);
 		redirectStrategy.sendRedirect(request, response, "/");
 	}
-	private void logToDB(HttpServletRequest request, User user) {
+	private void logToDB(HttpServletRequest request, User user, AuditOperation auditOperation) {
 		AuditLog auditLog=new AuditLog();
-		auditLog.setOperaion(AuditOperation.LOGIN);
+		auditLog.setOperaion(auditOperation);
 		auditLog.setUser(userService.findByLogin(user.getUsername()));
 		auditLog.setIp(request.getRemoteAddr());
 		auditLog.setTime(new Date());
 		auditLogService.save(auditLog);
 		
 	}
-	
-
+	@Override
+	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+			throws IOException, ServletException {
+		User user=(User)authentication.getPrincipal();
+		LOGGER.debug("Wylogowano "+user);		
+		logToDB(request, user, AuditOperation.LOGOUT);
+		redirectStrategy.sendRedirect(request, response, "/");
+		
+	}	
 }
