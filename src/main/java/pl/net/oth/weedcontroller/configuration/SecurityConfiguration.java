@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import pl.net.oth.weedcontroller.security.LoginSuccessHandler;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -17,6 +19,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     @Qualifier("customUserDetailsService")
     UserDetailsService userDetailsService;
+    
+    @Autowired
+    private LoginSuccessHandler loginSuccessHandler;
+    
+    
     @Autowired
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService);
@@ -27,7 +34,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     	http.authorizeRequests()
       	.antMatchers("/putSMS").permitAll()
       	.and().authorizeRequests().antMatchers("/**").access("hasRole('ADMIN')")        
-        .and().formLogin().and().httpBasic()
+        .and().formLogin().successHandler(loginSuccessHandler).and().httpBasic()
         .and().exceptionHandling().accessDeniedPage("/Access_Denied")
         .and().csrf().disable();
             	
