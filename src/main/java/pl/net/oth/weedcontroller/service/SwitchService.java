@@ -86,11 +86,15 @@ public class SwitchService {
 	public Switch getSwitchByName(String name){
 		return switchDAO.getSwitchByName(name);
 	}
+		
 	public SwitchState getStateByName(String name){
 		Switch switch1=getSwitchByName(name);
 		return gpioExternalController.getState(switch1.getGpioNumber(), switch1.getRevert().booleanValue());		
 	}
 	
+	public Switch getSwitchByNumber(Integer id){
+		return switchDAO.getSwitchByNumber(id);
+	}
 	public List<Integer> getSwitchesConfiguration(){
 		List<Switch> switches=switchDAO.getAllSwitches();
 		List<Integer> result=new ArrayList<Integer>();

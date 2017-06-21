@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.xml.ws.WebServiceProvider;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -43,6 +44,7 @@ public class ChartTest{
 	private ChartController chartController;
 		
 	@Test
+	@Ignore
 	public void test(){
 		
 		String data=chartController.generateChart(new Date().getTime()-1000*60*60*480, new Date().getTime());

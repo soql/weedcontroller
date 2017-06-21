@@ -55,6 +55,8 @@ public class CameraTask {
 		Map<Long, File> filesMap=new HashMap<>();
 		for (final File fileEntry : new File(IMAGE_FOLDER).listFiles()) {
 			String name=fileEntry.getName();
+			if(!name.contains("image-"))
+				continue;
 			name=name.replaceAll("image-", "").replaceAll(".jpg", "");
 			Long time=null;
 			try{

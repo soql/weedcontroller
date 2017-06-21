@@ -51,11 +51,11 @@ public class GpioMockExternalController implements GpioExternalController{
 			 gpioPinDigitalOutput.put(integer.intValue(),SwitchState.OFF);
 			 LOGGER.info("Ustawienie pinu "+integer+" pomyślne.");
 		}
-		 LOGGER.info("Odtworzenie stanów PINów.");
+		LOGGER.info("Odtworzenie stanów PINów.");
 		List<SwitchDTO> switchesWithLastState=switchService.getAllSwitchesWithLastStates();
 		for (SwitchDTO switchDTO : switchesWithLastState) {
 			LOGGER.info("PIN nr "+switchDTO.getGpioNumber()+ " ("+switchDTO.getName()+") ustawiamy na "+switchDTO.getState());
-			setState(switchDTO.getGpioNumber(), switchDTO.getState(), switchService.getSwitchByName(switchDTO.getName()).getRevert());
+			setState(switchDTO.getGpioNumber(), switchDTO.getState(), switchService.getSwitchByNumber(switchDTO.getGpioNumber()).getRevert());
 		}
 	}
 
