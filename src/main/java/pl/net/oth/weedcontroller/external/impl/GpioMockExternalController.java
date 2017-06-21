@@ -24,6 +24,7 @@ import com.pi4j.io.gpio.RaspiPin;
 import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.external.GpioExternalController;
 import pl.net.oth.weedcontroller.helpers.PinHelper;
+import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
 import pl.net.oth.weedcontroller.service.SwitchService;
 import pl.net.oth.weedcontroller.task.SensorTask;
 
@@ -50,7 +51,12 @@ public class GpioMockExternalController implements GpioExternalController{
 			 gpioPinDigitalOutput.put(integer.intValue(),SwitchState.OFF);
 			 LOGGER.info("Ustawienie pinu "+integer+" pomyślne.");
 		}
-		
+		 LOGGER.info("Odtworzenie stanów PINów.");
+		List<SwitchDTO> switchesWithLastState=switchService.getAllSwitchesWithLastStates();
+		for (SwitchDTO switchDTO : switchesWithLastState) {
+			LOGGER.info("PIN nr "+switchDTO.getGpioNumber()+ " ("+switchDTO.getName()+") ustawiamy na "+switchDTO.getState());
+			setState(switchDTO.getGpioNumber(), switchDTO.getState(), switchService.getSwitchByName(switchDTO.getName()).getRevert());
+		}
 	}
 
 	public SwitchState getState(int gpioNumber, boolean revert) {		

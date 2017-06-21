@@ -25,5 +25,9 @@ public class UserService {
 	public boolean validatePhoneNumber(String phoneNumber) {		
 		return userDAO.isExistPhoneNumber(phoneNumber);
 	}
+	
+	public String getLoginByPhoneNumber(String phoneNumber) {		
+		return userDAO.getLoginByPhoneNumber(phoneNumber);
+	}
 
 }

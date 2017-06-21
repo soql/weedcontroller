@@ -57,7 +57,7 @@ public class Command {
 	}
 	
 	public boolean sss(String switchName, SwitchState targetState){			
-		return setSwitchState(switchName, targetState, "REG:"+rulesTask.getActualRuleId());		
+		return setSwitchState(switchName, targetState, rulesTask.getActualRuleLogin());		
 	}	
 	
 	public boolean setSwitchState(String switchName, SwitchState targetState, String userName){

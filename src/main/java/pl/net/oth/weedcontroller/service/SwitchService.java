@@ -66,6 +66,23 @@ public class SwitchService {
 		return result;
 	}
 	
+	public List<SwitchDTO> getAllSwitchesWithLastStates(){
+		List<Switch> switches=switchDAO.getAllSwitches();
+		List<SwitchDTO> result=new ArrayList<SwitchDTO>();
+		for (Switch switch_ : switches) {
+			SwitchDTO switchDTO=new SwitchDTO();
+			switchDTO.setGpioNumber(switch_.getGpioNumber());
+			switchDTO.setName(switch_.getName());
+			switchDTO.setState(getLastState(switch_.getGpioNumber()));
+			result.add(switchDTO);
+		}
+		return result;
+	}
+	
+	private SwitchState getLastState(int gpioNumber) {
+		return switchDAO.getLastState(gpioNumber);
+	}
+
 	public Switch getSwitchByName(String name){
 		return switchDAO.getSwitchByName(name);
 	}

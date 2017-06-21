@@ -29,7 +29,7 @@ public class CameraTask {
 	public static final String CAMERA_ON="CAMERA_ON";
 	@Autowired
 	private ConfigurationService configurationService;
-	@Scheduled(fixedDelay = 30000)		
+	@Scheduled(fixedDelay = 15000)		
 	public void takeFoto(){
 		Configuration cameraOn=configurationService.getByKey(CAMERA_ON);
 		if(cameraOn==null || cameraOn.getValue().equals("OFF")){
@@ -60,7 +60,8 @@ public class CameraTask {
 			try{
 				time=Long.parseLong(name);
 				filesMap.put(time, fileEntry);
-			}catch(Exception e){			
+			}catch(Exception e){		
+				LOGGER.error(Helper.STACK_TRACE, e);
 			}			
 		}
 		long now=new Date().getTime();

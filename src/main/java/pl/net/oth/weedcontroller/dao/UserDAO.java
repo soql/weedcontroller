@@ -29,5 +29,11 @@ public class UserDAO {
 		Query query=em.createQuery("SELECT e FROM User e where e.phoneNumber=:phoneNumber");
 		query.setParameter("phoneNumber", phoneNumber);
 		return query.getResultList().size()>0;
+	}
+
+	public String getLoginByPhoneNumber(String phoneNumber) {
+		Query query=em.createQuery("SELECT e FROM User e where e.phoneNumber=:phoneNumber");
+		query.setParameter("phoneNumber", phoneNumber);
+		return ((User)query.getSingleResult()).getFullName();
 	}	
 }

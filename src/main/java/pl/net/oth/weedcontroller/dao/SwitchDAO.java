@@ -43,10 +43,17 @@ public class SwitchDAO {
 
 	public String getLastSwitchStateChangeUser(Switch switch_, SwitchState state) {
 		Query query=em.createQuery("SELECT e FROM SwitchLog e where e.switch_=:switch and e.state=:state and e.id=(select max(e.id) from SwitchLog where switch_=:switch and state=:state)");
+		
 		query.setParameter("switch", switch_);
 		query.setParameter("state", state);
 		SwitchLog sw=((SwitchLog)query.getResultList().get(0));
 		return sw.getUser()!=null? sw.getUser().getFullName(): sw.getRuleUser();
+	}
+
+	public SwitchState getLastState(int gpioNumber) {		
+		Query query=em.createQuery("SELECT e.state FROM SwitchLog e where e.switch_.gpioNumber=:gpioNumber and e.id=(SELECT max(id) FROM SwitchLog e where e.switch_.gpioNumber=:gpioNumber)");
+		query.setParameter("gpioNumber", gpioNumber);
+		return (SwitchState) query.getResultList().get(0);
 	}
 	
 	

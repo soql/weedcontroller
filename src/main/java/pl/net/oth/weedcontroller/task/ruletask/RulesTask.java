@@ -37,6 +37,7 @@ import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
 import pl.net.oth.weedcontroller.service.RuleService;
 import pl.net.oth.weedcontroller.service.SensorResultService;
 import pl.net.oth.weedcontroller.service.SwitchService;
+import pl.net.oth.weedcontroller.service.UserService;
 import pl.net.oth.weedcontroller.task.SensorTask;
 
 /**
@@ -60,11 +61,16 @@ public class RulesTask {
 	@Autowired
 	private Command command;
 	
+	@Autowired
+	private UserService userService;
+	
 	private Date lastRuleTime=null;
 	
 	private Date nowRuleTime=null;
 	
 	private Integer actualRuleId=null;	
+	
+	private String actualRuleLogin=null;
 	
 	private Map<String, SwitchState> nowSwitchStates=null;
 	
@@ -101,6 +107,7 @@ public class RulesTask {
 			Boolean condition=null;
 			try{
 				actualRuleId=rule.getId();
+				actualRuleLogin="REG:"+rule.getId();
 				condition=(Boolean) gs.evaluate(rule.getCondition_());
 				if(condition.booleanValue()){
 					LOGGER.info("Reguła "+rule.getId()+" spełniona - wykonuję rządanie.");
@@ -131,11 +138,18 @@ public class RulesTask {
 		GroovyShell gs=new GroovyShell();
 		fillGroovyShell(gs);
 		gs.setVariable("PHONE", message.getPhoneNumber());
+				
 		for (Rule rule : rules) {
+			actualRuleId=rule.getId();
+			actualRuleLogin="TEL:"+userService.getLoginByPhoneNumber(message.getPhoneNumber());
+			
 			Pattern p=Pattern.compile(rule.getCondition_());
 			Matcher m=p.matcher(message.getText().toUpperCase());
 			if(m.matches()){
 				try{
+					for(int i=0; i<m.groupCount(); i++){
+						gs.setVariable("G"+(i+1), m.group(i));
+					}
 					gs.evaluate(rule.getExpression_());
 					return;
 				}catch(Exception e){
@@ -159,8 +173,12 @@ public class RulesTask {
 
 	public Integer getActualRuleId() {
 		return actualRuleId;
-	}	
+	}		
 	
+	public String getActualRuleLogin() {
+		return actualRuleLogin;
+	}
+
 	public Date getLastRuleTime() {
 		return lastRuleTime;
 	}	
