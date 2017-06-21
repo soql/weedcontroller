@@ -41,6 +41,7 @@ public class CameraTask {
 			String time=String.valueOf(new Date().getTime());
 			LOGGER.debug("Robię zdjęcie o id "+time);
 			process = new ProcessBuilder(IMAGE_FOLDER+"takeFoto.sh", time).start();
+			process.waitFor();
 			Configuration configuration=new pl.net.oth.weedcontroller.model.Configuration();
 			configuration.setKey(ConfigurationService.LAST_FOTO_KEY);
 			configuration.setValue(time);
@@ -48,6 +49,8 @@ public class CameraTask {
 			LOGGER.debug("Zdjęcie zrobione pomyślnie");
 			removeOldFiles(true);
 		} catch (IOException e) {
+			LOGGER.error(Helper.STACK_TRACE, e);
+		} catch (InterruptedException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
 		}
 	}
