@@ -48,21 +48,30 @@ public class Command {
 	@Autowired
 	private SensorResultService sensorResultService;
 	
+	public long gCaL(String key){
+		return getConfigurationAsLong(key);
+	}
+	
+	public long getConfigurationAsLong(String key){
+		return (Long.parseLong(configurationService.getByKey(key).getValue()));	
+	}
+	
 	public SwitchState css(String switchName){
 		return checkSwitchState(switchName);
 	}
+		
 			
 	public SwitchState checkSwitchState(String switchName){
 		return switchService.getStateByName(switchName);		
 	}
 	
-	public boolean sss(String switchName, SwitchState targetState){			
+	public boolean sss(String switchName, String targetState){			
 		return setSwitchState(switchName, targetState, rulesTask.getActualRuleLogin());		
 	}	
 	
-	public boolean setSwitchState(String switchName, SwitchState targetState, String userName){
-		Switch s=switchService.getSwitchByName(switchName);				
-		return switchService.setSwitchState(s.getGpioNumber(), targetState, userName);		
+	public boolean setSwitchState(String switchName, String targetState, String userName){
+		Switch s=switchService.getSwitchByName(switchName);		
+		return switchService.setSwitchState(s.getGpioNumber(), SwitchState.valueOf(targetState), userName);		
 	}	
 	
 	public boolean csnc(String switchName, SwitchState state){
@@ -75,6 +84,13 @@ public class Command {
 	
 	public String getLastSwitchStateChangeUser(String switchName, SwitchState state){
 		return switchService.getLastSwitchStateChangeUser(switchName, state);
+	}
+	public int glssct(String switchName){
+		return getLastSwitchStateChangeTime(switchName);
+	}
+	
+	public int getLastSwitchStateChangeTime(String switchName){
+		return switchService.getLastSwitchStateChangeUser(switchName);
 	}
 	
 	public String ga(String type, String func, Integer hours){

@@ -27,6 +27,11 @@ public class ConfigurationService {
 		configurationDAO.save(r);		
 	}
 	
+	@Transactional
+	public void update(Configuration r) {
+		configurationDAO.update(r);		
+	}
+	
 	public boolean isConfigurationExist(String...keys){
 		for (String string : keys) {
 			if(getByKey(string)==null)

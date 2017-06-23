@@ -1,5 +1,9 @@
 package pl.net.oth.weedcontroller.task.ruletask;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
+import javax.sound.sampled.AudioFormat.Encoding;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -94,7 +99,8 @@ public class RulesTask {
 			LOGGER.info("Brak czasu poprzedniego wykonania - przetwarznie reguł wstrzymane");
 			lastRuleTime=nowRuleTime;
 		}
-		GroovyShell gs=new GroovyShell();
+		GroovyShell gs=new GroovyShell();		
+	
 		fillGroovyShell(gs);
 		
 		nowSwitchStates=buildSwitchStateMap();		
@@ -108,10 +114,11 @@ public class RulesTask {
 			try{
 				actualRuleId=rule.getId();
 				actualRuleLogin="REG:"+rule.getId();
-				condition=(Boolean) gs.evaluate(rule.getCondition_());
+				
+				condition=(Boolean) gs.evaluate(new StringReader(rule.getCondition_()));
 				if(condition.booleanValue()){
 					LOGGER.info("Reguła "+rule.getId()+" spełniona - wykonuję rządanie.");
-					gs.evaluate(rule.getExpression_());
+					gs.evaluate(new StringReader(rule.getExpression_()));
 				}
 			}catch(Exception e){
 				LOGGER.error("Błąd podczas weryfikacji/wykonania warunku reguly nr "+rule.getId());
@@ -147,19 +154,20 @@ public class RulesTask {
 			Matcher m=p.matcher(message.getText().toUpperCase());
 			if(m.matches()){
 				try{
-					for(int i=0; i<m.groupCount(); i++){
-						gs.setVariable("G"+(i+1), m.group(i));
+					for(int i=0; i<m.groupCount()+1; i++){
+						gs.setVariable("G"+i, m.group(i));
+						LOGGER.debug("Podstawiam pod zmienną G"+i+" = "+m.group(i));
 					}
-					gs.evaluate(rule.getExpression_());
+					gs.evaluate(new StringReader(rule.getExpression_()));
 					return;
 				}catch(Exception e){
 					LOGGER.error("Błąd podczas weryfikacji/wykonania warunku reguly SMS nr "+rule.getId());
 					LOGGER.error(Helper.STACK_TRACE,e);				
 					continue;
 				}					
-			}
-			command.sendSMS("Nie rozpoznano komendy.", message.getPhoneNumber());
+			}			
 		}
+		command.sendSMS("Nie rozpoznano komendy.", message.getPhoneNumber());
 		
 	}
 	private Map<String, SwitchState> buildSwitchStateMap() {

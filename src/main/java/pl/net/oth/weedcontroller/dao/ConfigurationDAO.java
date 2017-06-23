@@ -26,7 +26,12 @@ public class ConfigurationDAO {
 
 	@Transactional
 	public void save(Configuration r) {
-		em.merge(r);
-		
+		em.merge(r);		
+	}
+	@Transactional
+	public void update(Configuration r) {
+		em.merge(r);		
 	}
 }
+
+

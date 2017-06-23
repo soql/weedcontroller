@@ -28,8 +28,7 @@ import pl.net.oth.weedcontroller.model.dto.SwitchLogDTO;
 
 @Component
 @EnableTransactionManagement
-public class SwitchService {
-	
+public class SwitchService {	
 	private final static Log LOGGER = LogFactory.getLog(SwitchService.class);
 	
 	@Autowired
@@ -147,6 +146,12 @@ public class SwitchService {
 	public String getLastSwitchStateChangeUser(String switchName, SwitchState state) {
 		Switch switch_=getSwitchByName(switchName);
 		return switchDAO.getLastSwitchStateChangeUser(switch_, state);
+	}
+
+	public int getLastSwitchStateChangeUser(String switchName) {
+		Switch switch_=getSwitchByName(switchName);
+		Date lastDate=switchDAO.getLastSwitchStateChangeTime(switch_.getGpioNumber());
+		return (int) (new Date().getTime()-lastDate.getTime()/1000/60);
 	}
 	
 }
