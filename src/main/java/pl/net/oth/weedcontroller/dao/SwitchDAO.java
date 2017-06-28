@@ -1,5 +1,6 @@
 package pl.net.oth.weedcontroller.dao;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -64,7 +65,9 @@ public class SwitchDAO {
 	public Date getLastSwitchStateChangeTime(int gpioNumber) {
 		Query query=em.createQuery("SELECT e.date FROM SwitchLog e where e.switch_.gpioNumber=:gpioNumber and e.id=(SELECT max(f.id) FROM SwitchLog f where f.switch_.gpioNumber=:gpioNumber)");
 		query.setParameter("gpioNumber", gpioNumber);
-		return ((SwitchLog) query.getResultList().get(0)).getDate();
+		Date date=new Date(((Timestamp) query.getResultList().get(0)).getTime());
+		LOGGER.debug("getLastSwitchStateChangeTime "+date);
+		return date;
 	}
 	
 	

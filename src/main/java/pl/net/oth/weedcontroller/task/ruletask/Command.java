@@ -90,7 +90,7 @@ public class Command {
 	}
 	
 	public int getLastSwitchStateChangeTime(String switchName){
-		return switchService.getLastSwitchStateChangeUser(switchName);
+		return switchService.getLastSwitchStateChangeTime(switchName);
 	}
 	
 	public String ga(String type, String func, Integer hours){

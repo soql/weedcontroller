@@ -151,7 +151,7 @@ public class RulesTask {
 			actualRuleLogin="TEL:"+userService.getLoginByPhoneNumber(message.getPhoneNumber());
 			
 			Pattern p=Pattern.compile(rule.getCondition_());
-			Matcher m=p.matcher(message.getText().toUpperCase());
+			Matcher m=p.matcher(message.getText().toUpperCase().trim());
 			if(m.matches()){
 				try{
 					for(int i=0; i<m.groupCount()+1; i++){

@@ -148,10 +148,12 @@ public class SwitchService {
 		return switchDAO.getLastSwitchStateChangeUser(switch_, state);
 	}
 
-	public int getLastSwitchStateChangeUser(String switchName) {
+	public int getLastSwitchStateChangeTime(String switchName) {
 		Switch switch_=getSwitchByName(switchName);
 		Date lastDate=switchDAO.getLastSwitchStateChangeTime(switch_.getGpioNumber());
-		return (int) (new Date().getTime()-lastDate.getTime()/1000/60);
+		int time=(int) ((new Date().getTime()-lastDate.getTime())/1000/60);
+		LOGGER.debug("Czas od ost. zmiany statusu "+switchName+" = "+time);
+		return time;
 	}
 	
 }

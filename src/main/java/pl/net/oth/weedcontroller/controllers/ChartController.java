@@ -39,6 +39,8 @@ import pl.net.oth.weedcontroller.task.CameraTask;
 @Controller
 public class ChartController {
 	private final static Log LOGGER=LogFactory.getLog(ChartController.class);
+	public static final int TEMPERATURE=0;
+	public static final int HUMIDITY=1;
 	
 	@Autowired
 	private SwitchService switchService;
@@ -52,14 +54,22 @@ public class ChartController {
 		System.out.println("DateFrom "+dateFrom);
 		System.out.println("DateTo "+dateTo);
 		List<SensorResultLog> sensorResultLogs=sensorResultService.getResultsForDate(new Date(dateFrom), new Date(dateTo));
-		float min=Float.MIN_VALUE;
-		float max=Float.MAX_VALUE;
+		
+		float[] min={Float.MIN_VALUE, Float.MIN_VALUE};
+		float[] max={Float.MIN_VALUE, Float.MIN_VALUE};
 		for (SensorResultLog sensorResultLog : sensorResultLogs) {			
-			if(min==Float.MIN_VALUE || sensorResultLog.getTemperature()<min){
-				min=sensorResultLog.getTemperature();
+			if(min[TEMPERATURE]==Float.MIN_VALUE || sensorResultLog.getTemperature()<min[TEMPERATURE]){
+				min[TEMPERATURE]=sensorResultLog.getTemperature();
 			}
-			if(max==Float.MAX_VALUE || sensorResultLog.getTemperature()>max){
-				max=sensorResultLog.getTemperature();
+			if(max[TEMPERATURE]==Float.MAX_VALUE || sensorResultLog.getTemperature()>max[TEMPERATURE]){
+				max[TEMPERATURE]=sensorResultLog.getTemperature();
+			}
+			
+			if(min[HUMIDITY]==Float.MIN_VALUE || sensorResultLog.getHumidity()<min[HUMIDITY]){
+				min[HUMIDITY]=sensorResultLog.getHumidity();
+			}
+			if(max[HUMIDITY]==Float.MAX_VALUE || sensorResultLog.getHumidity()>max[HUMIDITY]){
+				max[HUMIDITY]=sensorResultLog.getHumidity();
 			}
 		}				
 		
@@ -80,7 +90,7 @@ public class ChartController {
 		 axis.setDateFormatOverride(new SimpleDateFormat("MM-dd hh:mm:ss"));
 		 
 		 NumberAxis angeAxis = (NumberAxis) plot.getRangeAxis();
-		 angeAxis.setRange(min, max);
+		 angeAxis.setRange(min[TEMPERATURE], max[TEMPERATURE]);
 		 angeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 		 angeAxis.setNumberFormatOverride(new DecimalFormat("##.#"));
 		 		 		 
@@ -93,7 +103,7 @@ public class ChartController {
 		}		 
 		return "data:image/png;base64,"+DatatypeConverter.printBase64Binary(imagebuffer.toByteArray());		
 	}
-	private XYDataset createDataset(List<SensorResultLog> sensorResultLogs, float min, float max ) {
+	private XYDataset createDataset(List<SensorResultLog> sensorResultLogs, float[] min, float[] max ) {
 		TimeSeriesCollection timeSeriesCollection=new TimeSeriesCollection();		
 		  final TimeSeries temperature = new TimeSeries( "Temperatura" );  
 	      for (SensorResultLog sensorResultLog : sensorResultLogs) {
@@ -103,7 +113,7 @@ public class ChartController {
 	      final TimeSeries humidity = new TimeSeries( "Wilgotność" );  
 	      for (SensorResultLog sensorResultLog : sensorResultLogs) {
 	    	  System.out.println(sensorResultLog.getHumidity());
-	    	  humidity.addOrUpdate(new Second(sensorResultLog.getDate()), sensorResultLog.getHumidity()*max/100);	    	  
+	    	  humidity.addOrUpdate(new Second(sensorResultLog.getDate()), (((sensorResultLog.getHumidity()-min[HUMIDITY])/(max[HUMIDITY]-min[HUMIDITY])*(max[TEMPERATURE]-min[TEMPERATURE]))+min[TEMPERATURE]));	    	  
 	      }		      
 	    		  
 	      timeSeriesCollection.addSeries(humidity);
