@@ -79,18 +79,18 @@ public class ChartController {
 		         "Value",
 		         createDataset(sensorResultLogs, min, max) ,		         
 		         true , true , false);
-		 xylineChart.setBackgroundPaint(Color.white);
+		 xylineChart.setBackgroundPaint(Color.lightGray);
 		 XYPlot plot=xylineChart.getXYPlot();
-		 plot.setBackgroundPaint(Color.lightGray);
-	     plot.setDomainGridlinePaint(Color.white);
-	     plot.setRangeGridlinePaint(Color.white);
+		 plot.setBackgroundPaint(Color.white);
+	     plot.setDomainGridlinePaint(Color.black);
+	     plot.setRangeGridlinePaint(Color.black);
 	     
 	     	     
 		 DateAxis axis = (DateAxis) plot.getDomainAxis();
 		 axis.setDateFormatOverride(new SimpleDateFormat("MM-dd hh:mm:ss"));
 		 
 		 NumberAxis angeAxis = (NumberAxis) plot.getRangeAxis();
-		 angeAxis.setRange(min[TEMPERATURE], max[TEMPERATURE]);
+		 angeAxis.setRange(min[TEMPERATURE], max[TEMPERATURE]+1);
 		 angeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 		 angeAxis.setNumberFormatOverride(new DecimalFormat("##.#"));
 		 		 		 

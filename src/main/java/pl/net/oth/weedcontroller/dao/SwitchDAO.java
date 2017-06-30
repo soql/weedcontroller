@@ -57,9 +57,12 @@ public class SwitchDAO {
 	}
 
 	public SwitchState getLastState(int gpioNumber) {		
-		Query query=em.createQuery("SELECT e.state FROM SwitchLog e where e.switch_.gpioNumber=:gpioNumber and e.id=(SELECT max(f.id) FROM SwitchLog f where f.switch_.gpioNumber=:gpioNumber)");
-		query.setParameter("gpioNumber", gpioNumber);
-		return (SwitchState) query.getResultList().get(0);
+			Query query=em.createQuery("SELECT e.state FROM SwitchLog e where e.switch_.gpioNumber=:gpioNumber and e.id=(SELECT max(f.id) FROM SwitchLog f where f.switch_.gpioNumber=:gpioNumber)");		
+			query.setParameter("gpioNumber", gpioNumber);	
+			List result=query.getResultList();
+			if(result==null || result.size()==0)
+				return SwitchState.OFF;
+			return (SwitchState)result.get(0);		
 	}
 
 	public Date getLastSwitchStateChangeTime(int gpioNumber) {
