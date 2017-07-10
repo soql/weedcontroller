@@ -15,6 +15,7 @@ import pl.net.oth.weedcontroller.model.Rule;
 @Component
 public class ConfigurationService {
 	public static final String LAST_FOTO_KEY = "LAST_FOTO";
+	public static final String HUMIDITY_POSITION="HUMIDITY_POSITION";
 	@Autowired
 	private ConfigurationDAO configurationDAO;
 	

@@ -46,18 +46,45 @@ public class FotoController {
 	private ConfigurationService configurationService;
 
 	@RequestMapping(value = "/getLastFoto", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody String getLastFoto() {
-		ByteArrayOutputStream imagebuffer=null;
+	public @ResponseBody String[] getLastFoto() {
+		String fileName="/opt/camera/image-"+configurationService.getByKey(ConfigurationService.LAST_FOTO_KEY).getValue()+".jpg";
+		LOGGER.debug("Rządanie pobrania pliku "+fileName);
+		BufferedImage image;
 		try {
-			String fileName="/opt/camera/image-"+configurationService.getByKey(ConfigurationService.LAST_FOTO_KEY).getValue()+".jpg";
-			LOGGER.debug("Rządanie pobrania pliku "+fileName);
-			BufferedImage image = ImageIO
-					.read(new File(fileName));
-			imagebuffer = new ByteArrayOutputStream();
-			ImageIO.write(image, "jpg", imagebuffer);
+			image = ImageIO
+					.read(new File(fileName));			
+			String[] cropPosition=configurationService.getByKey(ConfigurationService.HUMIDITY_POSITION).getValue().split(",");
+			return new String[]{convertToBase64(getFullPhoto(image)),convertToBase64(getPartPhoto(image, cropPosition[0],cropPosition[1], cropPosition[2], cropPosition[3]))};
 		} catch (IOException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
 		}
-		return "data:image/png;base64," + DatatypeConverter.printBase64Binary(imagebuffer.toByteArray());
+		return null;
+		
+	}
+	private byte[] getFullPhoto(BufferedImage image){
+		ByteArrayOutputStream imagebuffer=null;
+		try {
+			imagebuffer = new ByteArrayOutputStream();
+			ImageIO.write(image, "jpg", imagebuffer);
+			return imagebuffer.toByteArray();
+		} catch (IOException e) {
+			LOGGER.error(Helper.STACK_TRACE, e);
+		}
+		return null;
+	}
+	private byte[] getPartPhoto(BufferedImage image, String x, String y, String w, String h){
+		ByteArrayOutputStream imagebuffer=null;
+		try {
+			
+			imagebuffer = new ByteArrayOutputStream();
+			ImageIO.write(image.getSubimage(Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(w), Integer.parseInt(h)), "jpg", imagebuffer);
+			return imagebuffer.toByteArray();
+		} catch (IOException e) {
+			LOGGER.error(Helper.STACK_TRACE, e);
+		}
+		return null;
+	}
+	private String convertToBase64(byte[] image){
+		return "data:image/png;base64," + DatatypeConverter.printBase64Binary(image);	
 	}
 }

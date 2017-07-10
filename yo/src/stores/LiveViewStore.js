@@ -8,7 +8,7 @@ class LiveViewStore extends EventEmitter {
     constructor() {
         super();
         this.dispatchToken = AppDispatcher.register(this.dispatcherCallback.bind(this));
-        this._image = null;          	  	
+        this._image = [];          	  	
     }      
       
     emitChange(eventName) {
