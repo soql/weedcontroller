@@ -1,3 +1,5 @@
+require('styles/App.css');
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch} from 'react-router-dom'
@@ -15,12 +17,13 @@ ReactDOM.render((
 				<Link className="menu-item" to="wykresy">Wykresy</Link>
 				<Link className="menu-item" to="live">Live</Link>
 				<Link className="menu-item" to="ustawienia">Ustawienia</Link>
-				
+				<Link className="menu-item" to="/logout">Wyloguj</Link>				
 			</Menu>
 			<Switch>
 				<Route exact path="/" component={Main}/>				
 				<Route exact path="/wykresy" component={ChartGenerator} />
 				<Route exact path="/live" component={LiveView} />
+				<Route exact path="/logout" to="/logout" />
 			</Switch>			
 		</div>
 	</BrowserRouter>

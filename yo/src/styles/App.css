@@ -126,3 +126,10 @@ td {
     max-height: 100vh;
     height: auto;
 }
+
+.menu-item {
+	font-size: 28px;
+	font-weight: bold;
+	color: 	#F8F8FF;
+	text-align: center;
+}

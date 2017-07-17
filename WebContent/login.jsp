@@ -20,7 +20,7 @@ table {
 	font-weight: 700;
 	color: ivory;
 	text-align: center;
-	font-size: 40px;
+	font-size: 70px;
 	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
 }
 
@@ -28,7 +28,7 @@ table {
 	font-weight: 700;
 	color: black;	
 	text-align: center;
-	font-size: 40px;
+	font-size: 70px;
 	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
 }
 
