@@ -29,14 +29,6 @@ public class SensorTest {
 	@Test
 	public void test() {
 		SensorResultDTO s=new SensorResultDTO(new Date(), 10, 80);
-		sensorTask.setLastSensorResult(s);
-		sensorTask.check();
-		s=new SensorResultDTO(new Date(), 10, 80);
-		sensorTask.setLastSensorResult(s);
-		sensorTask.check();
-		s=new SensorResultDTO(new Date(), 3, 80);
-		sensorTask.setLastSensorResult(s);
-		sensorTask.check();
 
 	}
 }

@@ -3,6 +3,7 @@ package pl.net.oth.weedcontroller.model.dto;
 import java.util.Date;
 
 public class SensorResultJson {
+	public String sensorName;
 	public Integer lastReadTimeElapse;
 	public float temperature;	
 	public float humidity;

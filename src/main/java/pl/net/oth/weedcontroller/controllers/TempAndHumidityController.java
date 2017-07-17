@@ -1,6 +1,10 @@
 package pl.net.oth.weedcontroller.controllers;
 
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +25,17 @@ public class TempAndHumidityController {
 	private SensorTask sensorTask;
 	
 	@RequestMapping(value = "/tempAndHumidity", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody SensorResultJson getTempAndHumidity() {
-		SensorResultDTO sensorResultDTO=sensorTask.getLastSuccesfullSensorResult();
+	public @ResponseBody List<SensorResultJson> getTempAndHumidity() {
+		List<SensorResultJson> result=new ArrayList<>();
+		Map<Integer, SensorResultDTO> sensorResultDTO=sensorTask.getLastSuccesfullSensorResult();
 		if(sensorResultDTO==null){
 			LOGGER.error("Brak udanego odczytu");
+			return null;
 		}
-		return new SensorResultJson(sensorResultDTO);		
+		
+		for (SensorResultDTO sensorResultDTO2 : sensorResultDTO.values()) {
+			result.add(new SensorResultJson(sensorResultDTO2));
+		}
+		return result;		
 	}
 }

@@ -11,7 +11,7 @@ import javax.persistence.Id;
 public class SensorResultLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private Integer id;
+	private Integer id;	
 	private Date date;
 	private float temperature;
 	private float humidity;

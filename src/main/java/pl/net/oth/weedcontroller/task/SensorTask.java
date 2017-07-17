@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,11 +38,11 @@ public class SensorTask {
 	
 	public static final String MAX_HUMI_ERROR_KEY="MAX_HUMI_ERROR_KEY";
 	
-	private Map<Integer, SensorResultDTO> lastSuccesfullSensorResult;
+	private Map<Integer, SensorResultDTO> lastSuccesfullSensorResult=new HashMap<>();
 		
-	private Map<Integer,SensorResultDTO> lastSensorResult;
+	private Map<Integer,SensorResultDTO> lastSensorResult=new HashMap<>();
 	
-	private Map<Integer,SensorResultDTO> previousSuccessfullSensorResult;
+	private Map<Integer,SensorResultDTO> previousSuccessfullSensorResult=new HashMap<>();
 	
 	public void readFromExternal(Integer number){
 		lastSensorResult.put(number,sensorExternalController.check(number));
