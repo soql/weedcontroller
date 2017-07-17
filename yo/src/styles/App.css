@@ -24,6 +24,13 @@ body {
 	text-align: center;
 }
 
+.sensorName {
+	font-size: 42px;
+	font-weight: bold;
+	color: red;
+	text-align: center;
+}
+
 .humidity {
 	font-size: 42px;
 	font-weight: bold;

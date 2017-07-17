@@ -88,6 +88,7 @@ class Main extends React.Component {
   renderTable(element){
 	  return (
 	  <table>
+	  <tr><td colSpan="2" className="sensorName">{element.sensorName}</td></tr>
 		<tr><td className="header1">Temp:</td><td className="temp">{element.temperature} &#8451;</td></tr>
 		<tr><td className="header1">Wilg:</td><td className="humidity">{element.humidity} %</td></tr>
 		<tr><td className="header1">Odczyt:</td><td className="lastRead">{element.lastReadTimeElapse} sek.</td></tr>
