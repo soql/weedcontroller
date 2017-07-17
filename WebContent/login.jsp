@@ -6,7 +6,15 @@ body {
 }
 
 table {
-	margin: 0px auto;
+	margin: 0px auto;	
+}
+
+.login_div {
+  position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);       
 }
 
 .login_button {
@@ -38,6 +46,7 @@ table {
 	<c:set var="loginUrl">
 		<c:url value="/login" />
 	</c:set>
+	<div class="login_div">
 	<form method="post" action="${loginUrl}">
 		<table>
 			<tr>
@@ -54,5 +63,6 @@ table {
 
 		</table>
 	</form>
+	</div>
 </body>
 </html>
