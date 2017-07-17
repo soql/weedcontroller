@@ -6,9 +6,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import pl.net.oth.weedcontroller.dao.SensorResultDAO;
+import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.SensorResultLog;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
 import pl.net.oth.weedcontroller.service.SensorResultService;
+import pl.net.oth.weedcontroller.service.SensorService;
 
 @Configuration
 @EnableScheduling
@@ -19,16 +21,22 @@ public class HistoryTask {
 	@Autowired
 	private SensorResultService sensorResultService;
 	
+	@Autowired
+	private SensorService sensorService;
+	
 	@Scheduled(fixedDelay = 30000)
 	public void putSensorDataToDatabase(){
-		SensorResultDTO sensorResultDTO=sensorTask.getLastSuccesfullSensorResult().get(4);
-		if(sensorResultDTO==null)
-			return;
-		SensorResultLog sensorResult=new SensorResultLog();
-		sensorResult.setDate(sensorResultDTO.getLastSuccesfullRead());
-		sensorResult.setTemperature(sensorResultDTO.getTemperature());
-		sensorResult.setHumidity(sensorResultDTO.getHumidity());
-		sensorResultService.add(sensorResult);
+		for(Sensor sensor:sensorService.getAllSensors()){
+			SensorResultDTO sensorResultDTO=sensorTask.getLastSuccesfullSensorResult().get(sensor.getGpioNumber());
+			if(sensorResultDTO==null)
+				return;
+			SensorResultLog sensorResult=new SensorResultLog();
+			sensorResult.setSensor(sensor);
+			sensorResult.setDate(sensorResultDTO.getLastSuccesfullRead());
+			sensorResult.setTemperature(sensorResultDTO.getTemperature());
+			sensorResult.setHumidity(sensorResultDTO.getHumidity());
+			sensorResultService.add(sensorResult);
+		}
 	}
 
 	public SensorTask getSensorTask() {

@@ -18,9 +18,7 @@ class Main extends React.Component {
     super(props)
     this.state = {blocking: false, 
     	switches: SwitchStore.getSwitches(), 
-    	temperature: SensorStore.getTemperature(), 
-    	lastReadTimeElapse: SensorStore.getLastReadTimeElapse(), 
-    	humidity: SensorStore.getHumidity()
+    	sensors: SensorStore.getSensors()
     	};
     }  
      
@@ -41,9 +39,7 @@ class Main extends React.Component {
 
   sensorChanged(){
 	  this.setState({
-		  temperature: SensorStore.getTemperature(), 
-		  lastReadTimeElapse: SensorStore.getLastReadTimeElapse(), 
-		  humidity: SensorStore.getHumidity()
+		  sensors: SensorStore.getSensors(), 		
 	  })
   }
   
@@ -89,18 +85,27 @@ class Main extends React.Component {
 			 );  
   }
   
+  renderTable(element){
+	  return (
+	  <table>
+		<tr><td className="header1">Temp:</td><td className="temp">{element.temperature} &#8451;</td></tr>
+		<tr><td className="header1">Wilg:</td><td className="humidity">{element.humidity} %</td></tr>
+		<tr><td className="header1">Odczyt:</td><td className="lastRead">{element.lastReadTimeElapse} sek.</td></tr>
+	</table>)
+  }
+  
   render () {	   
-    return (  
+	  let rows=[];	  	  
+	  this.state.sensors.forEach((element) => {
+		  rows.push(this.renderTable(element));
+	  });
+	return (  
     		    	
     <div className="grid grid-pad">
 	
     	<div className="col-1-3">
     		<div className="content">
-	    		<table>
-	    			<tr><td className="header1">Temp:</td><td className="temp">{this.state.temperature} &#8451;</td></tr>
-	    			<tr><td className="header1">Wilg:</td><td className="humidity">{this.state.humidity} %</td></tr>
-	    			<tr><td className="header1">Odczyt:</td><td className="lastRead">{this.state.lastReadTimeElapse} sek.</td></tr>
-	    		</table>
+	    		{rows}
 	    	</div>
 	    </div>
     	<div className="col-1-3">

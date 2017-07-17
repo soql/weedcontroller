@@ -7,10 +7,8 @@ class SensorStore extends EventEmitter {
 
     constructor() {
         super();
-        this.dispatchToken = AppDispatcher.register(this.dispatcherCallback.bind(this))        
-        this._temperature = 0;
-        this._humidity = 0;
-        this._lastReadTimeElapse=0;
+        this.dispatchToken = AppDispatcher.register(this.dispatcherCallback.bind(this));    
+        this._sensors = [];        
         this.tick();  	  	
     }        
       
@@ -39,25 +37,19 @@ class SensorStore extends EventEmitter {
         return true;
     }
     tick() {
-    	    axios.get('tempAndHumidity').then(res => { 
-    	    	this._temperature=res.data.temperature;
-    	    	this._humidity=res.data.humidity;
-    	    	this._lastReadTimeElapse=res.data.lastReadTimeElapse;    	    	
+    	    axios.get('tempAndHumidity').then(res => {
+    	    	console.log(res);
+    	    	console.log(res.data);
+    	    	this._sensors=res.data;    	    		    	
     	    	}).then(res => {
     	  	    	AppActions.sensorChanged();
-    	  	    });;  
+    	  	    }); 
     	        	   
     }
                   
-      getTemperature(){
-    	  return this._temperature;
-      }
-      getHumidity(){
-    	  return this._humidity;
-      }
-      getLastReadTimeElapse(){
-    	  return this._lastReadTimeElapse;
-      }
+      getSensors(){
+    	  return this._sensors;
+      }      
 }
 
 export default new SensorStore();

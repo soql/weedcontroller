@@ -6,12 +6,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class SensorResultLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;	
+	@ManyToOne
+	private Sensor sensor;
 	private Date date;
 	private float temperature;
 	private float humidity;
@@ -46,6 +49,14 @@ public class SensorResultLog {
 
 	public void setHumidity(float humidity) {
 		this.humidity = humidity;
+	}
+
+	public Sensor getSensor() {
+		return sensor;
+	}
+
+	public void setSensor(Sensor sensor) {
+		this.sensor = sensor;
 	}
 
 }

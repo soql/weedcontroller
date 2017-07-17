@@ -12,12 +12,13 @@ public class SensorResultJson {
 		
 	}
 	
-	public SensorResultJson(SensorResultDTO sensorResultDTO){
+	public SensorResultJson(SensorResultDTO sensorResultDTO, String sensorName){
 		SensorResultJson result=new SensorResultJson();
 		this.lastReadTimeElapse=new Integer((int)(new Date().getTime()-sensorResultDTO.getLastSuccesfullRead().getTime()));
 		this.lastReadTimeElapse=this.lastReadTimeElapse/1000;
 		this.humidity=sensorResultDTO.getHumidity();
 		this.temperature=sensorResultDTO.getTemperature();	
+		this.sensorName=sensorName;
 	}
 	
 	public Integer getLastReadTimeElapse() {
@@ -38,5 +39,14 @@ public class SensorResultJson {
 	public void setHumidity(float humidity) {
 		this.humidity = humidity;
 	}
+
+	public String getSensorName() {
+		return sensorName;
+	}
+
+	public void setSensorName(String sensorName) {
+		this.sensorName = sensorName;
+	}
+	
 	
 }

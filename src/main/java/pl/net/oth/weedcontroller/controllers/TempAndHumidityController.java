@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
 import pl.net.oth.weedcontroller.model.dto.SensorResultJson;
+import pl.net.oth.weedcontroller.service.SensorService;
 import pl.net.oth.weedcontroller.task.SensorTask;
 
 @Controller
@@ -23,6 +24,9 @@ public class TempAndHumidityController {
 	
 	@Autowired
 	private SensorTask sensorTask;
+	
+	@Autowired
+	private SensorService sensorService;
 	
 	@RequestMapping(value = "/tempAndHumidity", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody List<SensorResultJson> getTempAndHumidity() {
@@ -33,8 +37,9 @@ public class TempAndHumidityController {
 			return null;
 		}
 		
-		for (SensorResultDTO sensorResultDTO2 : sensorResultDTO.values()) {
-			result.add(new SensorResultJson(sensorResultDTO2));
+		for (Integer number : sensorResultDTO.keySet()) {
+			SensorResultDTO sensorResultDTO2=sensorResultDTO.get(number);
+			result.add(new SensorResultJson(sensorResultDTO2, sensorService.getNameByNumber(number)));
 		}
 		return result;		
 	}

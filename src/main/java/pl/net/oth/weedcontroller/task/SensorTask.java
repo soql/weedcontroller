@@ -19,8 +19,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import pl.net.oth.weedcontroller.external.impl.SensorExternalController;
+import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
+import pl.net.oth.weedcontroller.service.SensorService;
 import pl.net.oth.weedcontroller.service.SwitchService;
 
 @Configuration
@@ -33,6 +35,9 @@ public class SensorTask {
 	
 	@Autowired
 	private ConfigurationService configurationService;
+	
+	@Autowired
+	private SensorService sensorService;
 	
 	public static final String MAX_TEMP_ERROR_KEY="MAX_TEMP_ERROR_KEY";
 	
@@ -50,16 +55,18 @@ public class SensorTask {
 	
 	@Scheduled(fixedDelay = 15000)
 	public void check() {
-		Integer sensorNumber=4;
-		readFromExternal(sensorNumber);
-		
-		if(lastSensorResult.get(sensorNumber)!=null){			
-			if(!checkErrors(previousSuccessfullSensorResult.get(sensorNumber), lastSensorResult.get(sensorNumber))){
-				lastSuccesfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
-				previousSuccessfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
-			}else{
-				LOGGER.debug("Odczyt "+lastSensorResult.get(sensorNumber).getTemperature()+" "+lastSensorResult.get(sensorNumber).getHumidity()+" uznany za nieprawidłowy !!");
-				previousSuccessfullSensorResult=lastSensorResult;
+		for(Sensor sensor:sensorService.getAllSensors()){
+			Integer sensorNumber=sensor.getGpioNumber();
+			readFromExternal(sensorNumber);
+			
+			if(lastSensorResult.get(sensorNumber)!=null){			
+				if(!checkErrors(previousSuccessfullSensorResult.get(sensorNumber), lastSensorResult.get(sensorNumber))){
+					lastSuccesfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
+					previousSuccessfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
+				}else{
+					LOGGER.debug("Odczyt "+lastSensorResult.get(sensorNumber).getTemperature()+" "+lastSensorResult.get(sensorNumber).getHumidity()+" uznany za nieprawidłowy !!");
+					previousSuccessfullSensorResult=lastSensorResult;
+				}
 			}
 		}
 	}
