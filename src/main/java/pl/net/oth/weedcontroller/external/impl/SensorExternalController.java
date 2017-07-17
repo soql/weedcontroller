@@ -21,10 +21,10 @@ public class SensorExternalController {
 	private final static Log LOGGER = LogFactory.getLog(SensorTask.class);
 	private static final String ERROR_MESSAGE = "Failed to get reading. Try again!";
 
-	public SensorResultDTO check() {
+	public SensorResultDTO check(int sensorNumber) {
 		Process process;
 		try {
-			process = new ProcessBuilder("/opt/externalSensor/AdafruitDHT.py", "22", "4").start();
+			process = new ProcessBuilder("/opt/externalSensor/AdafruitDHT.py", "22", String.valueOf(sensorNumber)).start();
 			InputStream is = process.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);

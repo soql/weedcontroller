@@ -21,7 +21,7 @@ public class HistoryTask {
 	
 	@Scheduled(fixedDelay = 30000)
 	public void putSensorDataToDatabase(){
-		SensorResultDTO sensorResultDTO=sensorTask.getLastSuccesfullSensorResult();
+		SensorResultDTO sensorResultDTO=sensorTask.getLastSuccesfullSensorResult().get(4);
 		if(sensorResultDTO==null)
 			return;
 		SensorResultLog sensorResult=new SensorResultLog();

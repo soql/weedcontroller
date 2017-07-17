@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Switch} from 'react-router-dom'
 import Main from './components/Main';
 import ChartGenerator from './components/ChartGenerator';
 import LiveView from './components/LiveView';
+import Logout from './components/Logout';
 import { Link, Match } from 'react-router-dom';
 import { slide as Menu } from 'react-burger-menu'
 
@@ -23,7 +24,7 @@ ReactDOM.render((
 				<Route exact path="/" component={Main}/>				
 				<Route exact path="/wykresy" component={ChartGenerator} />
 				<Route exact path="/live" component={LiveView} />
-				<Route exact path="/logout" to="/logout" />
+				<Route exact path="/logout" component={Logout} />
 			</Switch>			
 		</div>
 	</BrowserRouter>

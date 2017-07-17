@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,26 +37,27 @@ public class SensorTask {
 	
 	public static final String MAX_HUMI_ERROR_KEY="MAX_HUMI_ERROR_KEY";
 	
-	private SensorResultDTO lastSuccesfullSensorResult;
+	private Map<Integer, SensorResultDTO> lastSuccesfullSensorResult;
 		
-	private SensorResultDTO lastSensorResult;
+	private Map<Integer,SensorResultDTO> lastSensorResult;
 	
-	private SensorResultDTO previousSuccessfullSensorResult;
+	private Map<Integer,SensorResultDTO> previousSuccessfullSensorResult;
 	
-	public void readFromExternal(){
-		lastSensorResult=sensorExternalController.check();
+	public void readFromExternal(Integer number){
+		lastSensorResult.put(number,sensorExternalController.check(number));
 	}
 	
 	@Scheduled(fixedDelay = 15000)
 	public void check() {
-		readFromExternal();
+		Integer sensorNumber=4;
+		readFromExternal(sensorNumber);
 		
-		if(lastSensorResult!=null){			
-			if(!checkErrors(previousSuccessfullSensorResult, lastSensorResult)){
-				lastSuccesfullSensorResult=lastSensorResult;
-				previousSuccessfullSensorResult=lastSensorResult;
+		if(lastSensorResult.get(sensorNumber)!=null){			
+			if(!checkErrors(previousSuccessfullSensorResult.get(sensorNumber), lastSensorResult.get(sensorNumber))){
+				lastSuccesfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
+				previousSuccessfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
 			}else{
-				LOGGER.debug("Odczyt "+lastSensorResult.getTemperature()+" "+lastSensorResult.getHumidity()+" uznany za nieprawidłowy !!");
+				LOGGER.debug("Odczyt "+lastSensorResult.get(sensorNumber).getTemperature()+" "+lastSensorResult.get(sensorNumber).getHumidity()+" uznany za nieprawidłowy !!");
 				previousSuccessfullSensorResult=lastSensorResult;
 			}
 		}
@@ -77,22 +79,8 @@ public class SensorTask {
 		return false;
 	}
 
-
-	public SensorResultDTO getLastSensorResult() {
-		return lastSensorResult;
-	}
-
-
-	public SensorResultDTO getLastSuccesfullSensorResult() {
+	public Map<Integer, SensorResultDTO> getLastSuccesfullSensorResult() {
 		return lastSuccesfullSensorResult;
-	}
-
-
-	public void setLastSensorResult(SensorResultDTO lastSensorResult) {
-		this.lastSensorResult = lastSensorResult;
-	}
-	
-
-
+	}	
 	
 }
