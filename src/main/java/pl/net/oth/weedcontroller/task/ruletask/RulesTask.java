@@ -135,8 +135,10 @@ public class RulesTask {
 		gs.setVariable("r", command);
 		gs.setVariable("ON", SwitchState.ON);
 		gs.setVariable("OFF", SwitchState.OFF);
-		gs.setVariable("TEMP", sensorTask.getLastSuccesfullSensorResult().get(4).getTemperature());
-		gs.setVariable("HUMI", sensorTask.getLastSuccesfullSensorResult().get(4).getHumidity());				
+		gs.setVariable("TEMP", sensorTask.getLastSuccesfullSensorResult().get(1).getTemperature());
+		gs.setVariable("HUMI", sensorTask.getLastSuccesfullSensorResult().get(1).getHumidity());
+		gs.setVariable("TEMP_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getTemperature());
+		gs.setVariable("HUMI_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getHumidity());
 	}
 
 	public void handleSMS(SMSMessage message) {

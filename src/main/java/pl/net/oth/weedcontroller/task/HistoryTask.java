@@ -27,7 +27,7 @@ public class HistoryTask {
 	@Scheduled(fixedDelay = 30000)
 	public void putSensorDataToDatabase(){
 		for(Sensor sensor:sensorService.getAllSensors()){
-			SensorResultDTO sensorResultDTO=sensorTask.getLastSuccesfullSensorResult().get(sensor.getGpioNumber());
+			SensorResultDTO sensorResultDTO=sensorTask.getLastSuccesfullSensorResult().get(sensor.getNumber());
 			if(sensorResultDTO==null)
 				return;
 			SensorResultLog sensorResult=new SensorResultLog();

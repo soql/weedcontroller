@@ -19,12 +19,12 @@ import pl.net.oth.weedcontroller.task.SensorTask;
 @Configuration
 public class SensorExternalController {
 	private final static Log LOGGER = LogFactory.getLog(SensorTask.class);
-	private static final String ERROR_MESSAGE = "Failed to get reading. Try again!";
+	private static final String ERROR_MESSAGE = "Failed to get reading. Try again!";		
 
-	public SensorResultDTO check(int sensorNumber) {
+	public SensorResultDTO check(String command) {
 		Process process;
 		try {
-			process = new ProcessBuilder("/opt/externalSensor/AdafruitDHT.py", "22", String.valueOf(sensorNumber)).start();
+			process = new ProcessBuilder(command.split(" ")).start();
 			InputStream is = process.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);

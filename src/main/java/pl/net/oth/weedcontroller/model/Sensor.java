@@ -8,18 +8,13 @@ import javax.persistence.Id;
 public class Sensor {
 	@Id
 	@Column
-	private int gpioNumber;
+	private int number;
 	
 	@Column
 	private String name;
 
-	public int getGpioNumber() {
-		return gpioNumber;
-	}
-
-	public void setGpioNumber(int gpioNumber) {
-		this.gpioNumber = gpioNumber;
-	}
+	@Column
+	private String command;
 
 	public String getName() {
 		return name;
@@ -27,5 +22,22 @@ public class Sensor {
 
 	public void setName(String name) {
 		this.name = name;
-	}		
+	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
+	public String getCommand() {
+		return command;
+	}
+
+	public void setCommand(String command) {
+		this.command = command;
+	}	
+	
 }

@@ -49,15 +49,15 @@ public class SensorTask {
 	
 	private Map<Integer,SensorResultDTO> previousSuccessfullSensorResult=new HashMap<>();
 	
-	public void readFromExternal(Integer number){
-		lastSensorResult.put(number,sensorExternalController.check(number));
+	public void readFromExternal(Integer number, String command){
+		lastSensorResult.put(number,sensorExternalController.check(command));
 	}
 	
 	@Scheduled(fixedDelay = 15000)
 	public void check() {
-		for(Sensor sensor:sensorService.getAllSensors()){
-			Integer sensorNumber=sensor.getGpioNumber();
-			readFromExternal(sensorNumber);
+		for(Sensor sensor:sensorService.getAllSensors()){			
+			readFromExternal(sensor.getNumber(), sensor.getCommand());
+			Integer sensorNumber=sensor.getNumber();
 			
 			if(lastSensorResult.get(sensorNumber)!=null){			
 				if(!checkErrors(previousSuccessfullSensorResult.get(sensorNumber), lastSensorResult.get(sensorNumber))){
