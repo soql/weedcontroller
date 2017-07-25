@@ -65,7 +65,7 @@ public class SensorTask {
 					previousSuccessfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
 				}else{
 					LOGGER.debug("Odczyt "+lastSensorResult.get(sensorNumber).getTemperature()+" "+lastSensorResult.get(sensorNumber).getHumidity()+" uznany za nieprawidłowy !!");
-					previousSuccessfullSensorResult=lastSensorResult;
+					previousSuccessfullSensorResult.put(sensor.getNumber(), lastSensorResult.get(sensor.getNumber()));
 				}
 			}
 		}
