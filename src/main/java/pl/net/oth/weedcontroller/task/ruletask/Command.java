@@ -21,6 +21,7 @@ import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.RuleService;
 import pl.net.oth.weedcontroller.service.SensorResultService;
+import pl.net.oth.weedcontroller.service.SensorService;
 import pl.net.oth.weedcontroller.service.SwitchService;
 
 @Configuration
@@ -47,6 +48,9 @@ public class Command {
 	
 	@Autowired
 	private SensorResultService sensorResultService;
+	
+	@Autowired
+	private SensorService sensorService;
 	
 	public long gCaL(String key){
 		return getConfigurationAsLong(key);
@@ -108,7 +112,7 @@ public class Command {
 		}
 		Date dateFrom=new Date(new Date().getTime()-(1000*60*60*hours.intValue()));
 		Date dateTo=new Date();
-		return String.valueOf(new DecimalFormat("0.00##").format(sensorResultService.getAggregatedValue(type, func,dateFrom, dateTo)));
+		return String.valueOf(new DecimalFormat("0.00##").format(sensorResultService.getAggregatedValue(type, func,dateFrom, dateTo, sensorService.getSensorByNumber(1))));
 	}
 	
 

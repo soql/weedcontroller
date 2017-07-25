@@ -22,8 +22,11 @@ public class SensorService {
 		return sensorDAO.getAllSensors();
 	}
 
-
 	public String getNameByNumber(Integer number) {		
 		return sensorDAO.getNameByNumber(number);
+	}
+	
+	public Sensor getSensorByNumber(Integer number) {		
+		return sensorDAO.getSensorByNumber(number);
 	}
 }

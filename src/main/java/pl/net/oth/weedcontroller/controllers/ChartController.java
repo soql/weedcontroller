@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.SensorResultLog;
 import pl.net.oth.weedcontroller.service.SensorResultService;
+import pl.net.oth.weedcontroller.service.SensorService;
 import pl.net.oth.weedcontroller.service.SwitchService;
 import pl.net.oth.weedcontroller.task.CameraTask;
 
@@ -41,6 +42,9 @@ public class ChartController {
 	private final static Log LOGGER=LogFactory.getLog(ChartController.class);
 	public static final int TEMPERATURE=0;
 	public static final int HUMIDITY=1;
+	
+	@Autowired
+	private SensorService sensorService;
 	
 	@Autowired
 	private SwitchService switchService;
@@ -53,7 +57,7 @@ public class ChartController {
 	public @ResponseBody  String generateChart(@RequestParam("dateFrom") final Long dateFrom,@RequestParam("dateTo") final Long dateTo ) {
 		System.out.println("DateFrom "+dateFrom);
 		System.out.println("DateTo "+dateTo);
-		List<SensorResultLog> sensorResultLogs=sensorResultService.getResultsForDate(new Date(dateFrom), new Date(dateTo));
+		List<SensorResultLog> sensorResultLogs=sensorResultService.getResultsForDate(new Date(dateFrom), new Date(dateTo), sensorService.getSensorByNumber(1));
 		
 		float[] min={Float.MIN_VALUE, Float.MIN_VALUE};
 		float[] max={Float.MIN_VALUE, Float.MIN_VALUE};

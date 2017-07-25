@@ -24,8 +24,10 @@ public class SensorDAO {
 		return (List<Sensor>)query.getResultList();
 	}
 
-	public String getNameByNumber(Integer number) {
-			
+	public String getNameByNumber(Integer number) {			
 		return em.find(Sensor.class, number).getName();
+	}
+	public Sensor getSensorByNumber(Integer number){
+		return em.find(Sensor.class, number);
 	}
 }

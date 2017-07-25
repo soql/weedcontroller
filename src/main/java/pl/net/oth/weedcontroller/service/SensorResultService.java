@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pl.net.oth.weedcontroller.dao.SensorResultDAO;
 import pl.net.oth.weedcontroller.dao.SwitchDAO;
+import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.SensorResultLog;
 import pl.net.oth.weedcontroller.model.Switch;
 
@@ -22,12 +23,12 @@ public class SensorResultService {
 		sensorResultDAO.persist(s);
 	}
 	
-	public List<SensorResultLog> getResultsForDate(Date dateFrom, Date dateTo){
-		return sensorResultDAO.getResultsForDate(dateFrom, dateTo);
+	public List<SensorResultLog> getResultsForDate(Date dateFrom, Date dateTo, Sensor sensor){
+		return sensorResultDAO.getResultsForDate(dateFrom, dateTo, sensor);
 	}
 
-	public float getAggregatedValue(String type, String func, Date dateFrom, Date dateTo) {	
-		return sensorResultDAO.getAggregatedValue(type, func, dateFrom, dateTo);
+	public float getAggregatedValue(String type, String func, Date dateFrom, Date dateTo, Sensor sensor){
+		return sensorResultDAO.getAggregatedValue(type, func, dateFrom, dateTo, sensor);
 	}
 	
 	
