@@ -22,7 +22,7 @@ public class PingTask {
 	
 	private final static String ADDRESS_TO_PING="8.8.8.8";
 
-	private static final String LAST_INTERNET_CONNECTION = "LAST_INTERNET_CONNECTION";
+	public static final String LAST_INTERNET_CONNECTION = "LAST_INTERNET_CONNECTION";
 	
 	@Autowired
 	private ConfigurationService configurationService;

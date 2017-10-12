@@ -23,6 +23,7 @@ import pl.net.oth.weedcontroller.service.RuleService;
 import pl.net.oth.weedcontroller.service.SensorResultService;
 import pl.net.oth.weedcontroller.service.SensorService;
 import pl.net.oth.weedcontroller.service.SwitchService;
+import pl.net.oth.weedcontroller.task.PingTask;
 
 @Configuration
 public class Command {
@@ -99,6 +100,16 @@ public class Command {
 	
 	public String ga(String type, String func, Integer hours){
 		return getAggregatedValue(type, func, hours);
+	}
+	
+	public long getLastInternetConnection() {
+		long last=getConfigurationAsLong(PingTask.LAST_INTERNET_CONNECTION);
+		long timeInMinutes=(last-new Date().getTime())/1000/60;
+		return timeInMinutes; 
+	}
+	
+	public long getLIC() {		
+		return getLastInternetConnection(); 
 	}
 	
 	public String getAggregatedValue(String type, String func, Integer hours){
