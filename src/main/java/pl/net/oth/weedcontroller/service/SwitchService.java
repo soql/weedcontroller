@@ -72,6 +72,7 @@ public class SwitchService {
 			SwitchDTO switchDTO=new SwitchDTO();
 			switchDTO.setGpioNumber(switch_.getGpioNumber());
 			switchDTO.setName(switch_.getName());
+			/*TODO tutaj chyba revert jeśli będzie błąd*/
 			switchDTO.setState(getLastState(switch_.getGpioNumber()));
 			result.add(switchDTO);
 		}
