@@ -20,6 +20,9 @@ class PowerUsage extends React.Component {
 	    
 	    
 	}  
+	componentWillMount(){
+		this.setState({dateFrom: ConfigurationStore.getStartDate()});
+	}
 	calculatePowerUsage(){
 		axios.get('calculatePowerUsage?dateFrom='+this.state.dateFrom+"&dateTo="+this.state.dateTo).then(res => {
 	    	this.setState({powerUsageResult: res.data});
@@ -37,9 +40,9 @@ class PowerUsage extends React.Component {
 	  			<tr className="logTableTr">  			
 	  			<td className="logTableTd">{element.switchName}</td>
 	  			<td className="logTableTd">{element.powerUsage} W</td>
-	  			<td className="logTableTd">{parseFloat(element.powerOnTime).toFixed(2)}</td>
-	  			<td className="logTableTd">{parseFloat(element.maxTime).toFixed(2)}</td>	  			
-	  			<td className="logTableTd">{parseFloat(element.cost).toFixed(2)}</td>
+	  			<td className="logTableTd">{parseFloat(element.powerOnTime).toFixed(2)} h</td>
+	  			<td className="logTableTd">{parseFloat(element.maxTime).toFixed(2)} h</td>	  			
+	  			<td className="logTableTd">{parseFloat(element.cost).toFixed(2)} zł</td>
 	  			</tr>);
 	}
 	
@@ -48,16 +51,23 @@ class PowerUsage extends React.Component {
 		  this.state.powerUsageResult.forEach((element) => {
 			  rows.push(this.renderOneRow(element));				  
 		  });
+		  let all=0;
+		  this.state.powerUsageResult.forEach(ele => {all+=ele.cost});
 		  return (
+				  this.state.powerUsageResult.length>0 && 
 				  <table className="logTable">
 				  <tr className="logTableTr">  			
 		  			<th className="logTableTd">Urządzenie</th>
 		  			<th className="logTableTd">Zużycie</th>
-		  			<th className="logTableTd">Włączony (h)</th>
-		  			<th className="logTableTd">Max (h)</th>		  				  		
-		  			<th className="logTableTd">Koszt (zł)</th>
+		  			<th className="logTableTd">Włączony</th>
+		  			<th className="logTableTd">Max</th>		  				  		
+		  			<th className="logTableTd">Koszt)</th>
 		  			</tr>
-				    {rows}				  	
+				    {rows}
+				    <tr className="logTableTr">
+				    	<td className="logTableTd" colSpan="4">Razem:</td>
+				    	<td className="logTableTd" colSpan="4">{parseFloat(all).toFixed(2)} zł</td>
+				    </tr>
 				  </table>
 				 ); 
 	}
