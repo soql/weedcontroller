@@ -23,6 +23,7 @@ import pl.net.oth.weedcontroller.dao.UserDAO;
 import pl.net.oth.weedcontroller.event.ChangeSwitchStateEvent;
 import pl.net.oth.weedcontroller.external.GpioExternalController;
 import pl.net.oth.weedcontroller.helpers.Helper;
+import pl.net.oth.weedcontroller.model.Configuration;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.User;
@@ -34,6 +35,8 @@ import pl.net.oth.weedcontroller.model.dto.SwitchLogDTO;
 @EnableTransactionManagement
 public class SwitchService {	
 	private final static Log LOGGER = LogFactory.getLog(SwitchService.class);
+
+	private static final String ONE_WAT_COST = "ONE_WAT_COST";
 	
 	@Autowired
     private ApplicationEventPublisher applicationEventPublisher;
@@ -50,6 +53,10 @@ public class SwitchService {
 	
 	@Autowired
 	private GpioExternalController gpioExternalController;
+	
+	@Autowired
+	private ConfigurationService configurationService;
+	
 	
 	@Transactional
 	public void add(Switch s) {
@@ -170,6 +177,7 @@ public class SwitchService {
 	public List<PowerUsageDTO> calculatePowerUsage(final Long dateFrom, final Long dateTo ) {
 		List<PowerUsageDTO> resultsDTO=new ArrayList<PowerUsageDTO>();
 		List<Switch> allSwitches=getAllSwitches();
+		Double oneWatCost=getOneWatCost();		
 		for (Switch switch_ : allSwitches) {
 			PowerUsageDTO powerUsageDTO=new PowerUsageDTO();
 			powerUsageDTO.setSwitchName(switch_.getName());
@@ -198,10 +206,24 @@ public class SwitchService {
 				LOGGER.debug("Dodaję do "+switch_.getName()+" czas "+timeInMilisecounds+" za okres "+lastState.getDate()+" do "+prevState.getDate());
 			}
 			powerUsageDTO.setPowerOnTime(Helper.milisecondsToHours(milisecoundsOn));
+			powerUsageDTO.setCost(powerUsageDTO.getPowerOnTime()/1000*oneWatCost*powerUsageDTO.getPowerUsage());
 			resultsDTO.add(powerUsageDTO);
 		}
 		
 		return resultsDTO;
+	}
+
+	private Double getOneWatCost() {
+		Configuration oneWatCost=configurationService.getByKey(ONE_WAT_COST);
+		if(oneWatCost!=null) {			
+			try {
+				return Double.parseDouble(oneWatCost.getValue());
+			} catch (NumberFormatException e) {
+				return new Double(0);
+			}
+		
+		}
+		return new Double(0);
 	}
 	
 	

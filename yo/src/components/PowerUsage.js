@@ -36,9 +36,10 @@ class PowerUsage extends React.Component {
 		return (
 	  			<tr className="logTableTr">  			
 	  			<td className="logTableTd">{element.switchName}</td>
-	  			<td className="logTableTd">{element.powerUsage}</td>
-	  			<td className="logTableTd">{element.powerOnTime}</td>
-	  			<td className="logTableTd">{element.maxTime}</td>	  			
+	  			<td className="logTableTd">{element.powerUsage} W</td>
+	  			<td className="logTableTd">{parseFloat(element.powerOnTime).toFixed(2)}</td>
+	  			<td className="logTableTd">{parseFloat(element.maxTime).toFixed(2)}</td>	  			
+	  			<td className="logTableTd">{parseFloat(element.cost).toFixed(2)}</td>
 	  			</tr>);
 	}
 	
@@ -51,9 +52,10 @@ class PowerUsage extends React.Component {
 				  <table className="logTable">
 				  <tr className="logTableTr">  			
 		  			<th className="logTableTd">Urządzenie</th>
-		  			<th className="logTableTd">Zużycie (W)</th>
+		  			<th className="logTableTd">Zużycie</th>
 		  			<th className="logTableTd">Włączony (h)</th>
 		  			<th className="logTableTd">Max (h)</th>		  				  		
+		  			<th className="logTableTd">Koszt (zł)</th>
 		  			</tr>
 				    {rows}				  	
 				  </table>

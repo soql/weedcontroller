@@ -5,6 +5,7 @@ public class PowerUsageDTO {
 	private Double powerOnTime;
 	private Double MaxTime;
 	private Double powerUsage;
+	private Double cost;
 	public String getSwitchName() {
 		return switchName;
 	}
@@ -29,6 +30,10 @@ public class PowerUsageDTO {
 	public void setMaxTime(Double maxTime) {
 		MaxTime = maxTime;
 	}
-	
-	
+	public Double getCost() {
+		return cost;
+	}
+	public void setCost(Double cost) {
+		this.cost = cost;
+	}	
 }
