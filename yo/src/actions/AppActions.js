@@ -38,7 +38,7 @@ class AppActions {
             actionType: 'IMAGE_LOADED',
             value: data
         });
-    }    
+    }     
 }
 
 export default new AppActions() 
