@@ -39,7 +39,7 @@ public class SwitchService {
 	private SwitchDAO switchDAO;
 
 	@Autowired
-	private SwitchLogDAO SwitchLogDAO;
+	private SwitchLogDAO switchLogDAO;
 	
 	@Autowired
 	private UserDAO userDAO;
@@ -50,6 +50,10 @@ public class SwitchService {
 	@Transactional
 	public void add(Switch s) {
 		switchDAO.persist(s);
+	}
+	
+	public List<Switch> getAllSwitches(){
+		return switchDAO.getAllSwitches();
 	}
 	
 	public List<SwitchDTO> getAllSwitchesWithStates(){
@@ -134,13 +138,16 @@ public class SwitchService {
 	}
 	
 	public List<SwitchLogDTO> getLogs(int number){
-		List<SwitchLog> switchLogs=SwitchLogDAO.getSwitchLog(number);
+		List<SwitchLog> switchLogs=switchLogDAO.getSwitchLog(number);
 		List<SwitchLogDTO> result=new ArrayList<SwitchLogDTO>();
 		for (SwitchLog switchLog : switchLogs) {
 			String userName=switchLog.getUser()!=null?switchLog.getUser().getFullName():switchLog.getRuleUser();
 			result.add(new SwitchLogDTO(userName, switchLog.getSwitch_().getName(), switchLog.getState(), switchLog.getDate()));
 		}
 		return result;
+	}
+	public List<SwitchLog> getLogsForDate(Switch switch_, Date dateFrom, Date DateTo){
+		return switchLogDAO.getLogsForDate(switch_, dateFrom, DateTo);
 	}
 
 	public String getLastSwitchStateChangeUser(String switchName, SwitchState state) {
@@ -155,5 +162,6 @@ public class SwitchService {
 		LOGGER.debug("Czas od ost. zmiany statusu "+switchName+" = "+time);
 		return time;
 	}
+	
 	
 }
