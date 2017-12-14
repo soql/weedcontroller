@@ -3,6 +3,7 @@ package pl.net.oth.weedcontroller.model.dto;
 public class PowerUsageDTO {
 	private String switchName;
 	private Double powerOnTime;
+	private Double MaxTime;
 	private Double powerUsage;
 	public String getSwitchName() {
 		return switchName;
@@ -22,5 +23,12 @@ public class PowerUsageDTO {
 	public void setPowerUsage(Double powerUsage) {
 		this.powerUsage = powerUsage;
 	}
+	public Double getMaxTime() {
+		return MaxTime;
+	}
+	public void setMaxTime(Double maxTime) {
+		MaxTime = maxTime;
+	}
+	
 	
 }

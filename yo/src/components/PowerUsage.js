@@ -16,15 +16,49 @@ import ConfigurationStore from '../stores/ConfigurationStore';
 class PowerUsage extends React.Component {	
 	constructor (props) {
 	    super(props)
-	    this.state = {dateFrom: ConfigurationStore.getStartDate(), dateTo: new Date()-0}	    
+	    this.state = {dateFrom: ConfigurationStore.getStartDate(), dateTo: new Date()-0, powerUsageResult: []}	   
+	    
 	    
 	}  
 	calculatePowerUsage(){
 		axios.get('calculatePowerUsage?dateFrom='+this.state.dateFrom+"&dateTo="+this.state.dateTo).then(res => {
-	    	this.setState({image: res.data});
+	    	this.setState({powerUsageResult: res.data});
 	    });
 	}
+	dateFromChange(moment){
+		this.setState({dateFrom: moment.format("x")})
+	}
 	
+	dateToChange(moment){
+		this.setState({dateTo: moment.format("x")})
+	}
+	renderOneRow(element){
+		return (
+	  			<tr className="logTableTr">  			
+	  			<td className="logTableTd">{element.switchName}</td>
+	  			<td className="logTableTd">{element.powerUsage}</td>
+	  			<td className="logTableTd">{element.powerOnTime}</td>
+	  			<td className="logTableTd">{element.maxTime}</td>	  			
+	  			</tr>);
+	}
+	
+	renderPowerUsageTable(){
+		  let rows=[];	  	  
+		  this.state.powerUsageResult.forEach((element) => {
+			  rows.push(this.renderOneRow(element));				  
+		  });
+		  return (
+				  <table className="logTable">
+				  <tr className="logTableTr">  			
+		  			<th className="logTableTd">Urządzenie</th>
+		  			<th className="logTableTd">Zużycie (W)</th>
+		  			<th className="logTableTd">Włączony (h)</th>
+		  			<th className="logTableTd">Max (h)</th>		  				  		
+		  			</tr>
+				    {rows}				  	
+				  </table>
+				 ); 
+	}
   render () {
     return (
     	<div className="grid grid-pad">
@@ -79,7 +113,9 @@ class PowerUsage extends React.Component {
 	        		  
         		</div>
         	</div>
-        	      
+        	<div>
+        		{this.renderPowerUsageTable()}
+        	</div>
         </div>  
     	  
     	    	

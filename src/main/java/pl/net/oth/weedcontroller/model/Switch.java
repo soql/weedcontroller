@@ -1,6 +1,7 @@
 package pl.net.oth.weedcontroller.model;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -14,6 +15,8 @@ public class Switch {
 	private String name;		
 	@Column
 	private Boolean revert;
+	@Column
+	private Double powerUsage;
 
 	public int getGpioNumber() {
 		return gpioNumber;
@@ -39,7 +42,11 @@ public class Switch {
 		this.revert = revert;
 	}
 
-	
-	
+	public Double getPowerUsage() {
+		return powerUsage;
+	}
 
+	public void setPowerUsage(Double powerUsage) {
+		this.powerUsage = powerUsage;
+	}		
 }

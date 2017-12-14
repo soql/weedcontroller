@@ -13,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.dao.SwitchDAO;
@@ -20,9 +22,11 @@ import pl.net.oth.weedcontroller.dao.SwitchLogDAO;
 import pl.net.oth.weedcontroller.dao.UserDAO;
 import pl.net.oth.weedcontroller.event.ChangeSwitchStateEvent;
 import pl.net.oth.weedcontroller.external.GpioExternalController;
+import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.User;
+import pl.net.oth.weedcontroller.model.dto.PowerUsageDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchLogDTO;
 
@@ -162,6 +166,44 @@ public class SwitchService {
 		LOGGER.debug("Czas od ost. zmiany statusu "+switchName+" = "+time);
 		return time;
 	}
+	
+	public List<PowerUsageDTO> calculatePowerUsage(final Long dateFrom, final Long dateTo ) {
+		List<PowerUsageDTO> resultsDTO=new ArrayList<PowerUsageDTO>();
+		List<Switch> allSwitches=getAllSwitches();
+		for (Switch switch_ : allSwitches) {
+			PowerUsageDTO powerUsageDTO=new PowerUsageDTO();
+			powerUsageDTO.setSwitchName(switch_.getName());
+			powerUsageDTO.setMaxTime(Helper.milisecondsToHours(dateTo-dateFrom));
+			powerUsageDTO.setPowerUsage(switch_.getPowerUsage());
+			LOGGER.debug("Przelacznik "+switch_.getName());
+			List<SwitchLog> results=getLogsForDate(switch_, new Date(dateFrom), new Date(dateTo));
+			long milisecoundsOn=0;
+			SwitchLog lastState=null;
+			SwitchLog prevState=null;
+			for (SwitchLog switchLog : results) {	
+				prevState=lastState;
+				if(lastState!=null) {
+					LOGGER.debug("Resultat: "+lastState.getState()+" od "+lastState.getDate()+" do "+switchLog.getDate());
+					if(lastState.getState().equals(SwitchState.ON)) {
+						long timeInMilisecounds=(switchLog.getDate().getTime()-lastState.getDate().getTime());
+						milisecoundsOn+=timeInMilisecounds;
+						LOGGER.debug("Dodaję do "+switch_.getName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+lastState.getDate()+" do "+switchLog.getDate());
+					}
+				}				
+				lastState=switchLog;
+			}
+			if(lastState!=null && lastState.getState().equals(SwitchState.ON)) {
+				long timeInMilisecounds=(lastState.getDate().getTime()-prevState.getDate().getTime());
+				milisecoundsOn+=timeInMilisecounds;
+				LOGGER.debug("Dodaję do "+switch_.getName()+" czas "+timeInMilisecounds+" za okres "+lastState.getDate()+" do "+prevState.getDate());
+			}
+			powerUsageDTO.setPowerOnTime(Helper.milisecondsToHours(milisecoundsOn));
+			resultsDTO.add(powerUsageDTO);
+		}
+		
+		return resultsDTO;
+	}
+	
 	
 	
 }
