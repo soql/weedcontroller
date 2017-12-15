@@ -29,7 +29,9 @@ class ConfigurationStore extends EventEmitter {
 	    getConfigAsDate(name){
 	    	 axios.get('getConfigurationAsDate?key='+name).then(res => {
 	   	    	this.startDate = res.data;
-	   	    });	    	
+	   	    }).then(res => {
+	  	    	AppActions.startDateReaded();
+	  	    }); 	    	
 	    }
 	    getStartDate(){
 	    	return this.startDate;

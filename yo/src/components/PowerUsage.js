@@ -15,13 +15,18 @@ import ConfigurationStore from '../stores/ConfigurationStore';
  
 class PowerUsage extends React.Component {	
 	constructor (props) {
-	    super(props)
-	    this.state = {dateFrom: ConfigurationStore.getStartDate(), dateTo: new Date()-0, powerUsageResult: []}	   
-	    
-	    
+	    super(props)	    
+	    this.state = {dateFrom: new Date()-0, dateTo: new Date()-0, powerUsageResult: []}	   	    	    
 	}  
-	componentWillMount(){
+	
+	startDateReaded(){
+		console.log("DATA ODCZYTANA "+ConfigurationStore.getStartDate());
 		this.setState({dateFrom: ConfigurationStore.getStartDate()});
+	}
+	
+	componentWillMount(){
+		console.log("CWM");
+		ConfigurationStore.addChangeListener('STORE_START_DATE_READED', this.startDateReaded.bind(this));
 	}
 	calculatePowerUsage(){
 		axios.get('calculatePowerUsage?dateFrom='+this.state.dateFrom+"&dateTo="+this.state.dateTo).then(res => {
@@ -61,12 +66,12 @@ class PowerUsage extends React.Component {
 		  			<th className="logTableTd">Zużycie</th>
 		  			<th className="logTableTd">Włączony</th>
 		  			<th className="logTableTd">Max</th>		  				  		
-		  			<th className="logTableTd">Koszt)</th>
+		  			<th className="logTableTd">Koszt</th>
 		  			</tr>
 				    {rows}
 				    <tr className="logTableTr">
 				    	<td className="logTableTd" colSpan="4">Razem:</td>
-				    	<td className="logTableTd" colSpan="4">{parseFloat(all).toFixed(2)} zł</td>
+				    	<td className="allCostTd" colSpan="4">{parseFloat(all).toFixed(2)} zł</td>
 				    </tr>
 				  </table>
 				 ); 
@@ -83,6 +88,7 @@ class PowerUsage extends React.Component {
 			        		  dateFormat="YYYY-MM-DD HH:mm:ss"
 			        		  forceValidDate={true}
 			        		  defaultValue={this.state.dateFrom}
+			        		  value={this.state.dateFrom}
 			        		  onChange={(dateString, {dateMoment, timestamp}) => {this.dateFromChange(dateMoment)}}>	        		
 			        		  <DatePicker
 			        		    navigation={true}
@@ -100,6 +106,7 @@ class PowerUsage extends React.Component {
 			        		  dateFormat="YYYY-MM-DD HH:mm:ss"
 			        		  forceValidDate={true}
 			        		  defaultValue={this.state.dateTo}
+			        		  value={this.state.dateTo}
 			        		  onChange={(dateString, {dateMoment, timestamp}) => {this.dateToChange(dateMoment)}}>	        		
 			        		  <DatePicker
 			        		    navigation={true}

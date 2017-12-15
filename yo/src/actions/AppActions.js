@@ -38,7 +38,13 @@ class AppActions {
             actionType: 'IMAGE_LOADED',
             value: data
         });
-    }     
+    }  
+    startDateReaded(data){
+    	  AppDispatcher.dispatch({
+              actionType: 'START_DATE_READED',
+              value: data
+          });
+      }      
 }
 
 export default new AppActions() 
