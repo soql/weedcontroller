@@ -16,7 +16,7 @@ import ConfigurationStore from '../stores/ConfigurationStore';
 class PowerUsage extends React.Component {	
 	constructor (props) {
 	    super(props)	    
-	    this.state = {dateFrom: new Date()-0, dateTo: new Date()-0, powerUsageResult: []}	   	    	    
+	    this.state = {dateFrom: ConfigurationStore.getStartDate(), dateTo: new Date()-0, powerUsageResult: []}	   	    	    
 	}  
 	
 	startDateReaded(){
