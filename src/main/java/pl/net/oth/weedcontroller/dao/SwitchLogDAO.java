@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
+import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 
@@ -62,7 +63,11 @@ public class SwitchLogDAO {
 			firstResult.setDate(dateFrom);
 			resultsToReturn.add(firstResult);
 		}else {
-			results.get(0).setDate(dateFrom);
+			SwitchLog firstMock=new SwitchLog();			
+			firstMock.setDate(dateFrom);
+			firstMock.setState(SwitchState.OFF);
+			firstMock.setSwitch_(switch_);	
+			resultsToReturn.add(firstMock);
 		}
 		resultsToReturn.addAll(results);
 		

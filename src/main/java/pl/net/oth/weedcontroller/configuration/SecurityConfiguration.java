@@ -32,7 +32,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
     	http.authorizeRequests()
-      	.antMatchers("/putSMS").permitAll().antMatchers("/login.jsp").permitAll()
+      	.antMatchers("/putSMS").permitAll().antMatchers("/sendSMS").permitAll().antMatchers("/login.jsp").permitAll()
       	.and().authorizeRequests().antMatchers("/**").access("hasRole('ADMIN')")        
         .and().formLogin().loginPage("/login.jsp").successHandler(loginSuccessHandler).and().httpBasic()
         .and().logout().logoutSuccessHandler(loginSuccessHandler).and().exceptionHandling().accessDeniedPage("/Access_Denied")
