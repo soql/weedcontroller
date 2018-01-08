@@ -48,7 +48,7 @@ public class CameraTask {
 			configurationService.save(configuration);
 			LOGGER.debug("Zdjęcie zrobione pomyślnie");
 			removeOldFiles(true,"image");
-			removeOldFiles(true,"interal");
+			removeOldFiles(true,"internal");
 		} catch (IOException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
 		} catch (InterruptedException e) {
