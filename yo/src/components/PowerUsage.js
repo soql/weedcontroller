@@ -34,6 +34,7 @@ class PowerUsage extends React.Component {
 	    });
 	}
 	dateFromChange(moment){
+		console.log("Formatowanie "+moment);
 		this.setState({dateFrom: moment.format("x")})
 	}
 	
@@ -105,8 +106,7 @@ class PowerUsage extends React.Component {
 			        		  <DateField
 			        		  dateFormat="YYYY-MM-DD HH:mm:ss"
 			        		  forceValidDate={true}
-			        		  defaultValue={this.state.dateTo}
-			        		  value={this.state.dateTo}
+			        		  defaultValue={this.state.dateTo}			        		  
 			        		  onChange={(dateString, {dateMoment, timestamp}) => {this.dateToChange(dateMoment)}}>	        		
 			        		  <DatePicker
 			        		    navigation={true}
