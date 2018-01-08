@@ -24,12 +24,13 @@ class LogTable extends React.Component {
 	  this.setState({logs: LogStore.getLogs()});	 
   } 
   renderLog(element){
+	  var styleClassName=(element.switchState=='ON'?'logTableTd-green':'logTableTd-red');
   	return (
   			<tr className="logTableTr">  			
-  			<td className="logTableTd">{element.switchName}</td>
-  			<td className="logTableTd">{element.switchState}</td>
-  			<td className="logTableTd">{element.date}</td>
-  			<td className="logTableTd">{element.userName}</td>
+  			<td className={styleClassName}>{element.switchName}</td>
+  			<td className={styleClassName}>{element.switchState}</td>
+  			<td className={styleClassName}>{element.date}</td>
+  			<td className={styleClassName}>{element.userName}</td>
   			</tr>);
   }
   

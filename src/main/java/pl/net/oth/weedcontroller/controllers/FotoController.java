@@ -60,8 +60,8 @@ public class FotoController {
 			String[] cropPosition=configurationService.getByKey(ConfigurationService.HUMIDITY_POSITION).getValue().split(",");
 			return new String[]{
 					convertToBase64(getFullPhoto(image)),
-					convertToBase64(getPartPhoto(image, cropPosition[0],cropPosition[1], cropPosition[2], cropPosition[3])),
-					convertToBase64(getFullPhoto(internalImage))
+					convertToBase64(getFullPhoto(internalImage)),
+					convertToBase64(getPartPhoto(image, cropPosition[0],cropPosition[1], cropPosition[2], cropPosition[3]))					
 					};
 		} catch (IOException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
