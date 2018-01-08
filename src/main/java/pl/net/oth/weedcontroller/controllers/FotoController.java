@@ -48,13 +48,21 @@ public class FotoController {
 	@RequestMapping(value = "/getLastFoto", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody String[] getLastFoto() {
 		String fileName="/opt/camera/image-"+configurationService.getByKey(ConfigurationService.LAST_FOTO_KEY).getValue()+".jpg";
+		String fileNameInternal="/opt/camera/internal-"+configurationService.getByKey(ConfigurationService.LAST_FOTO_KEY).getValue()+".jpg";
 		LOGGER.debug("Rządanie pobrania pliku "+fileName);
-		BufferedImage image;
+		LOGGER.debug("Rządanie pobrania pliku "+fileNameInternal);
+		BufferedImage image,internalImage;
 		try {
 			image = ImageIO
-					.read(new File(fileName));			
+					.read(new File(fileName));
+			internalImage = ImageIO
+					.read(new File(fileNameInternal));	
 			String[] cropPosition=configurationService.getByKey(ConfigurationService.HUMIDITY_POSITION).getValue().split(",");
-			return new String[]{convertToBase64(getFullPhoto(image)),convertToBase64(getPartPhoto(image, cropPosition[0],cropPosition[1], cropPosition[2], cropPosition[3]))};
+			return new String[]{
+					convertToBase64(getFullPhoto(image)),
+					convertToBase64(getPartPhoto(image, cropPosition[0],cropPosition[1], cropPosition[2], cropPosition[3])),
+					convertToBase64(getFullPhoto(internalImage))
+					};
 		} catch (IOException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
 		}

@@ -24,7 +24,7 @@ public class CameraTask {
 	private final static Log LOGGER=LogFactory.getLog(CameraTask.class);
 	public static final String IMAGE_FOLDER="/opt/camera/";
 	/*In hours*/
-	public static final long IMAGE_TIME_TO_KEEP=24;
+	public static final long IMAGE_TIME_TO_KEEP=10;
 	
 	public static final String CAMERA_ON="CAMERA_ON";
 	@Autowired
@@ -47,20 +47,21 @@ public class CameraTask {
 			configuration.setValue(time);
 			configurationService.save(configuration);
 			LOGGER.debug("Zdjęcie zrobione pomyślnie");
-			removeOldFiles(true);
+			removeOldFiles(true,"image");
+			removeOldFiles(true,"interal");
 		} catch (IOException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
 		} catch (InterruptedException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
 		}
 	}
-	private void removeOldFiles(boolean realDelete) {
+	private void removeOldFiles(boolean realDelete, String prefix) {
 		Map<Long, File> filesMap=new HashMap<>();
 		for (final File fileEntry : new File(IMAGE_FOLDER).listFiles()) {
 			String name=fileEntry.getName();
-			if(!name.contains("image-"))
+			if(!name.contains(prefix+"-"))
 				continue;
-			name=name.replaceAll("image-", "").replaceAll(".jpg", "");
+			name=name.replaceAll(prefix+"-", "").replaceAll(".jpg", "");
 			Long time=null;
 			try{
 				time=Long.parseLong(name);
@@ -69,6 +70,7 @@ public class CameraTask {
 				LOGGER.error(Helper.STACK_TRACE, e);
 			}			
 		}
+		
 		long now=new Date().getTime();
 		for (Entry<Long, File> entry : filesMap.entrySet()) {
 			if(entry.getKey().longValue()+IMAGE_TIME_TO_KEEP*60*60*1000<now){
