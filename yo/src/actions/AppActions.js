@@ -38,6 +38,7 @@ class AppActions {
             actionType: 'IMAGE_LOADED',
             value: data
         });
+<<<<<<< HEAD
     }  
     startDateReaded(data){
     	  AppDispatcher.dispatch({
@@ -45,6 +46,9 @@ class AppActions {
               value: data
           });
       }      
+=======
+    }     
+>>>>>>> refs/remotes/weedcontroller/master
 }
 
 export default new AppActions() 
