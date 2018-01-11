@@ -25,6 +25,7 @@ import pl.net.oth.weedcontroller.external.GpioExternalController;
 import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.Configuration;
 import pl.net.oth.weedcontroller.model.Switch;
+import pl.net.oth.weedcontroller.model.SwitchGPIO;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.model.dto.PowerUsageDTO;
@@ -71,30 +72,39 @@ public class SwitchService {
 		List<Switch> switches=switchDAO.getAllSwitches();
 		List<SwitchDTO> result=new ArrayList<SwitchDTO>();
 		for (Switch switch_ : switches) {
-			SwitchDTO switchDTO=new SwitchDTO();
-			switchDTO.setGpioNumber(switch_.getGpioNumber());
+			SwitchDTO switchDTO=new SwitchDTO();			
 			switchDTO.setName(switch_.getName());
-			switchDTO.setState(gpioExternalController.getState(switch_.getGpioNumber(), switch_.getRevert().booleanValue()));
+			switchDTO.setState(getStateFromExternalController(switch_));
 			result.add(switchDTO);
 		}
 		return result;
 	}
 	
+	
+	private SwitchState getStateFromExternalController(Switch switch_) {
+		for(SwitchGPIO switchGPIO: switch_.getGpios()){
+			if(switchGPIO.isActive()) {
+				return gpioExternalController.getState(switchGPIO.getGpioNumber(), switch_.getRevert().booleanValue());
+			}
+		}
+		LOGGER.error("Brak aktywnego GPIO dla "+switch_.getName());
+		return SwitchState.OFF;
+	}
+
 	public List<SwitchDTO> getAllSwitchesWithLastStates(){
 		List<Switch> switches=switchDAO.getAllSwitches();
 		List<SwitchDTO> result=new ArrayList<SwitchDTO>();
 		for (Switch switch_ : switches) {
-			SwitchDTO switchDTO=new SwitchDTO();
-			switchDTO.setGpioNumber(switch_.getGpioNumber());
+			SwitchDTO switchDTO=new SwitchDTO();			
 			switchDTO.setName(switch_.getName());
-			switchDTO.setState(getLastState(switch_.getGpioNumber()));
+			switchDTO.setState(getLastState(switch_));
 			result.add(switchDTO);
 		}
 		return result;
 	}
 	
-	private SwitchState getLastState(int gpioNumber) {
-		return switchDAO.getLastState(gpioNumber);
+	private SwitchState getLastState(Switch switch_) {
+		return switchDAO.getLastState(switch_);
 	}
 
 	public Switch getSwitchByName(String name){
@@ -103,7 +113,7 @@ public class SwitchService {
 		
 	public SwitchState getStateByName(String name){
 		Switch switch1=getSwitchByName(name);
-		return gpioExternalController.getState(switch1.getGpioNumber(), switch1.getRevert().booleanValue());		
+		return getStateFromExternalController(switch1);		
 	}
 	
 	public Switch getSwitchByNumber(Integer id){
@@ -112,8 +122,10 @@ public class SwitchService {
 	public List<Integer> getSwitchesConfiguration(){
 		List<Switch> switches=switchDAO.getAllSwitches();
 		List<Integer> result=new ArrayList<Integer>();
-		for (Switch switch_ : switches) {				
-			result.add(switch_.getGpioNumber());
+		for (Switch switch_ : switches) {	
+			for(SwitchGPIO switchGPIO: switch_.getGpios()) {
+				result.add(switchGPIO.getGpioNumber());
+			}
 		}
 		return result;
 	}
@@ -127,14 +139,23 @@ public class SwitchService {
 	}
 	
 	
-	public Boolean setSwitchState(Integer switchNumber, SwitchState state, String ruleUser){		
-		LOGGER.info("Rzadanie zmiany przel. nr "+switchNumber+" na "+state+" przez rolę  "+ruleUser);		
-		Switch switch_=switchDAO.getSwitchByNumber(switchNumber);
+	public Boolean setSwitchState(Switch switch_, SwitchState state, String ruleUser){		
+		LOGGER.info("Rzadanie zmiany przel. nr "+switch_.getName()+" na "+state+" przez rolę  "+ruleUser);				
 		publishEvent(switch_, state, null, ruleUser);
 		/*logSwitchChange(switchNumber,state);*/
-		return gpioExternalController.setState(switchNumber.intValue(), state, switch_.getRevert().booleanValue());		
+		return setStateToExternalController(switch_, state);		
 	}
-	
+	public Boolean setStateToExternalController(Switch switch_, SwitchState state) {
+		boolean result=false;
+		for(SwitchGPIO switchGPIO: switch_.getGpios()) {
+			if(switchGPIO.isActive()) {
+				result=gpioExternalController.setState(switchGPIO.getGpioNumber(), state, switch_.getRevert().booleanValue());
+			}else {
+				result=gpioExternalController.setState(switchGPIO.getGpioNumber(), SwitchState.OFF, switch_.getRevert().booleanValue());
+			}
+		}
+		return result;
+	}
 	
 	private void publishEvent(Switch switch_, SwitchState state, User user, String ruleUser) {		
 		ChangeSwitchStateEvent csse=new ChangeSwitchStateEvent(this, switch_, state, user, ruleUser);
@@ -168,7 +189,7 @@ public class SwitchService {
 
 	public int getLastSwitchStateChangeTime(String switchName) {
 		Switch switch_=getSwitchByName(switchName);
-		Date lastDate=switchDAO.getLastSwitchStateChangeTime(switch_.getGpioNumber());
+		Date lastDate=switchDAO.getLastSwitchStateChangeTime(switch_);
 		int time=(int) ((new Date().getTime()-lastDate.getTime())/1000/60);
 		LOGGER.debug("Czas od ost. zmiany statusu "+switchName+" = "+time);
 		return time;

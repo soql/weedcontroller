@@ -18,7 +18,7 @@ public class SwitchGPIO {
 	private String description;
 
 	@ManyToOne
-	private Sensor parent;
+	private Switch parent;
 	
 	
 	public int getGpioNumber() {
@@ -45,13 +45,15 @@ public class SwitchGPIO {
 		this.description = description;
 	}
 
-	public Sensor getParent() {
+	public Switch getParent() {
 		return parent;
 	}
 
-	public void setParent(Sensor parent) {
+	public void setParent(Switch parent) {
 		this.parent = parent;
 	}
+
+	
 	
 	
 }

@@ -1,6 +1,7 @@
 package pl.net.oth.weedcontroller.dao;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.external.impl.GpioMockExternalController;
 import pl.net.oth.weedcontroller.model.Switch;
+import pl.net.oth.weedcontroller.model.SwitchGPIO;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 
 @Component
@@ -56,22 +58,28 @@ public class SwitchDAO {
 		return sw.getUser()!=null? sw.getUser().getFullName(): sw.getRuleUser();
 	}
 
-	public SwitchState getLastState(int gpioNumber) {		
-			Query query=em.createQuery("SELECT e.state FROM SwitchLog e where e.switch_.gpioNumber=:gpioNumber and e.id=(SELECT max(f.id) FROM SwitchLog f where f.switch_.gpioNumber=:gpioNumber)");		
-			query.setParameter("gpioNumber", gpioNumber);	
+	public SwitchState getLastState(Switch switch_) {		
+			Query query=em.createQuery("SELECT e.state FROM SwitchLog e where e.switch_.gpioNumber=:gpioNumber and e.id=(SELECT max(f.id) FROM SwitchLog f where f.switch_.gpioNumber in :gpioNumber)");		
+			query.setParameter("gpioNumber", getGpioList(switch_));	
 			List result=query.getResultList();
 			if(result==null || result.size()==0)
 				return SwitchState.OFF;
 			return (SwitchState)result.get(0);		
 	}
 
-	public Date getLastSwitchStateChangeTime(int gpioNumber) {
-		Query query=em.createQuery("SELECT e.date FROM SwitchLog e where e.switch_.gpioNumber=:gpioNumber and e.id=(SELECT max(f.id) FROM SwitchLog f where f.switch_.gpioNumber=:gpioNumber)");
-		query.setParameter("gpioNumber", gpioNumber);
+	public Date getLastSwitchStateChangeTime(Switch switch_) {		
+		Query query=em.createQuery("SELECT e.date FROM SwitchLog e where e.switch_.gpioNumber=:gpioNumber and e.id=(SELECT max(f.id) FROM SwitchLog f where f.switch_.gpioNumber in :gpioNumber)");
+		query.setParameter("gpioNumber", getGpioList(switch_));
 		Date date=new Date(((Timestamp) query.getResultList().get(0)).getTime());
 		LOGGER.debug("getLastSwitchStateChangeTime "+date);
 		return date;
 	}
-	
+	private List<Integer> getGpioList(Switch switch_){
+		List<Integer> gpioList=new ArrayList<>();
+		for(SwitchGPIO switchGPIO : switch_.getGpios()) {
+			gpioList.add(switchGPIO.getGpioNumber());
+		}
+		return gpioList;
+	}
 	
 }

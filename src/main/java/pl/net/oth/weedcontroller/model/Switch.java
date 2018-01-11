@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 public class Switch {
-	
+	@Id	
 	@Column
 	private String name;		
 	@Column
@@ -45,7 +45,7 @@ public class Switch {
 	public void setPowerUsage(Double powerUsage) {
 		this.powerUsage = powerUsage;
 	}
-
+	
 	public List<SwitchGPIO> getGpios() {
 		return gpios;
 	}
@@ -53,5 +53,6 @@ public class Switch {
 	public void setGpios(List<SwitchGPIO> gpios) {
 		this.gpios = gpios;
 	}	
+	
 	
 }
