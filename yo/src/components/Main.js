@@ -12,21 +12,26 @@ import LogTable from './LogTable';
 import AppActions from '../actions/AppActions';
 import SwitchStore from '../stores/SwitchStore';
 import SensorStore from '../stores/SensorStore';
+import ConfigurationStore from '../stores/ConfigurationStore';
 
 class Main extends React.Component {
   constructor (props) {
     super(props)
     this.state = {blocking: false, 
     	switches: SwitchStore.getSwitches(), 
-    	sensors: SensorStore.getSensors()
+    	sensors: SensorStore.getSensors(),
+    	actualPhase: ConfigurationStore.getActualPhase()
     	};
     }  
      
   componentWillMount(){
 	  SwitchStore.startTimer();
+	  ConfigurationStore.startTimer();
 	  SwitchStore.addChangeListener('STORE_SWITCH_CHANGED', this.switchChanged.bind(this));	  
 	  SwitchStore.addChangeListener('STORE_SENSOR_CHANGED', this.sensorChanged.bind(this));	  	  
+	  ConfigurationStore.addChangeListener('STORE_ACTUAL_PHASE_CHANGED', this.actualPhaseChaged.bind(this));
 	  SwitchStore.tick();
+	  ConfigurationStore.tick();
   }
  
   componentWillUnmount(){
@@ -37,6 +42,12 @@ class Main extends React.Component {
 	  this.setState({switches: SwitchStore.getSwitches()});	 
   }   
 
+  
+  actualPhaseChaged(){
+	  console.log("actualPhaseChaged "+ConfigurationStore.getActualPhase());
+	this.setState({actualPhase: ConfigurationStore.getActualPhase()});  
+  }
+  
   sensorChanged(){
 	  this.setState({
 		  sensors: SensorStore.getSensors(), 		
@@ -81,7 +92,12 @@ class Main extends React.Component {
 		  rows.push(this.renderSwitch(element));
 	  });
 	  return (
-			  <table>{rows}</table>
+			  <div>				  
+				  <table>
+				  <tr><td className="phaseText" colSpan="2">{this.state.actualPhase}</td></tr>
+				  	{rows}
+				  </table>
+			  </div>
 			 );  
   }
   
@@ -102,8 +118,7 @@ class Main extends React.Component {
 	  });
 	return (  
     		    	
-    <div className="grid grid-pad">
-	
+    <div className="grid grid-pad">	
     	<div className="col-1-3">
     		<div className="content">
 	    		{rows}

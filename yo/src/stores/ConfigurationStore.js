@@ -7,8 +7,17 @@ class ConfigurationStore extends EventEmitter {
 	 constructor() {
 	        super();
 	        this.dispatchToken = AppDispatcher.register(this.dispatcherCallback.bind(this));
-	        this.getConfigAsDate("START_DATE");          	  	
+	        this.getConfigAsDate("START_DATE");  
+	        this.readActualPhase();
 	    }    
+	 startTimer () {
+	        clearInterval(this.timer)
+	        this.timer = setInterval(this.tick.bind(this), 10000)
+	        this.tick();
+	      }
+	 tick(){ 
+		 this.readActualPhase();		  	
+	    }
 	  emitChange(eventName) {
 	        this.emit(eventName);
 	    }
@@ -33,8 +42,18 @@ class ConfigurationStore extends EventEmitter {
 	  	    	AppActions.startDateReaded();
 	  	    }); 	    	
 	    }
+	    readActualPhase(){
+	    	 axios.get('getActualPhase').then(res => {
+	   	    	this.actualPhase = res.data;
+	   	    }).then(res => {
+	  	    	AppActions.actualPhaseChanged();
+	  	    }); 	    	
+	    }
 	    getStartDate(){
 	    	return this.startDate;
+	    }
+	    getActualPhase(){
+	    	return this.actualPhase;
 	    }
 	   
 }

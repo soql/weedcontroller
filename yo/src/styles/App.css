@@ -52,6 +52,12 @@ body {
 	text-align: center;
 }
 
+.phaseText {
+	font-size: 38px;
+	font-weight: bold;
+	color: 	#de79d0;
+	text-align: center;
+}
 .logTable{
 	border-collapse: collapse;
 }

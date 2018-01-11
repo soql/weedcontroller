@@ -18,6 +18,7 @@ import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.dto.SwitchLogDTO;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
+import pl.net.oth.weedcontroller.service.PhaseService;
 import pl.net.oth.weedcontroller.service.SwitchService;
 
 @Controller
@@ -25,6 +26,9 @@ public class ConfigurationController {
 	private final static Log LOGGER = LogFactory.getLog(ConfigurationController.class);
 	@Autowired
 	private ConfigurationService configurationService;
+	
+	@Autowired
+	private PhaseService phaseService;
 
 	@RequestMapping(value = "/getConfigurationAsDate", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody long getConfigurationAsDate(@RequestParam("key") final String key) {
@@ -38,5 +42,16 @@ public class ConfigurationController {
 		}
 		return new Date().getTime();
 		
+	}
+	@RequestMapping(value = "/getConfigurationAsString", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody String getConfigurationAsString(@RequestParam("key") final String key) {
+		return configurationService.getByKey(key).getValue();				
+	}
+	
+	@RequestMapping(value = "/getActualPhase", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody String getActualPhase() {
+		String idAsString=configurationService.getByKey(ConfigurationService.ACTUAL_PHASE).getValue();
+		Integer id=new Integer(idAsString);
+		return phaseService.getPhaseById(id).getName();
 	}
 }

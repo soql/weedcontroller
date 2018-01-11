@@ -44,7 +44,13 @@ class AppActions {
               actionType: 'START_DATE_READED',
               value: data
           });
-      }              
+      }
+    actualPhaseChanged(data){
+    	AppDispatcher.dispatch({
+            actionType: 'ACTUAL_PHASE_CHANGED',
+            value: data
+        });
+    }
 }
 
 export default new AppActions() 
