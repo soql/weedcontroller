@@ -1,16 +1,17 @@
 package pl.net.oth.weedcontroller.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 public class Switch {
-	@Id
-	@Column
-	private int gpioNumber;
+	
 	@Column
 	private String name;		
 	@Column
@@ -18,13 +19,8 @@ public class Switch {
 	@Column
 	private Double powerUsage;
 
-	public int getGpioNumber() {
-		return gpioNumber;
-	}
-
-	public void setGpioNumber(int gpioNumber) {
-		this.gpioNumber = gpioNumber;
-	}
+	@OneToMany(mappedBy="parent")
+	private List<SwitchGPIO> gpios;
 
 	public String getName() {
 		return name;
@@ -48,5 +44,14 @@ public class Switch {
 
 	public void setPowerUsage(Double powerUsage) {
 		this.powerUsage = powerUsage;
-	}		
+	}
+
+	public List<SwitchGPIO> getGpios() {
+		return gpios;
+	}
+
+	public void setGpios(List<SwitchGPIO> gpios) {
+		this.gpios = gpios;
+	}	
+	
 }
