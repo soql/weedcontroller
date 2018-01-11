@@ -17,6 +17,9 @@ public class RuleService {
 	public List<Rule> getAllActiveRules(){
 		return ruleDAO.getAllActiveRules();
 	}
+	public List<Rule> getAllActiveRulesByPhase(Integer phaseId) {
+		return ruleDAO.getAllActiveRulesByPhase(phaseId);
+	}
 	public List<Rule> getAllActiveSMSRules(){
 		return ruleDAO.getAllActiveSMSRules();
 	}
@@ -26,5 +29,5 @@ public class RuleService {
 		r.setNextTimeExecution(new Date(new Date().getTime()+minutes*60*1000));
 		ruleDAO.update(r);
 		
-	}
+	}	
 }

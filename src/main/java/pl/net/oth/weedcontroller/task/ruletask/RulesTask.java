@@ -34,11 +34,14 @@ import pl.net.oth.weedcontroller.dao.UserDAO;
 import pl.net.oth.weedcontroller.external.impl.SMSController;
 import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.helpers.PinHelper;
+import pl.net.oth.weedcontroller.model.Phase;
 import pl.net.oth.weedcontroller.model.Rule;
 import pl.net.oth.weedcontroller.model.SMSMessage;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
+import pl.net.oth.weedcontroller.service.ConfigurationService;
+import pl.net.oth.weedcontroller.service.PhaseService;
 import pl.net.oth.weedcontroller.service.RuleService;
 import pl.net.oth.weedcontroller.service.SensorResultService;
 import pl.net.oth.weedcontroller.service.SwitchService;
@@ -67,6 +70,12 @@ public class RulesTask {
 	private Command command;
 	
 	@Autowired
+	private ConfigurationService configurationService;
+	
+	@Autowired
+	private PhaseService phaseService;
+	
+	@Autowired
 	private UserService userService;
 	
 	private Date lastRuleTime=null;
@@ -81,6 +90,10 @@ public class RulesTask {
 	
 	private Map<String, SwitchState> lastSwitchStates=null;
 		
+	private Integer lastPhase=null;
+	
+	private Integer nowPhase=null;
+	
 	private static final SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
 	
 	@PostConstruct
@@ -91,6 +104,12 @@ public class RulesTask {
 	@Scheduled(fixedDelay = 15000)
 	private void checkAndExecuteRules() {
 		nowRuleTime=new Date();
+		pl.net.oth.weedcontroller.model.Configuration nowPhaseConf=configurationService.getByKey(ConfigurationService.ACTUAL_PHASE);
+		if(nowPhaseConf==null) {
+			LOGGER.error("Brak zdefiniowanej fazy - przetwarznie reguł wstrzymane");			
+			return;
+		}
+		nowPhase=Integer.parseInt(nowPhaseConf.getValue());
 		if(sensorTask.getLastSuccesfullSensorResult()==null){
 			LOGGER.info("Brak rezultatów z sensora - przetwarznie reguł wstrzymane");
 			return;
@@ -100,6 +119,12 @@ public class RulesTask {
 			lastRuleTime=nowRuleTime;
 			return;
 		}
+		if(lastPhase==null) {
+			LOGGER.info("Brak poprzedniej fazy - przetwarznie reguł wstrzymane");
+			lastPhase=nowPhase;
+			return;
+			
+		}
 		GroovyShell gs=new GroovyShell();		
 	
 		fillGroovyShell(gs);
@@ -108,7 +133,7 @@ public class RulesTask {
 		
 		LOGGER.info("Weryfikacja taskow. Poprzedni czas: "+sdf.format(lastRuleTime)+" Aktualny czas: "+sdf.format(nowRuleTime));
 				
-		List<Rule> rules=ruleService.getAllActiveRules();
+		List<Rule> rules=ruleService.getAllActiveRulesByPhase(nowPhase);
 		for (Rule rule : rules) {
 			LOGGER.info("Weryfikacja warunków reguły nr "+rule.getId());
 			Boolean condition=null;
@@ -142,6 +167,8 @@ public class RulesTask {
 			gs.setVariable("TEMP_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getTemperature());
 			gs.setVariable("HUMI_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getHumidity());
 		}
+		gs.setVariable("LAST_PHASE", phaseService.getPhaseById(lastPhase).getName());
+		gs.setVariable("ACTUAL_PHASE", phaseService.getPhaseById(nowPhase).getName());
 	}
 
 	public void handleSMS(SMSMessage message) {
