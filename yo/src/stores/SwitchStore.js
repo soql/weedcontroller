@@ -26,7 +26,7 @@ class SwitchStore extends EventEmitter {
     
     switchChange(element){
     	console.log("Zmiana przelacznika "+element.gpioNumber+" na "+element.switchState);
-    	axios.get('setState?switchNumber='+element.gpioNumber+'&switchState='+element.switchState).then(response =>
+    	axios.get('setState?switchName='+element.switchName+'&switchState='+element.switchState).then(response =>
     	{
     		this.tick();
     	});
