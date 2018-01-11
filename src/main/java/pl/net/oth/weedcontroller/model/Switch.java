@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -12,14 +13,14 @@ import javax.persistence.Table;
 @Entity
 public class Switch {
 	@Id	
-	@Column
+	@Column(columnDefinition="varchar(255) default 'BRAK'")	
 	private String name;		
 	@Column
 	private Boolean revert;
 	@Column
 	private Double powerUsage;
 
-	@OneToMany(mappedBy="parent")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="parent")	
 	private List<SwitchGPIO> gpios;
 
 	public String getName() {

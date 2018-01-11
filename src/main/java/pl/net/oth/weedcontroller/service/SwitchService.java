@@ -115,10 +115,7 @@ public class SwitchService {
 		Switch switch1=getSwitchByName(name);
 		return getStateFromExternalController(switch1);		
 	}
-	
-	public Switch getSwitchByNumber(Integer id){
-		return switchDAO.getSwitchByNumber(id);
-	}
+		
 	public List<Integer> getSwitchesConfiguration(){
 		List<Switch> switches=switchDAO.getAllSwitches();
 		List<Integer> result=new ArrayList<Integer>();
@@ -130,12 +127,12 @@ public class SwitchService {
 		return result;
 	}
 	
-	public Boolean setSwitchState(Integer switchNumber, SwitchState state){		
-		LOGGER.info("Rzadanie zmiany przel. nr "+switchNumber+" na "+state+" przez uzytkownika "+getUser().getFullName());
-		Switch switch_=switchDAO.getSwitchByNumber(switchNumber);
+	public Boolean setSwitchState(String switchName, SwitchState state){		
+		LOGGER.info("Rzadanie zmiany przel. nr "+switchName+" na "+state+" przez uzytkownika "+getUser().getFullName());
+		Switch switch_=switchDAO.getSwitchByName(switchName);
 		publishEvent(switch_, state, getUser(), null);
 		/*logSwitchChange(switchNumber,state);*/
-		return gpioExternalController.setState(switchNumber.intValue(), state, switch_.getRevert().booleanValue());		
+		return setStateToExternalController(switch_, state);		
 	}
 	
 	

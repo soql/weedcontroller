@@ -38,16 +38,11 @@ public class SwitchDAO {
 		return (List<Switch>)query.getResultList();
 	}
 	
-	public Switch getSwitchByNumber(Integer number){
-		return em.find(Switch.class, number);
+	public Switch getSwitchByName(String name){
+		return em.find(Switch.class, name);
 	}
 
-	public Switch getSwitchByName(String name) {
-		Query query=em.createQuery("SELECT e FROM Switch e where e.name=:name");
-		LOGGER.debug("getSwitchByName "+name);
-		query.setParameter("name", name);
-		return (Switch) query.getResultList().get(0);
-	}
+	
 
 	public String getLastSwitchStateChangeUser(Switch switch_, SwitchState state) {
 		Query query=em.createQuery("SELECT e FROM SwitchLog e where e.switch_=:switch and e.state=:state and e.id=(select max(f.id) from SwitchLog f where f.switch_=:switch and f.state=:state)");
@@ -59,8 +54,8 @@ public class SwitchDAO {
 	}
 
 	public SwitchState getLastState(Switch switch_) {		
-			Query query=em.createQuery("SELECT e.state FROM SwitchLog e where e.switch_.gpioNumber=:gpioNumber and e.id=(SELECT max(f.id) FROM SwitchLog f where f.switch_.gpioNumber in :gpioNumber)");		
-			query.setParameter("gpioNumber", getGpioList(switch_));	
+			Query query=em.createQuery("SELECT e.state FROM SwitchLog e where e.switch_.name=:switchName and e.id=(SELECT max(f.id) FROM SwitchLog f where f.switch_.name in :switchName)");		
+			query.setParameter("switchName", switch_.getName());	
 			List result=query.getResultList();
 			if(result==null || result.size()==0)
 				return SwitchState.OFF;
@@ -68,8 +63,8 @@ public class SwitchDAO {
 	}
 
 	public Date getLastSwitchStateChangeTime(Switch switch_) {		
-		Query query=em.createQuery("SELECT e.date FROM SwitchLog e where e.switch_.gpioNumber=:gpioNumber and e.id=(SELECT max(f.id) FROM SwitchLog f where f.switch_.gpioNumber in :gpioNumber)");
-		query.setParameter("gpioNumber", getGpioList(switch_));
+		Query query=em.createQuery("SELECT e.date FROM SwitchLog e where e.switch_.name=:switchName and e.id=(SELECT max(f.id) FROM SwitchLog f where f.switch_.name in :switchName)");
+		query.setParameter("switchName", switch_.getName());
 		Date date=new Date(((Timestamp) query.getResultList().get(0)).getTime());
 		LOGGER.debug("getLastSwitchStateChangeTime "+date);
 		return date;

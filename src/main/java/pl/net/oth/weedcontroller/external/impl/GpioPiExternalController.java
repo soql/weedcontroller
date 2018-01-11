@@ -56,7 +56,7 @@ public class GpioPiExternalController implements GpioExternalController{
 		List<SwitchDTO> switchesWithLastState=switchService.getAllSwitchesWithLastStates();
 		for (SwitchDTO switchDTO : switchesWithLastState) {
 			LOGGER.info("PIN nr "+switchDTO.getGpioNumber()+ " ("+switchDTO.getName()+") ustawiamy na "+switchDTO.getState());
-			setState(switchDTO.getGpioNumber(), switchDTO.getState(), switchService.getSwitchByNumber(switchDTO.getGpioNumber()).getRevert());
+			setState(switchDTO.getGpioNumber(), switchDTO.getState(), switchService.getSwitchByName(switchDTO.getName()).getRevert());
 		}
 	}
 
