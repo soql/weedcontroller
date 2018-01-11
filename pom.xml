@@ -150,7 +150,7 @@
 					<password>deployerDGF#</password>
 					<server>tomcat-zjc</server>
 					<path>/</path>
-					<!-- <update>true</update>-->
+					<update>true</update>
 				</configuration>
 			</plugin>
 			<plugin>
