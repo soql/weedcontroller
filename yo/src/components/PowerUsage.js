@@ -35,7 +35,7 @@ class PowerUsage extends React.Component {
 	}
 	dateFromChange(moment){
 		console.log("Formatowanie "+moment);
-		this.setState({dateFrom: moment.format("x")})
+		this.setState({dateFrom: moment})
 	}
 	
 	dateToChange(moment){
