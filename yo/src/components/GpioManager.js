@@ -66,14 +66,14 @@ class GpioManager extends React.Component {
 							
 						</div>
 					</div>
-					<div className="col-1-3">  	
-						<BlockUi tag="div" blocking={this.state.blocking}>
+					<div className="col-1-3">  							
 						<div className="content">
-							{this.state.managedSwitches.map((element,i) => {
-								return this.renderOneSwitch(element)
-							})}
-						</div>
-						</BlockUi>
+							<BlockUi tag="div" blocking={this.state.blocking}>
+								{this.state.managedSwitches.map((element,i) => {
+									return this.renderOneSwitch(element)
+								})}
+							</BlockUi>
+						</div>						
 					</div>
 					<div className="col-1-3">
 		    			<div className="content">
