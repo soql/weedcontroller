@@ -276,9 +276,12 @@ public class SwitchService {
 		return new Double(0);
 	}
 
-	public Boolean setManagedSwitchState(Integer gpioNumber, Boolean active) {
-		switchDAO.updateGpioActive(gpioNumber, active.booleanValue());
+	public void mergeGpioStates() {
 		gpioExternalController.mergeGpioStates(getAllSwitchesWithLastStates());
+	}
+	public Boolean setManagedSwitchState(Integer gpioNumber, Boolean active) {
+		switchDAO.updateGpioActive(gpioNumber, active.booleanValue());	
+		mergeGpioStates();
 		return true;
 	}
 	

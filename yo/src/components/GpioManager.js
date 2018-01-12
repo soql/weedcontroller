@@ -46,15 +46,14 @@ class GpioManager extends React.Component {
 		  			</tr>);
 	  }
 	  renderOneSwitch(element){
-		  return (
-				  <BlockUi tag="div" blocking={this.state.blocking}>
+		  return (				  
 				  <table>
 				  <tr><td className="managedGpioParentText" colSpan="2">{element.name}</td></tr>
 				  {element.gpio.map((children, i) => {					  
 					  return this.renderChildren(children)
 				  })}				  
 				  </table>
-				  </BlockUi>);
+				  );
 	  }
 	render(){
 		this.state.managedSwitches.forEach((element) => {
@@ -62,12 +61,27 @@ class GpioManager extends React.Component {
 		  })
 		return (
 				<div className="grid grid-pad">
-					<div className="col-1-1">  					
-					{this.state.managedSwitches.map((element,i) => {
-						  return this.renderOneSwitch(element)
-					  })}
-					</div>       	      
-				</div>    
+					<div className="col-1-3">
+						<div className="content">
+							
+						</div>
+					</div>
+					<div className="col-1-3">  	
+						<BlockUi tag="div" blocking={this.state.blocking}>
+						<div className="content">
+							{this.state.managedSwitches.map((element,i) => {
+								return this.renderOneSwitch(element)
+							})}
+						</div>
+						</BlockUi>
+					</div>
+					<div className="col-1-3">
+		    			<div className="content">
+			    		
+		    			</div>
+		    		</div>
+				</div>  
+
 				);
 	}
 }
