@@ -3,8 +3,13 @@ require('normalize.css/normalize.css');
 require('styles/App.css');
 
 require('styles/simplegrid.css');
+
+require('slick-carousel/slick/slick.css');
+require('slick-carousel/slick/slick-theme.css');
+
 import axios from 'axios';
 import React from 'react';
+import Slider from 'react-slick';
 import LiveViewStore from'../stores/LiveViewStore';
  
 class LiveView extends React.Component {	
@@ -34,6 +39,15 @@ class LiveView extends React.Component {
 	  
 	  
   render () {
+	  var settings = {
+		      dots: false,
+		      infinite: true,
+		      speed: 2000,
+		      slidesToShow: 1,
+		      slidesToScroll: 1,
+		      autoplay: false,		      
+		      pauseOnHover: false
+		    };
 	let rows=[];	  	  
 	this.state.image.forEach((element) => {		
 	  rows.push(this.renderImage(element));				  
@@ -41,7 +55,11 @@ class LiveView extends React.Component {
     return (
     	<div className="grid grid-pad">
         	<div className="col-1-1">        		
-        		{rows}
+        	  <Slider ref={c => this.slider = c } {...settings}>
+		        	<div className="contentDiv">
+		        		{rows[0]}		        			       
+		        		</div>
+		      </Slider>
         	</div>       	      
         </div>      		       	
     );
