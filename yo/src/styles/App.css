@@ -58,6 +58,23 @@ body {
 	color: 	#de79d0;
 	text-align: center;
 }
+
+.managedGpioParentText {
+	font-size: 48px;
+	font-weight: bold;
+	color: 	#e9b96e;
+	text-align: left;
+}
+
+.managedGpioText {
+	font-size: 38px;
+	font-weight: bold;
+	color: 	#FFFFFF;
+	text-align: left;
+}
+.managedGpioCheckbox{
+	transform: scale(2.5)
+}
 .logTable{
 	border-collapse: collapse;
 }

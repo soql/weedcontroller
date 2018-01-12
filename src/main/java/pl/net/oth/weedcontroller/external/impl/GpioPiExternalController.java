@@ -26,6 +26,7 @@ import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.external.GpioExternalController;
 import pl.net.oth.weedcontroller.helpers.PinHelper;
 import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
+import pl.net.oth.weedcontroller.model.dto.SwitchGpioDTO;
 import pl.net.oth.weedcontroller.service.SwitchService;
 import pl.net.oth.weedcontroller.task.SensorTask;
 
@@ -55,8 +56,15 @@ public class GpioPiExternalController implements GpioExternalController{
 		LOGGER.info("Odtworzenie stanów PINów.");
 		List<SwitchDTO> switchesWithLastState=switchService.getAllSwitchesWithLastStates();
 		for (SwitchDTO switchDTO : switchesWithLastState) {
-			LOGGER.info("PIN nr "+switchDTO.getGpioNumber()+ " ("+switchDTO.getName()+") ustawiamy na "+switchDTO.getState());
-			setState(switchDTO.getGpioNumber(), switchDTO.getState(), switchService.getSwitchByName(switchDTO.getName()).getRevert());
+			for(SwitchGpioDTO switchGpioDTO: switchDTO.getGpio()) {
+				if(switchGpioDTO.getActive().booleanValue()) {
+					LOGGER.info("AKTYWNY PIN nr "+ switchGpioDTO.getGpioNumber()+ " ("+switchDTO.getName()+") ustawiamy na "+switchDTO.getState());
+					setState( switchGpioDTO.getGpioNumber(), switchDTO.getState(), switchService.getSwitchByName(switchDTO.getName()).getRevert());
+				}else {
+					LOGGER.info("NIEAKTYWNY PIN nr "+ switchGpioDTO.getGpioNumber()+ " ("+switchDTO.getName()+") ustawiamy na "+SwitchState.OFF);
+					setState( switchGpioDTO.getGpioNumber(), SwitchState.OFF, switchService.getSwitchByName(switchDTO.getName()).getRevert());
+				}
+			}
 		}
 	}
 
@@ -75,6 +83,7 @@ public class GpioPiExternalController implements GpioExternalController{
 	}
 	
 	public boolean setState(int gpioNumber, SwitchState switchState, boolean revert) {
+		LOGGER.info("Zmiana PINu nr "+gpioNumber+" na "+switchState);
 		if(switchState==getState(gpioNumber, revert)){
 			return false ;
 		}
@@ -94,6 +103,21 @@ public class GpioPiExternalController implements GpioExternalController{
 		
 		return true;
 	}
+	@Override
+	public void mergeGpioStates(List<SwitchDTO> allSwitches) {
+		for(SwitchDTO switch_:allSwitches) {
+			for(SwitchGpioDTO switchGPIO:switch_.getGpio()) {
+				SwitchState switchState=getState(switchGPIO.getGpioNumber(), switch_.getIsRevert());
+				if(switchGPIO.getActive()) {
+					setState(switchGPIO.getGpioNumber(), switch_.getState(), switch_.getIsRevert());
+				}else {
+					setState(switchGPIO.getGpioNumber(), SwitchState.OFF, switch_.getIsRevert());
+				}
+			}
+		}
+		
+	}
+	
 	@PreDestroy
 	public void destroy() {
 		LOGGER.info("Shutdown GPIO");

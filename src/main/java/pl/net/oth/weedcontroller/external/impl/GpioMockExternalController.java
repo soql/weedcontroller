@@ -24,7 +24,10 @@ import com.pi4j.io.gpio.RaspiPin;
 import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.external.GpioExternalController;
 import pl.net.oth.weedcontroller.helpers.PinHelper;
+import pl.net.oth.weedcontroller.model.Switch;
+import pl.net.oth.weedcontroller.model.SwitchGPIO;
 import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
+import pl.net.oth.weedcontroller.model.dto.SwitchGpioDTO;
 import pl.net.oth.weedcontroller.service.SwitchService;
 import pl.net.oth.weedcontroller.task.SensorTask;
 
@@ -54,8 +57,15 @@ public class GpioMockExternalController implements GpioExternalController{
 		LOGGER.info("Odtworzenie stanów PINów.");
 		List<SwitchDTO> switchesWithLastState=switchService.getAllSwitchesWithLastStates();
 		for (SwitchDTO switchDTO : switchesWithLastState) {
-			LOGGER.info("PIN nr "+switchDTO.getGpioNumber()+ " ("+switchDTO.getName()+") ustawiamy na "+switchDTO.getState());
-			setState(switchDTO.getGpioNumber(), switchDTO.getState(), switchService.getSwitchByName(switchDTO.getName()).getRevert());
+			for(SwitchGpioDTO switchGpioDTO: switchDTO.getGpio()) {
+				if(switchGpioDTO.getActive().booleanValue()) {
+					LOGGER.info("AKTYWNY PIN nr "+ switchGpioDTO.getGpioNumber()+ " ("+switchDTO.getName()+") ustawiamy na "+switchDTO.getState());
+					setState( switchGpioDTO.getGpioNumber(), switchDTO.getState(), switchService.getSwitchByName(switchDTO.getName()).getRevert());
+				}else {
+					LOGGER.info("NIEAKTYWNY PIN nr "+ switchGpioDTO.getGpioNumber()+ " ("+switchDTO.getName()+") ustawiamy na "+SwitchState.OFF);
+					setState( switchGpioDTO.getGpioNumber(), SwitchState.OFF, switchService.getSwitchByName(switchDTO.getName()).getRevert());
+				}
+			}
 		}
 	}
 
@@ -79,5 +89,29 @@ public class GpioMockExternalController implements GpioExternalController{
 	public void destroy() {
 		LOGGER.info("Shutdown GPIO");		
 		LOGGER.info("Pozytywny shutdown GPIO");
+	}
+
+	@Override
+	public void mergeGpioStates(List<SwitchDTO> allSwitches) {		
+		for(SwitchDTO switch_:allSwitches) {
+			for(SwitchGpioDTO switchGPIO:switch_.getGpio()) {
+				SwitchState realSwitchState=getState(switchGPIO.getGpioNumber(), switch_.getIsRevert());
+				if(switchGPIO.getActive()) {
+					if(!realSwitchState.equals(switch_.getState())) {
+						setState(switchGPIO.getGpioNumber(), switch_.getState(), switch_.getIsRevert());
+					}
+				}else {
+					setState(switchGPIO.getGpioNumber(), SwitchState.OFF, switch_.getIsRevert());
+				}
+			}
+		}
+		printMockStates();
+	}
+
+	private void printMockStates() {
+		for(Integer pin: gpioPinDigitalOutput.keySet()) {
+			LOGGER.debug("Stan pinu "+pin+" = "+gpioPinDigitalOutput.get(pin));
+		}
+		
 	}
 }

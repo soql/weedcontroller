@@ -30,6 +30,7 @@ import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.model.dto.PowerUsageDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
+import pl.net.oth.weedcontroller.model.dto.SwitchGpioDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchLogDTO;
 
 @Component
@@ -80,6 +81,28 @@ public class SwitchService {
 		return result;
 	}
 	
+	public List<SwitchDTO> getManagedSwitches(){
+		List<Switch> switches=switchDAO.getAllSwitches();
+		List<SwitchDTO> result=new ArrayList<SwitchDTO>();
+		for (Switch switch_ : switches) {
+			if(switch_.getGpios().size()>1) {
+				SwitchDTO switchDTO=new SwitchDTO();			
+				switchDTO.setName(switch_.getName());
+				switchDTO.setState(getStateFromExternalController(switch_));
+				switchDTO.setGpio(new ArrayList<SwitchGpioDTO>());
+				for(SwitchGPIO switchGPIO : switch_.getGpios()) {
+					SwitchGpioDTO switchGpioDTO=new SwitchGpioDTO();
+					switchGpioDTO.setActive(switchGPIO.isActive());
+					switchGpioDTO.setName(switchGPIO.getDescription());
+					switchGpioDTO.setGpioNumber(switchGPIO.getGpioNumber());
+					switchDTO.getGpio().add(switchGpioDTO);
+				}
+				result.add(switchDTO);	
+			}
+			
+		}
+		return result;
+	}
 	
 	private SwitchState getStateFromExternalController(Switch switch_) {
 		for(SwitchGPIO switchGPIO: switch_.getGpios()){
@@ -95,9 +118,18 @@ public class SwitchService {
 		List<Switch> switches=switchDAO.getAllSwitches();
 		List<SwitchDTO> result=new ArrayList<SwitchDTO>();
 		for (Switch switch_ : switches) {
-			SwitchDTO switchDTO=new SwitchDTO();			
+			SwitchDTO switchDTO=new SwitchDTO();	
 			switchDTO.setName(switch_.getName());
+			switchDTO.setIsRevert(switch_.getRevert());
 			switchDTO.setState(getLastState(switch_));
+			switchDTO.setGpio(new ArrayList<SwitchGpioDTO>());
+			for(SwitchGPIO switchGPIO : switch_.getGpios()) {
+				SwitchGpioDTO switchGpioDTO=new SwitchGpioDTO();
+				switchGpioDTO.setActive(switchGPIO.isActive());
+				switchGpioDTO.setGpioNumber(switchGPIO.getGpioNumber());
+				switchGpioDTO.setName(switchGPIO.getDescription());
+				switchDTO.getGpio().add(switchGpioDTO);
+			}
 			result.add(switchDTO);
 		}
 		return result;
@@ -243,7 +275,12 @@ public class SwitchService {
 		}
 		return new Double(0);
 	}
+
+	public Boolean setManagedSwitchState(Integer gpioNumber, Boolean active) {
+		switchDAO.updateGpioActive(gpioNumber, active.booleanValue());
+		gpioExternalController.mergeGpioStates(getAllSwitchesWithLastStates());
+		return true;
+	}
 	
-	
-	
+		
 }

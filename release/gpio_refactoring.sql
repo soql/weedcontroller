@@ -2,11 +2,12 @@ ALTER TABLE `weedcontroller`.`SwitchLog`
 ADD COLUMN `switch__name` VARCHAR(45) NULL AFTER `user_login`;
 
 update weedcontroller.SwitchLog sl set switch__name=(select name from Switch s where s.gpioNumber=sl.switch__gpioNumber);
-/*USUNĄC NAWILZACZ 2*/
+delete from weedcontroller.SwitchLog where switch__name='NAWILZACZ2';
 
 /*Odpalamy aplikację*/
 INSERT weedcontroller.SwitchGPIO SELECT gpioNumber, 1, name, name from weedcontroller.Switch;
-/*USUNĄC NAWILZACZ 2*/
+update weedcontroller.SwitchGPIO set parent_name='NAWILZACZ' where parent_name='NAWILZACZ2'
+delete from Switch where name='NAWILZACZ2'
 
 ALTER TABLE `weedcontroller`.`SwitchLog` 
 DROP FOREIGN KEY `FKf4ll1d36iuc9ryobjicoytxmo`;

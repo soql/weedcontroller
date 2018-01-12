@@ -33,6 +33,11 @@ public class SwitchDAO {
 		em.persist(switch_);
 	}	
 	
+	@Transactional
+	public void saveOrUpdate(SwitchGPIO switchGpio) {
+		em.persist(switchGpio);
+	}
+	
 	public List<Switch> getAllSwitches(){
 		Query query=em.createQuery("SELECT e FROM Switch e");
 		return (List<Switch>)query.getResultList();
@@ -69,12 +74,20 @@ public class SwitchDAO {
 		LOGGER.debug("getLastSwitchStateChangeTime "+date);
 		return date;
 	}
+	
 	private List<Integer> getGpioList(Switch switch_){
 		List<Integer> gpioList=new ArrayList<>();
 		for(SwitchGPIO switchGPIO : switch_.getGpios()) {
 			gpioList.add(switchGPIO.getGpioNumber());
 		}
 		return gpioList;
+	}
+	
+	@Transactional	
+	public void updateGpioActive(Integer gpioNumber, boolean active) {
+		SwitchGPIO switchGPIO=em.find(SwitchGPIO.class, gpioNumber);
+		switchGPIO.setActive(active);
+		saveOrUpdate(switchGPIO);
 	}
 	
 }
