@@ -1,6 +1,8 @@
 package pl.net.oth.weedcontroller.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -216,12 +219,13 @@ public class SwitchService {
 			String descr=switchLog.getSwitchGpio().getParent().getName()+"("+switchLog.getSwitchGpio().getDescription()+")";
 			result.add(new SwitchLogDTO(userName, descr, switchLog.getState(), switchLog.getDate(), SwitchLogDTO.LOG_SWITCH_GPIO));
 		}
-		result.sort(new Comparator<SwitchLogDTO>() {
+		Collections.sort(result,new Comparator<SwitchLogDTO>() {
 			@Override
 			public int compare(SwitchLogDTO o1, SwitchLogDTO o2) {				
 				return (int)(o2.getRealDate().getTime()-o1.getRealDate().getTime());
 			}
-		});		
+		});
+				
 		return result.subList(0, number);
 	}
 	public List<SwitchLog> getLogsForDate(Switch switch_, Date dateFrom, Date DateTo){
