@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.model.Switch;
+import pl.net.oth.weedcontroller.model.SwitchGpioLog;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 
 @Component
@@ -30,12 +31,23 @@ public class SwitchLogDAO {
 		em.persist(switchLog);
 	}
 	
+	@Transactional
+	public void persist(SwitchGpioLog switchLog){
+		em.persist(switchLog);
+	}
+	
 	public List<SwitchLog> getSwitchLog(int number){
 		Query query=em.createQuery("SELECT e FROM SwitchLog e order by id desc");
 		query.setMaxResults(number);
 		return (List<SwitchLog>)query.getResultList();
 	}
 
+	public List<SwitchGpioLog> getSwitchGpioLog(int number){
+		Query query=em.createQuery("SELECT e FROM SwitchGpioLog e order by id desc");
+		query.setMaxResults(number);
+		return (List<SwitchGpioLog>)query.getResultList();
+	}
+	
 	public List<SwitchLog> getLogsForDate(Switch switch_, Date dateFrom, Date dateTo) {
 		List<SwitchLog> resultsToReturn=new ArrayList<>();
 		Query query=em.createQuery("SELECT e FROM SwitchLog e where e.switch_=:switch and e.date>:dateFrom and e.date<=:dateTo order by e.id asc");

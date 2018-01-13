@@ -89,5 +89,9 @@ public class SwitchDAO {
 		switchGPIO.setActive(active);
 		saveOrUpdate(switchGPIO);
 	}
+
+	public SwitchGPIO getSwitchGpioByNumber(Integer gpioNumber) {
+		return em.find(SwitchGPIO.class, gpioNumber);
+	}
 	
 }

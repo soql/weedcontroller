@@ -1,6 +1,7 @@
 package pl.net.oth.weedcontroller.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -20,12 +21,14 @@ import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.dao.SwitchDAO;
 import pl.net.oth.weedcontroller.dao.SwitchLogDAO;
 import pl.net.oth.weedcontroller.dao.UserDAO;
+import pl.net.oth.weedcontroller.event.ChangeSwitchGpioStateEvent;
 import pl.net.oth.weedcontroller.event.ChangeSwitchStateEvent;
 import pl.net.oth.weedcontroller.external.GpioExternalController;
 import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.Configuration;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.SwitchGPIO;
+import pl.net.oth.weedcontroller.model.SwitchGpioLog;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.model.dto.PowerUsageDTO;
@@ -162,16 +165,14 @@ public class SwitchService {
 	public Boolean setSwitchState(String switchName, SwitchState state){		
 		LOGGER.info("Rzadanie zmiany przel. nr "+switchName+" na "+state+" przez uzytkownika "+getUser().getFullName());
 		Switch switch_=switchDAO.getSwitchByName(switchName);
-		publishEvent(switch_, state, getUser(), null);
-		/*logSwitchChange(switchNumber,state);*/
+		publishSwitchStateEvent(switch_, state, getUser(), null);		
 		return setStateToExternalController(switch_, state);		
 	}
 	
 	
 	public Boolean setSwitchState(Switch switch_, SwitchState state, String ruleUser){		
 		LOGGER.info("Rzadanie zmiany przel. nr "+switch_.getName()+" na "+state+" przez rolę  "+ruleUser);				
-		publishEvent(switch_, state, null, ruleUser);
-		/*logSwitchChange(switchNumber,state);*/
+		publishSwitchStateEvent(switch_, state, null, ruleUser);		
 		return setStateToExternalController(switch_, state);		
 	}
 	public Boolean setStateToExternalController(Switch switch_, SwitchState state) {
@@ -186,12 +187,15 @@ public class SwitchService {
 		return result;
 	}
 	
-	private void publishEvent(Switch switch_, SwitchState state, User user, String ruleUser) {		
+	private void publishSwitchStateEvent(Switch switch_, SwitchState state, User user, String ruleUser) {		
 		ChangeSwitchStateEvent csse=new ChangeSwitchStateEvent(this, switch_, state, user, ruleUser);
 		applicationEventPublisher.publishEvent(csse);
 	}
 
-
+	private void publishSwitchGpioStateEvent(SwitchGPIO switchGpio_, SwitchState state, User user, String ruleUser) {		
+		ChangeSwitchGpioStateEvent csse=new ChangeSwitchGpioStateEvent(this, switchGpio_, state, user, ruleUser);
+		applicationEventPublisher.publishEvent(csse);
+	}
 	private User getUser(){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    String name = auth.getName(); 
@@ -200,12 +204,25 @@ public class SwitchService {
 	
 	public List<SwitchLogDTO> getLogs(int number){
 		List<SwitchLog> switchLogs=switchLogDAO.getSwitchLog(number);
+		List<SwitchGpioLog> switchGpioLogs=switchLogDAO.getSwitchGpioLog(number);
+		
 		List<SwitchLogDTO> result=new ArrayList<SwitchLogDTO>();
 		for (SwitchLog switchLog : switchLogs) {
 			String userName=switchLog.getUser()!=null?switchLog.getUser().getFullName():switchLog.getRuleUser();
-			result.add(new SwitchLogDTO(userName, switchLog.getSwitch_().getName(), switchLog.getState(), switchLog.getDate()));
+			result.add(new SwitchLogDTO(userName, switchLog.getSwitch_().getName(), switchLog.getState(), switchLog.getDate(), SwitchLogDTO.LOG_SWITCH));
 		}
-		return result;
+		for (SwitchGpioLog switchLog : switchGpioLogs) {
+			String userName=switchLog.getUser()!=null?switchLog.getUser().getFullName():switchLog.getRuleUser();
+			String descr=switchLog.getSwitchGpio().getParent().getName()+"("+switchLog.getSwitchGpio().getDescription()+")";
+			result.add(new SwitchLogDTO(userName, descr, switchLog.getState(), switchLog.getDate(), SwitchLogDTO.LOG_SWITCH_GPIO));
+		}
+		result.sort(new Comparator<SwitchLogDTO>() {
+			@Override
+			public int compare(SwitchLogDTO o1, SwitchLogDTO o2) {				
+				return (int)(o2.getRealDate().getTime()-o1.getRealDate().getTime());
+			}
+		});		
+		return result.subList(0, number);
 	}
 	public List<SwitchLog> getLogsForDate(Switch switch_, Date dateFrom, Date DateTo){
 		return switchLogDAO.getLogsForDate(switch_, dateFrom, DateTo);
@@ -279,8 +296,13 @@ public class SwitchService {
 	public void mergeGpioStates() {
 		gpioExternalController.mergeGpioStates(getAllSwitchesWithLastStates());
 	}
-	public Boolean setManagedSwitchState(Integer gpioNumber, Boolean active) {
-		switchDAO.updateGpioActive(gpioNumber, active.booleanValue());	
+	public Boolean setManagedSwitchState(Integer gpioNumber, Boolean active) {		
+		SwitchState switchState=active?SwitchState.ON:SwitchState.OFF;
+	
+		LOGGER.info("Rzadanie zmiany przel. GPIO nr "+gpioNumber+" na "+switchState+" przez uzytkownika "+getUser().getFullName());
+		SwitchGPIO switchGPIO=switchDAO.getSwitchGpioByNumber(gpioNumber);
+		publishSwitchGpioStateEvent(switchGPIO, switchState, getUser(), null);
+		switchDAO.updateGpioActive(gpioNumber, active.booleanValue());		
 		mergeGpioStates();
 		return true;
 	}
