@@ -67,7 +67,7 @@ class Main extends React.Component {
 		 sendState='ON';
 	 }
 	 this.toggleBlocking(true);
-	 AppActions.switchChange({switchState: sendState, gpioNumber:element.gpioNumber});	 			 
+	 AppActions.switchChange({switchState: sendState, switchName:element.name});	 			 
   }
   
   
@@ -80,7 +80,7 @@ class Main extends React.Component {
 			  <tr>
 			  <td className="switchText">{element.name}</td>
 			  <td className="switchTd">			  	
-			  		<div id={element.gpioNumber} className={classNameStr} onClick={this.onButtonClick.bind(this, element)}></div>			  		
+			  		<div id={element.name} className={classNameStr} onClick={this.onButtonClick.bind(this, element)}></div>			  		
 			  </td>			  
 			  </tr>
 			  );

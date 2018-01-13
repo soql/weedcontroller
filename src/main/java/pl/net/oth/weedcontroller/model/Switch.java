@@ -1,30 +1,27 @@
 package pl.net.oth.weedcontroller.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 public class Switch {
-	@Id
-	@Column
-	private int gpioNumber;
-	@Column
+	@Id	
+	@Column(columnDefinition="varchar(255) default 'BRAK'")	
 	private String name;		
 	@Column
 	private Boolean revert;
 	@Column
 	private Double powerUsage;
 
-	public int getGpioNumber() {
-		return gpioNumber;
-	}
-
-	public void setGpioNumber(int gpioNumber) {
-		this.gpioNumber = gpioNumber;
-	}
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="parent")	
+	private List<SwitchGPIO> gpios;
 
 	public String getName() {
 		return name;
@@ -48,5 +45,15 @@ public class Switch {
 
 	public void setPowerUsage(Double powerUsage) {
 		this.powerUsage = powerUsage;
-	}		
+	}
+	
+	public List<SwitchGPIO> getGpios() {
+		return gpios;
+	}
+
+	public void setGpios(List<SwitchGPIO> gpios) {
+		this.gpios = gpios;
+	}	
+	
+	
 }

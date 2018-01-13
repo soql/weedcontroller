@@ -103,6 +103,7 @@ public class RulesTask {
 	
 	@Scheduled(fixedDelay = 15000)
 	private void checkAndExecuteRules() {
+		switchService.mergeGpioStates();
 		nowRuleTime=new Date();
 		pl.net.oth.weedcontroller.model.Configuration nowPhaseConf=configurationService.getByKey(ConfigurationService.ACTUAL_PHASE);
 		if(nowPhaseConf==null) {
