@@ -14,6 +14,18 @@ class AppActions {
             value: data
         });
     } 
+    managedSwitchChange(data){
+    	AppDispatcher.dispatch({
+            actionType: 'MANAGED_SWITCH_CHANGE',
+            value: data
+        });
+    }
+    managedSwitchesChanged(data){
+    	  AppDispatcher.dispatch({
+              actionType: 'MANAGED_SWITCHES_READED',
+              value: data
+          });
+    }
     sensorChanged(data){
     	AppDispatcher.dispatch({
             actionType: 'SENSOR_CHANGED',
@@ -48,6 +60,12 @@ class AppActions {
     actualPhaseChanged(data){
     	AppDispatcher.dispatch({
             actionType: 'ACTUAL_PHASE_CHANGED',
+            value: data
+        });
+    }
+    switchesConfChanged(data){
+    	AppDispatcher.dispatch({
+            actionType: 'SWITCHES_CONF_CHANGED',
             value: data
         });
     }

@@ -9,6 +9,7 @@ class ConfigurationStore extends EventEmitter {
 	        this.dispatchToken = AppDispatcher.register(this.dispatcherCallback.bind(this));
 	        this.getConfigAsDate("START_DATE");  
 	        this.readActualPhase();
+	        this.readSwitchesConfiguration();
 	    }    
 	 startTimer () {
 	        clearInterval(this.timer)
@@ -49,11 +50,21 @@ class ConfigurationStore extends EventEmitter {
 	  	    	AppActions.actualPhaseChanged();
 	  	    }); 	    	
 	    }
+	    readSwitchesConfiguration(){
+	    	 axios.get('getSwitchesConfiguration').then(res => {
+	   	    	this.switchesConf = res.data;
+	   	    }).then(res => {
+	  	    	AppActions.switchesConfChanged();
+	  	    }); 	    	
+	    }
 	    getStartDate(){
 	    	return this.startDate;
 	    }
 	    getActualPhase(){
 	    	return this.actualPhase;
+	    }
+	    getSwitchesConfiguration(){
+	    	return this.switchesConf;
 	    }
 	   
 }

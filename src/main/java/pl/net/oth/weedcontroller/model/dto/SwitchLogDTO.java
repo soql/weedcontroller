@@ -6,22 +6,29 @@ import java.util.Date;
 import pl.net.oth.weedcontroller.SwitchState;
 
 public class SwitchLogDTO {
+	public static final int LOG_SWITCH=0;
+	public static final int LOG_SWITCH_GPIO=1;
 	private String userName;
 	private String switchName;
+	private String switchGpio;
 	private SwitchState switchState;		
-	private String date;
-	
+	private Date realDate;
+	private String date;	
 	private static SimpleDateFormat sdf=new SimpleDateFormat("MM-dd HH:mm:ss");
-			
+	private int logType;		
+	
 	public SwitchLogDTO() {
 		
 	}
-	public SwitchLogDTO(String userName, String switchName, SwitchState switchState, Date date) {
+	public SwitchLogDTO(String userName, String switchName, SwitchState switchState, Date date, int logType, String switchGpio) {
 		super();
 		this.userName = userName;
 		this.switchName = switchName;
 		this.switchState = switchState;
 		this.date = sdf.format(date);
+		this.realDate=date;
+		this.logType=logType;
+		this.switchGpio=switchGpio;
 	}
 	public String getUserName() {
 		return userName;
@@ -46,5 +53,23 @@ public class SwitchLogDTO {
 	}
 	public void setDate(String date) {
 		this.date = date;
-	}	
+	}
+	public Date getRealDate() {
+		return realDate;
+	}
+	public void setRealDate(Date realDate) {
+		this.realDate = realDate;
+	}
+	public int getLogType() {
+		return logType;
+	}
+	public void setLogType(int logType) {
+		this.logType = logType;
+	}
+	public String getSwitchGpio() {
+		return switchGpio;
+	}
+	public void setSwitchGpio(String switchGpio) {
+		this.switchGpio = switchGpio;
+	}			
 }

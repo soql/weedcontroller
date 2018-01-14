@@ -1,17 +1,15 @@
 package pl.net.oth.weedcontroller.model.dto;
 
+import java.util.List;
+
 import pl.net.oth.weedcontroller.SwitchState;
 
-public class SwitchDTO {
-	private int gpioNumber;
+public class SwitchDTO {	
 	private String name;
-	private SwitchState state;
-	public int getGpioNumber() {
-		return gpioNumber;
-	}
-	public void setGpioNumber(int gpioNumber) {
-		this.gpioNumber = gpioNumber;
-	}
+	private SwitchState state;	
+	private Boolean isRevert;
+	private List<SwitchGpioDTO> gpio;
+	
 	public String getName() {
 		return name;
 	}
@@ -23,5 +21,21 @@ public class SwitchDTO {
 	}
 	public void setState(SwitchState state) {
 		this.state = state;
-	}	
+	}
+	
+	public List<SwitchGpioDTO> getGpio() {
+		return gpio;
+	}
+	public void setGpio(List<SwitchGpioDTO> gpio) {
+		this.gpio = gpio;
+	}
+	public Boolean getIsRevert() {
+		return isRevert;
+	}
+	public void setIsRevert(Boolean isRevert) {
+		this.isRevert = isRevert;
+	}
+	
+	
+	
 }

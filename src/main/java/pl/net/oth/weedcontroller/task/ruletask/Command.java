@@ -76,7 +76,7 @@ public class Command {
 	
 	public boolean setSwitchState(String switchName, String targetState, String userName){
 		Switch s=switchService.getSwitchByName(switchName);		
-		return switchService.setSwitchState(s.getGpioNumber(), SwitchState.valueOf(targetState), userName);		
+		return switchService.setSwitchState(s, SwitchState.valueOf(targetState), userName);		
 	}	
 	
 	public boolean csnc(String switchName, SwitchState state){

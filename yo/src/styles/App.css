@@ -58,6 +58,23 @@ body {
 	color: 	#de79d0;
 	text-align: center;
 }
+
+.managedGpioParentText {
+	font-size: 48px;
+	font-weight: bold;
+	color: 	#e9b96e;
+	text-align: left;
+}
+
+.managedGpioText {
+	font-size: 38px;
+	font-weight: bold;
+	color: 	#FFFFFF;
+	text-align: left;
+}
+.managedGpioCheckbox{
+	transform: scale(2.5)
+}
 .logTable{
 	border-collapse: collapse;
 }
@@ -68,20 +85,13 @@ body {
     padding-left: 4px;
     padding-right: 4px;
 }
-.logTableTd-red{
-	border: 1px solid black;
-	color: #FF0000;
+.logTableTd{
+	border: 1px solid black;	
 	text-align: center;
     padding-left: 4px;
     padding-right: 4px;
 }
-.logTableTd-green{
-	border: 1px solid black;
-	color: #008000;
-	text-align: center;
-    padding-left: 4px;
-    padding-right: 4px;
-}
+
 .allCostTd{
 	border: 1px solid black;
 	color: #a90000;

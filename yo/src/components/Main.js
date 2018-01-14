@@ -20,7 +20,7 @@ class Main extends React.Component {
     this.state = {blocking: false, 
     	switches: SwitchStore.getSwitches(), 
     	sensors: SensorStore.getSensors(),
-    	actualPhase: ConfigurationStore.getActualPhase()
+    	actualPhase: ConfigurationStore.getActualPhase()    	
     	};
     }  
      
@@ -30,6 +30,7 @@ class Main extends React.Component {
 	  SwitchStore.addChangeListener('STORE_SWITCH_CHANGED', this.switchChanged.bind(this));	  
 	  SwitchStore.addChangeListener('STORE_SENSOR_CHANGED', this.sensorChanged.bind(this));	  	  
 	  ConfigurationStore.addChangeListener('STORE_ACTUAL_PHASE_CHANGED', this.actualPhaseChaged.bind(this));
+	  
 	  SwitchStore.tick();
 	  ConfigurationStore.tick();
   }
@@ -41,7 +42,6 @@ class Main extends React.Component {
 	  this.toggleBlocking(false);
 	  this.setState({switches: SwitchStore.getSwitches()});	 
   }   
-
   
   actualPhaseChaged(){
 	  console.log("actualPhaseChaged "+ConfigurationStore.getActualPhase());
@@ -67,7 +67,7 @@ class Main extends React.Component {
 		 sendState='ON';
 	 }
 	 this.toggleBlocking(true);
-	 AppActions.switchChange({switchState: sendState, gpioNumber:element.gpioNumber});	 			 
+	 AppActions.switchChange({switchState: sendState, switchName:element.name});	 			 
   }
   
   
@@ -80,7 +80,7 @@ class Main extends React.Component {
 			  <tr>
 			  <td className="switchText">{element.name}</td>
 			  <td className="switchTd">			  	
-			  		<div id={element.gpioNumber} className={classNameStr} onClick={this.onButtonClick.bind(this, element)}></div>			  		
+			  		<div id={element.name} className={classNameStr} onClick={this.onButtonClick.bind(this, element)}></div>			  		
 			  </td>			  
 			  </tr>
 			  );
