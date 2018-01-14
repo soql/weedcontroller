@@ -1,8 +1,12 @@
 package pl.net.oth.weedcontroller.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class User {
@@ -19,6 +23,9 @@ public class User {
 	private String phoneNumber;
 	@Column
 	private Boolean sendSMS;
+	
+	@ManyToMany(mappedBy = "users")    
+	private List<Role> roles;
 	
 	public String getLogin() {
 		return login;
