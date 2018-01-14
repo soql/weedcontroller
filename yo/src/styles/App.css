@@ -85,20 +85,13 @@ body {
     padding-left: 4px;
     padding-right: 4px;
 }
-.logTableTd-red{
-	border: 1px solid black;
-	color: #FF0000;
+.logTableTd{
+	border: 1px solid black;	
 	text-align: center;
     padding-left: 4px;
     padding-right: 4px;
 }
-.logTableTd-green{
-	border: 1px solid black;
-	color: #008000;
-	text-align: center;
-    padding-left: 4px;
-    padding-right: 4px;
-}
+
 .allCostTd{
 	border: 1px solid black;
 	color: #a90000;

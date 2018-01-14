@@ -63,6 +63,12 @@ class AppActions {
             value: data
         });
     }
+    switchesConfChanged(data){
+    	AppDispatcher.dispatch({
+            actionType: 'SWITCHES_CONF_CHANGED',
+            value: data
+        });
+    }
 }
 
 export default new AppActions() 

@@ -10,6 +10,7 @@ public class SwitchLogDTO {
 	public static final int LOG_SWITCH_GPIO=1;
 	private String userName;
 	private String switchName;
+	private String switchGpio;
 	private SwitchState switchState;		
 	private Date realDate;
 	private String date;	
@@ -19,7 +20,7 @@ public class SwitchLogDTO {
 	public SwitchLogDTO() {
 		
 	}
-	public SwitchLogDTO(String userName, String switchName, SwitchState switchState, Date date, int logType) {
+	public SwitchLogDTO(String userName, String switchName, SwitchState switchState, Date date, int logType, String switchGpio) {
 		super();
 		this.userName = userName;
 		this.switchName = switchName;
@@ -27,6 +28,7 @@ public class SwitchLogDTO {
 		this.date = sdf.format(date);
 		this.realDate=date;
 		this.logType=logType;
+		this.switchGpio=switchGpio;
 	}
 	public String getUserName() {
 		return userName;
@@ -64,6 +66,10 @@ public class SwitchLogDTO {
 	public void setLogType(int logType) {
 		this.logType = logType;
 	}
-	
-	
+	public String getSwitchGpio() {
+		return switchGpio;
+	}
+	public void setSwitchGpio(String switchGpio) {
+		this.switchGpio = switchGpio;
+	}			
 }

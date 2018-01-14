@@ -35,6 +35,7 @@ import pl.net.oth.weedcontroller.model.SwitchGpioLog;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.model.dto.PowerUsageDTO;
+import pl.net.oth.weedcontroller.model.dto.SwitchConfigurationDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchGpioDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchLogDTO;
@@ -212,12 +213,12 @@ public class SwitchService {
 		List<SwitchLogDTO> result=new ArrayList<SwitchLogDTO>();
 		for (SwitchLog switchLog : switchLogs) {
 			String userName=switchLog.getUser()!=null?switchLog.getUser().getFullName():switchLog.getRuleUser();
-			result.add(new SwitchLogDTO(userName, switchLog.getSwitch_().getName(), switchLog.getState(), switchLog.getDate(), SwitchLogDTO.LOG_SWITCH));
+			result.add(new SwitchLogDTO(userName, switchLog.getSwitch_().getName(), switchLog.getState(), switchLog.getDate(), SwitchLogDTO.LOG_SWITCH, null));
 		}
 		for (SwitchGpioLog switchLog : switchGpioLogs) {
 			String userName=switchLog.getUser()!=null?switchLog.getUser().getFullName():switchLog.getRuleUser();
-			String descr=switchLog.getSwitchGpio().getParent().getName()+"("+switchLog.getSwitchGpio().getDescription()+")";
-			result.add(new SwitchLogDTO(userName, descr, switchLog.getState(), switchLog.getDate(), SwitchLogDTO.LOG_SWITCH_GPIO));
+			String descr=switchLog.getSwitchGpio().getParent().getName();
+			result.add(new SwitchLogDTO(userName, descr, switchLog.getState(), switchLog.getDate(), SwitchLogDTO.LOG_SWITCH_GPIO, switchLog.getSwitchGpio().getDescription()));
 		}
 		Collections.sort(result,new Comparator<SwitchLogDTO>() {
 			@Override
@@ -309,6 +310,18 @@ public class SwitchService {
 		switchDAO.updateGpioActive(gpioNumber, active.booleanValue());		
 		mergeGpioStates();
 		return true;
+	}
+
+	public List<SwitchConfigurationDTO> getSwitchesCSSConfiguration() {
+		List<Switch> switches = switchDAO.getAllSwitches();
+		List<SwitchConfigurationDTO> result=new ArrayList<>();
+		for(Switch switch1:switches) {
+			SwitchConfigurationDTO switchConfiguration=new SwitchConfigurationDTO();
+			switchConfiguration.setName(switch1.getName());
+			switchConfiguration.setColor(switch1.getColor());
+			result.add(switchConfiguration);
+		}
+		return result;
 	}
 	
 		
