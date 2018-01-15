@@ -97,12 +97,12 @@ public class Command {
 	public int getLastSwitchStateChangeTime(String switchName){
 		return switchService.getLastSwitchStateChangeTime(switchName);
 	}
-	public float gav(String type, String func, Integer hours){
-		return getAggregatedValue(type, func, hours).floatValue();
+	public float gav(String type, String func, Integer minutes){
+		return getAggregatedValue(type, func, minutes).floatValue();
 	}
 	
-	public String gavAS(String type, String func, Integer hours){
-		return getAggregatedValueAsString(type, func, hours);
+	public String gavAS(String type, String func, Integer minutes){
+		return getAggregatedValueAsString(type, func, minutes);
 	}
 	
 	public long getLastInternetConnection() {
