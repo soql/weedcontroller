@@ -40,7 +40,7 @@ class LiveView extends React.Component {
 	  
   render () {
 	  var settings = {
-		      dots: false,
+		      dots: true,
 		      infinite: true,
 		      speed: 2000,
 		      slidesToShow: 1,
@@ -58,7 +58,10 @@ class LiveView extends React.Component {
         	  <Slider ref={c => this.slider = c } {...settings}>
 		        	<div className="contentDiv">
 		        		{rows[0]}		        			       
-		        		</div>
+		        	</div>
+		        	<div className="contentDiv">
+	        			{rows[1]}		        			       
+	        	</div>
 		      </Slider>
         	</div>       	      
         </div>      		       	
