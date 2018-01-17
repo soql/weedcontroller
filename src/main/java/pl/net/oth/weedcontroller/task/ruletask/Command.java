@@ -126,7 +126,9 @@ public class Command {
 		}
 		Date dateFrom=new Date(new Date().getTime()-(1000*60*minutes.intValue()));
 		Date dateTo=new Date();
-		return sensorResultService.getAggregatedValue(type, func,dateFrom, dateTo, sensorService.getSensorByNumber(1));
+		Float result=sensorResultService.getAggregatedValue(type, func,dateFrom, dateTo, sensorService.getSensorByNumber(1));
+		LOGGER.debug("getAggregatedValue ("+type+","+func+","+minutes+"): "+result);
+		return result;
 	}
 	public String getAggregatedValueAsString(String type, String func, Integer minutes){
 		return String.valueOf(new DecimalFormat("0.00##").format(getAggregatedValue(type, func, minutes)));

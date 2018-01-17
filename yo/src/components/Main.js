@@ -20,7 +20,8 @@ class Main extends React.Component {
     this.state = {blocking: false, 
     	switches: SwitchStore.getSwitches(), 
     	sensors: SensorStore.getSensors(),
-    	actualPhase: ConfigurationStore.getActualPhase()    	
+    	actualPhase: ConfigurationStore.getActualPhase(),
+    	switchesConf: ConfigurationStore.readSwitchesConfiguration()	
     	};
     }  
      
@@ -30,11 +31,13 @@ class Main extends React.Component {
 	  SwitchStore.addChangeListener('STORE_SWITCH_CHANGED', this.switchChanged.bind(this));	  
 	  SwitchStore.addChangeListener('STORE_SENSOR_CHANGED', this.sensorChanged.bind(this));	  	  
 	  ConfigurationStore.addChangeListener('STORE_ACTUAL_PHASE_CHANGED', this.actualPhaseChaged.bind(this));
-	  
+	  ConfigurationStore.addChangeListener('STORE_SWITCHES_CONF_CHANGED', this.switchesConfChaged.bind(this));	  
 	  SwitchStore.tick();
 	  ConfigurationStore.tick();
   }
- 
+  switchesConfChaged(){
+	  this.setState({switchesConf: ConfigurationStore.getSwitchesConfiguration()}); 
+  }
   componentWillUnmount(){
 	  SwitchStore.stopTimer();
   }
@@ -69,6 +72,9 @@ class Main extends React.Component {
 	 this.toggleBlocking(true);
 	 AppActions.switchChange({switchState: sendState, switchName:element.name});	 			 
   }
+  onSwitchClick(element){
+	  console.log("CLICKED");
+  }
   
   
   renderSwitch(element){
@@ -78,9 +84,11 @@ class Main extends React.Component {
 	  };
 	  return (
 			  <tr>
-			  <td className="switchText">{element.name}</td>
+			  <td className="switchText">
+			  	<div id={element.name+"_log"} onClick={this.onSwitchClick.bind(this,element)}>
+			  		{element.name}</div></td>
 			  <td className="switchTd">			  	
-			  		<div id={element.name} className={classNameStr} onClick={this.onButtonClick.bind(this, element)}></div>			  		
+			  		<div id={element.name+"_switch"} className={classNameStr} onClick={this.onButtonClick.bind(this, element)}></div>			  		
 			  </td>			  
 			  </tr>
 			  );
