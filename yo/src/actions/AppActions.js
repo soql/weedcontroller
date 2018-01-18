@@ -69,6 +69,18 @@ class AppActions {
             value: data
         });
     }
+    switchesLogConfChanged(data){
+    	AppDispatcher.dispatch({
+            actionType: 'SWITCHES_LOG_CONF_CHANGED',
+            value: data
+        });
+    }
+    oneSwitchLogChange(data){
+    	AppDispatcher.dispatch({
+            actionType: 'SWITCHES_SWITCH_LOG_CHANGE',
+            value: data
+        });
+    }
 }
 
 export default new AppActions() 

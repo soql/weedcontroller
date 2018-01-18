@@ -21,7 +21,7 @@ class Main extends React.Component {
     	switches: SwitchStore.getSwitches(), 
     	sensors: SensorStore.getSensors(),
     	actualPhase: ConfigurationStore.getActualPhase(),
-    	switchesConf: ConfigurationStore.readSwitchesConfiguration()	
+    	switchesLogConf: ConfigurationStore.getSwitchesConfiguration()	
     	};
     }  
      
@@ -31,12 +31,15 @@ class Main extends React.Component {
 	  SwitchStore.addChangeListener('STORE_SWITCH_CHANGED', this.switchChanged.bind(this));	  
 	  SwitchStore.addChangeListener('STORE_SENSOR_CHANGED', this.sensorChanged.bind(this));	  	  
 	  ConfigurationStore.addChangeListener('STORE_ACTUAL_PHASE_CHANGED', this.actualPhaseChaged.bind(this));
-	  ConfigurationStore.addChangeListener('STORE_SWITCHES_CONF_CHANGED', this.switchesConfChaged.bind(this));	  
+	  ConfigurationStore.addChangeListener('STORE_SWITCHES_LOG_CONF_CHANGED', this.switchesLogConfChanged.bind(this));	  
+	  ConfigurationStore.addChangeListener('STORE_SWITCHES_SWITCH_LOG_CHANGE', this.switchesLogConfChanged.bind(this));
 	  SwitchStore.tick();
 	  ConfigurationStore.tick();
   }
-  switchesConfChaged(){
-	  this.setState({switchesConf: ConfigurationStore.getSwitchesConfiguration()}); 
+  switchesLogConfChanged(){
+	  this.setState({switchesLogConf: 
+		  ConfigurationStore.getSwitchesConfiguration()
+		 }); 
   }
   componentWillUnmount(){
 	  SwitchStore.stopTimer();
@@ -46,8 +49,7 @@ class Main extends React.Component {
 	  this.setState({switches: SwitchStore.getSwitches()});	 
   }   
   
-  actualPhaseChaged(){
-	  console.log("actualPhaseChaged "+ConfigurationStore.getActualPhase());
+  actualPhaseChaged(){	  
 	this.setState({actualPhase: ConfigurationStore.getActualPhase()});  
   }
   
@@ -72,8 +74,12 @@ class Main extends React.Component {
 	 this.toggleBlocking(true);
 	 AppActions.switchChange({switchState: sendState, switchName:element.name});	 			 
   }
+  
   onSwitchClick(element){
-	  console.log("CLICKED");
+	  console.log(this.state.switchesLogConf);
+	  let oneSwitchLogConf=this.state.switchesLogConf.find(e => {return e.name==element.name});
+	  AppActions.oneSwitchLogChange({switchName: element.name, switchLogState: !oneSwitchLogConf.activeLog});
+	 
   }
   
   
@@ -82,9 +88,16 @@ class Main extends React.Component {
 	  if(element.state=='ON'){
 		  classNameStr+=" switchOn" 
 	  };
+	  let oneSwitchLogConf=this.state.switchesLogConf.find(e => {return e.name==element.name});
+	  let switchClassNameStr="switchText_log_";
+	  if(oneSwitchLogConf.activeLog){
+		  switchClassNameStr+="on"; 
+	  }else{
+		  switchClassNameStr+="off"; 
+	  }
 	  return (
 			  <tr>
-			  <td className="switchText">
+			  <td className={switchClassNameStr}>
 			  	<div id={element.name+"_log"} onClick={this.onSwitchClick.bind(this,element)}>
 			  		{element.name}</div></td>
 			  <td className="switchTd">			  	
@@ -94,7 +107,11 @@ class Main extends React.Component {
 			  );
   }
   
-  renderSwitches(){	  
+  renderSwitches(){
+	  if(!this.state.switchesLogConf){
+		  return (<table>		    
+		  </table>);
+	  }
 	  let rows=[];	  	  
 	  this.state.switches.forEach((element) => {
 		  rows.push(this.renderSwitch(element));

@@ -45,10 +45,16 @@ body {
 	text-align: center;
 }
 
-.switchText {
+.switchText_log_on {
 	font-size: 38px;
 	font-weight: bold;
 	color: 	#F8F8FF;
+	text-align: center;
+}
+.switchText_log_off {
+	font-size: 38px;
+	font-weight: bold;
+	color: 	#4a4a4a;
 	text-align: center;
 }
 

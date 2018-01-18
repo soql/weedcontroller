@@ -40,11 +40,11 @@ public class StartDateTest {
 	public void test() {
 		/*System.out.println(command.getNumberOfDays());*/
 		System.out.println("ELO "+command.getLastSwitchStateChangeUser("LAMPA", SwitchState.ON));
-		System.out.println(command.ga("TEMP","avg",24));
-		System.out.println(command.ga("TEMP","max",24));
-		System.out.println(command.ga("TEMP","min",24));				
-		System.out.println(command.ga("HUMI","avg",24));
-		System.out.println(command.ga("HUMI","max",24));
-		System.out.println(command.ga("HUMI","min",24));
+		System.out.println(command.gav("TEMP","avg",24));
+		System.out.println(command.gav("TEMP","max",24));
+		System.out.println(command.gav("TEMP","min",24));				
+		System.out.println(command.gav("HUMI","avg",24));
+		System.out.println(command.gav("HUMI","max",24));
+		System.out.println(command.gav("HUMI","min",24));
 	}
 }

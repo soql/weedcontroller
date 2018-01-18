@@ -2,6 +2,7 @@ import AppDispatcher from '../actions/AppDispatcher';
 import AppActions from '../actions/AppActions';
 import axios from 'axios';
 import { EventEmitter } from 'events';
+import ConfigurationStore from '../stores/ConfigurationStore';
 
 class LogStore extends EventEmitter {
 
@@ -28,6 +29,7 @@ class LogStore extends EventEmitter {
     	console.log("dipatcher "+action.actionType);
         switch (action.actionType) {
         case 'SWITCH_CHANGED':
+        case 'SWITCHES_SWITCH_LOG_CHANGE':
             this.tick();                
             break;   
         case 'SHOW_MORE_LOGS':
@@ -43,7 +45,17 @@ class LogStore extends EventEmitter {
        
     
     tick() {
-    	axios.get('getLogs?number='+this.state.numberOfLogs).then(res => {
+    	let switchesArray=ConfigurationStore.getSwitchesConfiguration();
+    	if(!switchesArray){
+    		return;
+    	}
+    	let switchesNames=[];
+    	switchesArray.forEach(e => {
+    		if(e.activeLog)
+    			switchesNames.push(e.name)
+    		});
+    	console.log("MAMY "+switchesNames)
+    	axios.get('getLogs?number='+this.state.numberOfLogs+'&switches='+switchesNames).then(res => {
 	    	this._logs = res.data;
 	    }).then(res => {
     	  	    	AppActions.logChanged();

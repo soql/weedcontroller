@@ -32,7 +32,12 @@ class ConfigurationStore extends EventEmitter {
 	    }
 	    
 	    dispatcherCallback(action) {
-	    	console.log("dipatcher "+action.actionType);        
+	    	console.log("dipatcher "+action.actionType); 
+	    	 switch (action.actionType) {
+	    	 	case 'SWITCHES_SWITCH_LOG_CHANGE':
+	    	 	this.switchLogChange(action.value);                
+	    	 	break;
+	    	 }
 	        this.emitChange('STORE_' + action.actionType);
 	        return true;
 	      } 
@@ -55,6 +60,8 @@ class ConfigurationStore extends EventEmitter {
 	   	    	this.switchesConf = res.data;
 	   	    }).then(res => {
 	  	    	AppActions.switchesConfChanged();
+	  	    }).then(res => {
+	  	    	AppActions.switchesLogConfChanged();
 	  	    }); 	    	
 	    }
 	    getStartDate(){
@@ -65,6 +72,9 @@ class ConfigurationStore extends EventEmitter {
 	    }
 	    getSwitchesConfiguration(){
 	    	return this.switchesConf;
+	    }
+	    switchLogChange(data){
+	    	this.switchesConf.find(e=> {return e.name==data.switchName}).activeLog=data.switchLogState;	    	
 	    }
 	   
 }
