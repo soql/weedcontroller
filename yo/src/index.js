@@ -15,7 +15,7 @@ import { slide as Menu } from 'react-burger-menu'
 ReactDOM.render((
 	<BrowserRouter>
 		<div>
-			<Menu>  
+			<Menu isOpen={ false }>  
 				<Link className="menu-item" to="/">Główna</Link>
 				<Link className="menu-item" to="wykresy">Wykresy</Link>
 				<Link className="menu-item" to="live">Live</Link>
