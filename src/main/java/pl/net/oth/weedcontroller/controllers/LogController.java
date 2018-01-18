@@ -1,5 +1,6 @@
 package pl.net.oth.weedcontroller.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,12 @@ public class LogController {
 	@Autowired
 	private SwitchService switchService;
 	@RequestMapping(value = "/getLogs", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody List<SwitchLogDTO> getSwitches(@RequestParam("number") final Integer number) {
-		return switchService.getLogs(number);
+	public @ResponseBody List<SwitchLogDTO> getSwitches(@RequestParam("number") final Integer number, @RequestParam("switches") final List<String> switches) {
+		if(switches==null) {
+			return switchService.getLogs(number, new ArrayList<String>());
+		}else {
+			return switchService.getLogs(number, switches);	
+		}
+		
 	}
 }

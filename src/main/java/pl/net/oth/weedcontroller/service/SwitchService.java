@@ -206,9 +206,9 @@ public class SwitchService {
 		return userDAO.findByLogin(name);		
 	}
 	
-	public List<SwitchLogDTO> getLogs(int number){
-		List<SwitchLog> switchLogs=switchLogDAO.getSwitchLog(number);
-		List<SwitchGpioLog> switchGpioLogs=switchLogDAO.getSwitchGpioLog(number);
+	public List<SwitchLogDTO> getLogs(int number, List<String> switches){
+		List<SwitchLog> switchLogs=switchLogDAO.getSwitchLog(number, switches);
+		List<SwitchGpioLog> switchGpioLogs=switchLogDAO.getSwitchGpioLog(number, switches);
 		
 		List<SwitchLogDTO> result=new ArrayList<SwitchLogDTO>();
 		for (SwitchLog switchLog : switchLogs) {
@@ -225,9 +225,8 @@ public class SwitchService {
 			public int compare(SwitchLogDTO o1, SwitchLogDTO o2) {				
 				return (int)(o2.getRealDate().getTime()-o1.getRealDate().getTime());
 			}
-		});
-				
-		return result.subList(0, number);
+		});		
+		return result.subList(0, result.size()>number?number:result.size());
 	}
 	public List<SwitchLog> getLogsForDate(Switch switch_, Date dateFrom, Date DateTo){
 		return switchLogDAO.getLogsForDate(switch_, dateFrom, DateTo);
@@ -319,6 +318,7 @@ public class SwitchService {
 			SwitchConfigurationDTO switchConfiguration=new SwitchConfigurationDTO();
 			switchConfiguration.setName(switch1.getName());
 			switchConfiguration.setColor(switch1.getColor());
+			switchConfiguration.setActiveLog(true);;
 			result.add(switchConfiguration);
 		}
 		return result;
