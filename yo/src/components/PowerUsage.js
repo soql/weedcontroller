@@ -79,6 +79,7 @@ class PowerUsage extends React.Component {
 	}
   render () {
     return (
+    		
     	<div className="grid grid-pad">
         	<div className="col-1-1">
         		<div className="content">
