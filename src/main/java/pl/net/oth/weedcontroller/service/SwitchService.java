@@ -189,9 +189,10 @@ public class SwitchService {
 		boolean result=false;
 		for(SwitchGPIO switchGPIO: switch_.getGpios()) {
 			if(switchGPIO.isActive()) {
-				result=gpioExternalController.setState(switchGPIO.getGpioNumber(), state, switch_.getRevert().booleanValue());
+				gpioExternalController.setState(switchGPIO.getGpioNumber(), state, switch_.getRevert().booleanValue());
+				result=true;
 			}else {
-				result=gpioExternalController.setState(switchGPIO.getGpioNumber(), SwitchState.OFF, switch_.getRevert().booleanValue());
+				gpioExternalController.setState(switchGPIO.getGpioNumber(), SwitchState.OFF, switch_.getRevert().booleanValue());				
 			}
 		}
 		return result;
