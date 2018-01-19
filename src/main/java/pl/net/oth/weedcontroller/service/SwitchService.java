@@ -276,11 +276,11 @@ public class SwitchService {
 					}
 				}				
 				lastState=switchLog;
-			}
-			if(lastState!=null && lastState.getState().equals(SwitchState.ON)) {
-				long timeInMilisecounds=(lastState.getDate().getTime()-prevState.getDate().getTime());
+			}	
+			if(lastState.getState().equals(SwitchState.ON) && lastState.getDate().before(new Date(dateTo))) {
+				long timeInMilisecounds=(new Date(dateTo).getTime()-lastState.getDate().getTime());
 				milisecoundsOn+=timeInMilisecounds;
-				LOGGER.debug("Dodaję do "+switch_.getName()+" czas "+timeInMilisecounds+" za okres "+lastState.getDate()+" do "+prevState.getDate());
+				LOGGER.debug("Dodaję do "+switch_.getName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+new Date(dateTo)+" do "+lastState.getDate());
 			}
 			powerUsageDTO.setPowerOnTime(Helper.milisecondsToHours(milisecoundsOn));
 			powerUsageDTO.setCost(powerUsageDTO.getPowerOnTime()/1000*oneWatCost*powerUsageDTO.getPowerUsage());
