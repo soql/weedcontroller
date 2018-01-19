@@ -168,16 +168,22 @@ public class SwitchService {
 	
 	public Boolean setSwitchState(String switchName, SwitchState state){		
 		LOGGER.info("Rzadanie zmiany przel. nr "+switchName+" na "+state+" przez uzytkownika "+getUser().getFullName());
-		Switch switch_=switchDAO.getSwitchByName(switchName);
-		publishSwitchStateEvent(switch_, state, getUser(), null);		
-		return setStateToExternalController(switch_, state);		
+		Switch switch_=switchDAO.getSwitchByName(switchName);			
+		Boolean result=setStateToExternalController(switch_, state);
+		if(result.booleanValue()) {
+			publishSwitchStateEvent(switch_, state, getUser(), null);
+		}
+		return result;
 	}
 	
 	
 	public Boolean setSwitchState(Switch switch_, SwitchState state, String ruleUser){		
-		LOGGER.info("Rzadanie zmiany przel. nr "+switch_.getName()+" na "+state+" przez rolę  "+ruleUser);				
-		publishSwitchStateEvent(switch_, state, null, ruleUser);		
-		return setStateToExternalController(switch_, state);		
+		LOGGER.info("Rzadanie zmiany przel. nr "+switch_.getName()+" na "+state+" przez rolę  "+ruleUser);							
+		Boolean result=setStateToExternalController(switch_, state);		
+		if(result.booleanValue()) {
+			publishSwitchStateEvent(switch_, state, null, ruleUser);
+		}
+		return result;
 	}
 	public Boolean setStateToExternalController(Switch switch_, SwitchState state) {
 		boolean result=false;
