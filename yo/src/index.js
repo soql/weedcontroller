@@ -18,7 +18,7 @@ ReactDOM.render((
 			<Menu isOpen={ false }>  
 				<Link className="menu-item" to="/">Główna</Link>
 				<Link className="menu-item" to="wykresy">Wykresy</Link>
-				<Link className="menu-item" to="live">Live</Link>
+				<Link className="menu-item" to="live">Live</Link>				
 				<Link className="menu-item" to="powerUsage">Prąd</Link>
 				<Link className="menu-item" to="nawilzacze">Nawilżacze</Link>
 				<Link className="menu-item" to="ustawienia">Ustawienia</Link>

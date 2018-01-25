@@ -8,6 +8,7 @@ require('slick-carousel/slick/slick.css');
 require('slick-carousel/slick/slick-theme.css');
 
 import axios from 'axios';
+import ReactPlayer from 'react-player'
 import React from 'react';
 import Slider from 'react-slick';
 import LiveViewStore from'../stores/LiveViewStore';
@@ -51,9 +52,10 @@ class LiveView extends React.Component {
 	let rows=[];	  	  
 	this.state.image.forEach((element) => {		
 	  rows.push(this.renderImage(element));				  
-	});
-    return (
+	});	
+    return (    		
     	<div className="grid grid-pad">
+    	
         	<div className="col-1-1">        		
         	  <Slider ref={c => this.slider = c } {...settings}>
 		        	<div className="contentDiv">
@@ -62,6 +64,9 @@ class LiveView extends React.Component {
 		        	<div className="contentDiv">
 	        			{rows[1]}		        			       
 	        	</div>
+	        	<div className="contentDiv">
+	        	<ReactPlayer url="http://localhost:8090/video.mp4" controls={true}/>    		        			       
+    	</div>
 		      </Slider>
         	</div>       	      
         </div>      		       	
