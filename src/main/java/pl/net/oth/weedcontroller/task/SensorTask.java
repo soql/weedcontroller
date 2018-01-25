@@ -20,7 +20,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import pl.net.oth.weedcontroller.external.impl.SensorExternalController;
 import pl.net.oth.weedcontroller.model.Sensor;
+import pl.net.oth.weedcontroller.model.SensorData;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
+import pl.net.oth.weedcontroller.model.dto.SensorResultDataDTO;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.SensorService;
 import pl.net.oth.weedcontroller.service.SwitchService;
@@ -38,33 +40,51 @@ public class SensorTask {
 	
 	@Autowired
 	private SensorService sensorService;
-	
-	public static final String MAX_TEMP_ERROR_KEY="MAX_TEMP_ERROR_KEY";
-	
-	public static final String MAX_HUMI_ERROR_KEY="MAX_HUMI_ERROR_KEY";
-	
+		
 	private Map<Integer, SensorResultDTO> lastSuccesfullSensorResult=new HashMap<>();
 		
 	private Map<Integer,SensorResultDTO> lastSensorResult=new HashMap<>();
 	
 	private Map<Integer,SensorResultDTO> previousSuccessfullSensorResult=new HashMap<>();
 	
-	public void readFromExternal(Integer number, String command){
-		lastSensorResult.put(number,sensorExternalController.check(command));
+	public void readFromExternal(Sensor sensor){
+		String result=sensorExternalController.check(sensor.getCommand());
+		if(result==null)
+			return;
+		LOGGER.debug("Odczyt z sensora "+sensor.getName()+": "+result);
+		SensorResultDTO sensorResultDTO = new SensorResultDTO();		
+		for(SensorData sensorData : sensor.getSensorDatas()) {			
+			Pattern pattern = Pattern.compile(sensorData.getRegexp());			
+			Matcher matcher = pattern.matcher(result);
+			if(matcher.matches()) {
+				Float resultData=Float.parseFloat(matcher.group(1));
+				SensorResultDataDTO sensorResultDataDTO=new SensorResultDataDTO();
+				sensorResultDataDTO.setResult(resultData);
+				sensorResultDataDTO.setDescription(sensorData.getDescription());
+				sensorResultDataDTO.setCssName(sensorData.getCssName());
+				sensorResultDataDTO.setUnit(sensorData.getUnit());
+				sensorResultDTO.getResults().put(sensorData.getName(), sensorResultDataDTO);
+				LOGGER.debug("PUT:"+sensorData.getName());
+			}else {
+				return;
+			}
+		}		
+		sensorResultDTO.setLastSuccesfullRead(new Date());
+		lastSensorResult.put(sensor.getNumber(), sensorResultDTO);
 	}
 	
 	@Scheduled(fixedDelay = 15000)
 	public void check() {
 		for(Sensor sensor:sensorService.getAllSensors()){			
-			readFromExternal(sensor.getNumber(), sensor.getCommand());
+			readFromExternal(sensor);
 			Integer sensorNumber=sensor.getNumber();
 			
 			if(lastSensorResult.get(sensorNumber)!=null){			
-				if(!checkErrors(previousSuccessfullSensorResult.get(sensorNumber), lastSensorResult.get(sensorNumber))){
+				if(!checkErrors(previousSuccessfullSensorResult.get(sensorNumber), lastSensorResult.get(sensorNumber), sensor)){
 					lastSuccesfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
 					previousSuccessfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
 				}else{
-					LOGGER.debug("Odczyt "+lastSensorResult.get(sensorNumber).getTemperature()+" "+lastSensorResult.get(sensorNumber).getHumidity()+" uznany za nieprawidłowy !!");
+					LOGGER.debug("Odczyt "+lastSensorResult.get(sensorNumber).getResults().get(SensorResultDTO.TEMPERATURE).getResult()+" "+lastSensorResult.get(sensorNumber).getResults().get(SensorResultDTO.HUMIDITY).getResult()+" uznany za nieprawidłowy !!");
 					previousSuccessfullSensorResult.put(sensor.getNumber(), lastSensorResult.get(sensor.getNumber()));
 				}
 			}
@@ -72,19 +92,19 @@ public class SensorTask {
 	}
 
 
-	private boolean checkErrors(SensorResultDTO previousSuccessfullSensorResult, SensorResultDTO lastSensorResult) {
+	private boolean checkErrors(SensorResultDTO previousSuccessfullSensorResult, SensorResultDTO lastSensorResult, Sensor sensor) {
 		if(previousSuccessfullSensorResult==null){
 			return false;
 		}
-		if(!configurationService.isConfigurationExist(MAX_TEMP_ERROR_KEY, MAX_HUMI_ERROR_KEY))
-			return false;
-		float maxErrorTemp=Float.parseFloat(configurationService.getByKey(MAX_TEMP_ERROR_KEY).getValue());
-		if(Math.abs(previousSuccessfullSensorResult.getTemperature()-lastSensorResult.getTemperature())>maxErrorTemp)
-			return true;
-		float maxErrorHumi=Float.parseFloat(configurationService.getByKey(MAX_HUMI_ERROR_KEY).getValue());
-		if(Math.abs(previousSuccessfullSensorResult.getHumidity()-lastSensorResult.getHumidity())>maxErrorHumi)
-			return true;
-		return false;
+		for(SensorData sensorData : sensor.getSensorDatas()) {
+			float maxError=sensorData.getMaxError();
+			if(Math.abs(previousSuccessfullSensorResult.getResults().get(sensorData.getName()).getResult()
+					-lastSensorResult.getResults().get(sensorData.getName()).getResult())>maxError) {
+				return true;
+			}
+			
+		}
+		return false;		
 	}
 
 	public Map<Integer, SensorResultDTO> getLastSuccesfullSensorResult() {
