@@ -168,24 +168,31 @@ public class SwitchService {
 	
 	public Boolean setSwitchState(String switchName, SwitchState state){		
 		LOGGER.info("Rzadanie zmiany przel. nr "+switchName+" na "+state+" przez uzytkownika "+getUser().getFullName());
-		Switch switch_=switchDAO.getSwitchByName(switchName);
-		publishSwitchStateEvent(switch_, state, getUser(), null);		
-		return setStateToExternalController(switch_, state);		
+		Switch switch_=switchDAO.getSwitchByName(switchName);			
+		Boolean result=setStateToExternalController(switch_, state);
+		if(result.booleanValue()) {
+			publishSwitchStateEvent(switch_, state, getUser(), null);
+		}
+		return result;
 	}
 	
 	
 	public Boolean setSwitchState(Switch switch_, SwitchState state, String ruleUser){		
-		LOGGER.info("Rzadanie zmiany przel. nr "+switch_.getName()+" na "+state+" przez rolę  "+ruleUser);				
-		publishSwitchStateEvent(switch_, state, null, ruleUser);		
-		return setStateToExternalController(switch_, state);		
+		LOGGER.info("Rzadanie zmiany przel. nr "+switch_.getName()+" na "+state+" przez rolę  "+ruleUser);							
+		Boolean result=setStateToExternalController(switch_, state);		
+		if(result.booleanValue()) {
+			publishSwitchStateEvent(switch_, state, null, ruleUser);
+		}
+		return result;
 	}
 	public Boolean setStateToExternalController(Switch switch_, SwitchState state) {
 		boolean result=false;
 		for(SwitchGPIO switchGPIO: switch_.getGpios()) {
 			if(switchGPIO.isActive()) {
-				result=gpioExternalController.setState(switchGPIO.getGpioNumber(), state, switch_.getRevert().booleanValue());
+				gpioExternalController.setState(switchGPIO.getGpioNumber(), state, switch_.getRevert().booleanValue());
+				result=true;
 			}else {
-				result=gpioExternalController.setState(switchGPIO.getGpioNumber(), SwitchState.OFF, switch_.getRevert().booleanValue());
+				gpioExternalController.setState(switchGPIO.getGpioNumber(), SwitchState.OFF, switch_.getRevert().booleanValue());				
 			}
 		}
 		return result;
@@ -270,11 +277,11 @@ public class SwitchService {
 					}
 				}				
 				lastState=switchLog;
-			}
-			if(lastState!=null && lastState.getState().equals(SwitchState.ON)) {
-				long timeInMilisecounds=(lastState.getDate().getTime()-prevState.getDate().getTime());
+			}	
+			if(lastState.getState().equals(SwitchState.ON) && lastState.getDate().before(new Date(dateTo))) {
+				long timeInMilisecounds=(new Date(dateTo).getTime()-lastState.getDate().getTime());
 				milisecoundsOn+=timeInMilisecounds;
-				LOGGER.debug("Dodaję do "+switch_.getName()+" czas "+timeInMilisecounds+" za okres "+lastState.getDate()+" do "+prevState.getDate());
+				LOGGER.debug("Dodaję do "+switch_.getName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+new Date(dateTo)+" do "+lastState.getDate());
 			}
 			powerUsageDTO.setPowerOnTime(Helper.milisecondsToHours(milisecoundsOn));
 			powerUsageDTO.setCost(powerUsageDTO.getPowerOnTime()/1000*oneWatCost*powerUsageDTO.getPowerUsage());

@@ -73,6 +73,7 @@ public class SwitchLogDAO {
 						
 		List<SwitchLog> firstResults=(List<SwitchLog>) firstEntry.getResultList();
 		List<SwitchLog> lastResults=(List<SwitchLog>) lastEntry.getResultList();
+				
 		
 		if(results.size()==0 && firstResults.size()==0 && lastResults.size()==0) {
 			return resultsToReturn;
@@ -99,9 +100,7 @@ public class SwitchLogDAO {
 			lastResult.setDate(dateTo);
 			resultsToReturn.add((SwitchLog) lastResults.get(0));
 		}else {
-			if(results.size()>0) {
-				LOGGER.debug("Przestawiam ostatni rezultat dla "+switch_.getName()+" na "+dateTo);
-				resultsToReturn.get(resultsToReturn.size()-1).setDate(dateTo);
+			if(results.size()>0) {											
 			}else {
 				SwitchLog lastMock=new SwitchLog();
 				lastMock.setDate(dateTo);
@@ -109,7 +108,8 @@ public class SwitchLogDAO {
 				lastMock.setSwitch_(switch_);				
 				resultsToReturn.add(lastMock);
 			}
-		}				
+		}	
+						
 		return resultsToReturn;
 	}			
 }
