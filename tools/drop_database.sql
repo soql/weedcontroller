@@ -1,0 +1,3 @@
+DROP TABLE `weedcontroller`.`AuditLog`, `weedcontroller`.`Configuration_`, `weedcontroller`.`hibernate_sequence`, `weedcontroller`.`Phase`, `weedcontroller`.`Role`, `weedcontroller`.`Rule`, `weedcontroller`.`Sensor`, `weedcontroller`.`SensorData`, `weedcontroller`.`SensorResultLog`, `weedcontroller`.`Switch`, `weedcontroller`.`SwitchGPIO`, `weedcontroller`.`SwitchGpioLog`, `weedcontroller`.`SwitchLog`, `weedcontroller`.`User`, `weedcontroller`.`UserRoles`;
+DROP TABLE `weedcontroller`.`Phase`, `weedcontroller`.`Role`, `weedcontroller`.`Sensor`, `weedcontroller`.`Switch`, `weedcontroller`.`SwitchGPIO`, `weedcontroller`.`User`;
+DROP TABLE `weedcontroller`.`Switch`;

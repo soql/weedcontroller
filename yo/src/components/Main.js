@@ -125,15 +125,25 @@ class Main extends React.Component {
 			  </div>
 			 );  
   }
-  
+  renderSensorRow(element){
+	  return (<tr><td className="header1">{element.description}: </td><td className={element.cssName}>{element.result} {element.unit}</td></tr>)	  
+  }
+  renderSensorRows(element){
+	  let rows=[];
+	  Object.keys(element).forEach((value) => {
+		  console.log(value);
+		rows.push(this.renderSensorRow(element[value]))  
+	  })
+	  return rows;
+  }
   renderTable(element){
+	  let rows=[];
+	  rows.push(this.renderSensorRows(element.results));	  
 	  return (
-	  <table>
-	  <tr><td colSpan="2" className="sensorName">{element.sensorName}</td></tr>
-		<tr><td className="header1">Temp:</td><td className="temp">{element.temperature} &#8451;</td></tr>
-		<tr><td className="header1">Wilg:</td><td className="humidity">{element.humidity} %</td></tr>
-		<tr><td className="header1">Odczyt:</td><td className="lastRead">{element.lastReadTimeElapse} sek.</td></tr>
-	</table>)
+		  <table>
+		  <tr><td colSpan="2" className="sensorName">{element.sensorName} ({element.lastReadTimeElapse})</td></tr>
+		  {rows}			
+		</table>)
   }
   
   render () {	   

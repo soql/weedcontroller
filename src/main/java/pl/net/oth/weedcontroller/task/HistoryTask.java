@@ -9,6 +9,7 @@ import pl.net.oth.weedcontroller.dao.SensorResultDAO;
 import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.SensorResultLog;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
+import pl.net.oth.weedcontroller.model.dto.SensorResultDataDTO;
 import pl.net.oth.weedcontroller.service.SensorResultService;
 import pl.net.oth.weedcontroller.service.SensorService;
 
@@ -33,9 +34,18 @@ public class HistoryTask {
 			SensorResultLog sensorResult=new SensorResultLog();
 			sensorResult.setSensor(sensor);
 			sensorResult.setDate(sensorResultDTO.getLastSuccesfullRead());
-			sensorResult.setTemperature(sensorResultDTO.getTemperature());
-			sensorResult.setHumidity(sensorResultDTO.getHumidity());
-			sensorResultService.add(sensorResult);
+			boolean writeLog=false;			
+			if(sensorResultDTO.getResults().get(SensorResultDTO.TEMPERATURE)!=null) {
+				sensorResult.setTemperature(sensorResultDTO.getResults().get(SensorResultDTO.TEMPERATURE).getResult());
+				writeLog=true;
+			}
+			if(sensorResultDTO.getResults().get(SensorResultDTO.HUMIDITY)!=null) {
+				sensorResult.setHumidity(sensorResultDTO.getResults().get(SensorResultDTO.HUMIDITY).getResult());
+				writeLog=true;
+			}
+			if(writeLog) {
+				sensorResultService.add(sensorResult);
+			}
 		}
 	}
 
