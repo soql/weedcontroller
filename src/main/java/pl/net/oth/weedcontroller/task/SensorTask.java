@@ -66,6 +66,7 @@ public class SensorTask {
 				sensorResultDTO.getResults().put(sensorData.getName(), sensorResultDataDTO);
 				LOGGER.debug("PUT:"+sensorData.getName());
 			}else {
+				LOGGER.error("Nieudane dopasowanie paternu z sensora "+sensor.getName()+" Odpowiedź: "+result+" Patern: "+sensorData.getRegexp());
 				return;
 			}
 		}		

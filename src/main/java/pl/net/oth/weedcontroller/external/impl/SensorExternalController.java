@@ -29,9 +29,7 @@ public class SensorExternalController {
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			String line = br.readLine();
-			Pattern pattern = Pattern.compile("Temp=.*?\\*  Humidity=.*?\\%");
-			Matcher matcher = pattern.matcher(line);
-			if (line.equals(ERROR_MESSAGE) || !matcher.matches()) {
+			if (line.equals(ERROR_MESSAGE)) {
 				LOGGER.error("Nieudane pobranie wartości z DHT22 - noException");
 				return null;
 			}

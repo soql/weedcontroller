@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+
 
 @Entity
 public class Sensor {
@@ -21,6 +23,7 @@ public class Sensor {
 	private String command;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy="parent")	
+	@OrderBy("id ASC")
 	private List<SensorData> sensorDatas;
 	
 	public String getName() {
