@@ -5,6 +5,8 @@ public class SensorResultDataDTO {
 	private String description;
 	private String cssName;
 	private String unit;
+	
+	
 	public Float getResult() {
 		return result;
 	}
