@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,13 +86,22 @@ public class SensorTask {
 					lastSuccesfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
 					previousSuccessfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
 				}else{
-					LOGGER.debug("Odczyt "+lastSensorResult.get(sensorNumber).getResults().get(SensorResultDTO.TEMPERATURE).getResult()+" "+lastSensorResult.get(sensorNumber).getResults().get(SensorResultDTO.HUMIDITY).getResult()+" uznany za nieprawidłowy !!");
+					LOGGER.debug("Odczyt "+printSensorResults(lastSensorResult.get(sensorNumber).getResults())+" uznany za nieprawidłowy !!");
 					previousSuccessfullSensorResult.put(sensor.getNumber(), lastSensorResult.get(sensor.getNumber()));
 				}
 			}
 		}
 	}
 
+	
+	private String printSensorResults(Map<String, SensorResultDataDTO> results) {
+		String result="";
+		for(String key: results.keySet()) {
+			result+="key="+key+": "+results.get(key).getResult()+" ";
+		}
+		return result;
+		
+	}
 
 	private boolean checkErrors(SensorResultDTO previousSuccessfullSensorResult, SensorResultDTO lastSensorResult, Sensor sensor) {
 		if(previousSuccessfullSensorResult==null){
