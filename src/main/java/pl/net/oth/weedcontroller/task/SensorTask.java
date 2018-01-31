@@ -65,12 +65,13 @@ public class SensorTask {
 				
 				Float resultData=Float.parseFloat(matcher.group(1));
 				LOGGER.debug("RESULT:"+resultData);
+				Float transformedResultData=null;
 				if(!StringUtils.isEmpty(sensorData.getTransformExpression())) {
 					GroovyShell gs=new GroovyShell();
 					gs.setVariable("VALUE", resultData);
 					Double resultDataAsDouble=(Double) gs.evaluate(new StringReader(sensorData.getTransformExpression()));
-					resultData=resultDataAsDouble.floatValue();
-					LOGGER.debug("RESULT_TRANSFORM:"+resultData);
+					transformedResultData=resultDataAsDouble.floatValue();
+					LOGGER.debug("RESULT_TRANSFORM:"+transformedResultData);
 				}
 				SensorResultDataDTO sensorResultDataDTO=new SensorResultDataDTO();
 				sensorResultDataDTO.setResult(resultData);

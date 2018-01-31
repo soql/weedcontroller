@@ -2,6 +2,7 @@ package pl.net.oth.weedcontroller.model.dto;
 
 public class SensorResultDataDTO {
 	private Float result;
+	private Float transformedResult;
 	private String description;
 	private String cssName;
 	private String unit;
@@ -12,6 +13,13 @@ public class SensorResultDataDTO {
 	}
 	public void setResult(Float result) {
 		this.result = result;
+	}
+	
+	public Float getTransformedResult() {
+		return transformedResult;
+	}
+	public void setTransformedResult(Float transformedResult) {
+		this.transformedResult = transformedResult;
 	}
 	public String getDescription() {
 		return description;
