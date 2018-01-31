@@ -75,6 +75,7 @@ public class SensorTask {
 				}
 				SensorResultDataDTO sensorResultDataDTO=new SensorResultDataDTO();
 				sensorResultDataDTO.setResult(resultData);
+				sensorResultDataDTO.setTransformedResult(transformedResultData);
 				sensorResultDataDTO.setDescription(sensorData.getDescription());
 				sensorResultDataDTO.setCssName(sensorData.getCssName());
 				sensorResultDataDTO.setUnit(sensorData.getUnit());
