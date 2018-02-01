@@ -33,7 +33,7 @@ public class SensorData {
 	@Column
 	private Float maxError;
 	
-	@Column
+	@Column(name="maxValue_")
 	private Float maxValue;
 
 	@Column
@@ -120,9 +120,5 @@ public class SensorData {
 
 	public void setMaxValue(Float maxValue) {
 		this.maxValue = maxValue;
-	}
-	
-	
-	
-	
+	}			
 }
