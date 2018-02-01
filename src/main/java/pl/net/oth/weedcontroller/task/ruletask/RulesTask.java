@@ -170,6 +170,7 @@ public class RulesTask {
 			gs.setVariable("TEMP_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getResults().get(SensorResultDTO.TEMPERATURE).getResult());
 			gs.setVariable("HUMI_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getResults().get(SensorResultDTO.HUMIDITY).getResult());
 		}
+		gs.setVariable("SENSORS_MAP", sensorTask.getLastSuccesfullSensorResult());
 		gs.setVariable("LAST_PHASE", phaseService.getPhaseById(lastPhase).getName());
 		gs.setVariable("ACTUAL_PHASE", phaseService.getPhaseById(nowPhase).getName());
 	}
