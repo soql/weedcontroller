@@ -148,7 +148,7 @@ class Main extends React.Component {
 	  let rows=[];
 	  rows.push(this.renderSensorRows(element.results));	  
 	  return (
-		  <table>
+		  <table className="sensorTable">
 		  <tr>
 		  <td colSpan="2" className="sensorName">
 		  	{element.sensorName}
