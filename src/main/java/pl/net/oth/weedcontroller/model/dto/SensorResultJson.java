@@ -18,13 +18,7 @@ public class SensorResultJson {
 		SensorResultJson result=new SensorResultJson();
 		this.lastReadTimeElapse=new Integer((int)(new Date().getTime()-sensorResultDTO.getLastSuccesfullRead().getTime()));
 		this.lastReadTimeElapse=this.lastReadTimeElapse/1000;		
-		this.results=new HashMap<>(sensorResultDTO.getResults());
-		for(String key:results.keySet()) {
-			if(results.get(key).getTransformedResult()!=null) {
-				results.get(key).setResult(results.get(key).getTransformedResult());
-			}
-		}
-		
+		this.results=new HashMap<>(sensorResultDTO.getResults());		
 		this.sensorName=sensorName;
 	}
 	
