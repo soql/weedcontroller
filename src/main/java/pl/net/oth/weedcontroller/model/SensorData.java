@@ -32,6 +32,9 @@ public class SensorData {
 	
 	@Column
 	private Float maxError;
+	
+	@Column
+	private Float maxValue;
 
 	@Column
 	private String transformExpression;
@@ -109,6 +112,14 @@ public class SensorData {
 
 	public void setTransformExpression(String transformExpression) {
 		this.transformExpression = transformExpression;
+	}
+
+	public Float getMaxValue() {
+		return maxValue;
+	}
+
+	public void setMaxValue(Float maxValue) {
+		this.maxValue = maxValue;
 	}
 	
 	

@@ -129,6 +129,10 @@ public class SensorTask {
 					-lastSensorResult.getResults().get(sensorData.getName()).getResult())>maxError) {
 				return true;
 			}
+			Float maxValue=sensorData.getMaxError();
+			if(maxValue!=null && lastSensorResult.getResults().get(sensorData.getName()).getResult()>maxValue.floatValue()) {
+				return true;
+			}
 			
 		}
 		return false;		
