@@ -126,7 +126,15 @@ class Main extends React.Component {
 			 );  
   }
   renderSensorRow(element){
-	  return (<tr><td className="header1">{element.description}: </td><td className={element.cssName}>{element.result} {element.unit}</td></tr>)	  
+	  let res=element.transformedResult!=null ?element.transformedResult: element.result;
+	  return (<tr><td className="header1">{element.description}: </td>
+	  	<td className={element.cssName}>
+	  		{parseFloat(res).toFixed(2)} 
+	  	</td>
+	  	<td className={element.cssName}>
+	  		{element.unit}
+	  	</td>
+	  </tr>)	  
   }
   renderSensorRows(element){
 	  let rows=[];
@@ -140,8 +148,15 @@ class Main extends React.Component {
 	  let rows=[];
 	  rows.push(this.renderSensorRows(element.results));	  
 	  return (
-		  <table>
-		  <tr><td colSpan="2" className="sensorName">{element.sensorName} ({element.lastReadTimeElapse})</td></tr>
+		  <table className="sensorTable">
+		  <tr>
+		  <td colSpan="2" className="sensorName">
+		  	{element.sensorName}
+		  </td>
+		  <td className="sensorName">
+		  	({element.lastReadTimeElapse})
+		  </td>
+		  </tr>
 		  {rows}			
 		</table>)
   }

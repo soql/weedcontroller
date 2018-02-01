@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.StringUtils;
 
+import groovy.lang.GroovyShell;
 import pl.net.oth.weedcontroller.external.impl.SensorExternalController;
 import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.SensorData;
@@ -51,20 +55,33 @@ public class SensorTask {
 		String result=sensorExternalController.check(sensor.getCommand());
 		if(result==null)
 			return;
-		LOGGER.debug("Odczyt z sensora "+sensor.getName()+": "+result);
+		LOGGER.debug("Odczyt z sensora "+sensor.getName()+": "+result);		
 		SensorResultDTO sensorResultDTO = new SensorResultDTO();		
 		for(SensorData sensorData : sensor.getSensorDatas()) {			
 			Pattern pattern = Pattern.compile(sensorData.getRegexp());			
 			Matcher matcher = pattern.matcher(result);
 			if(matcher.matches()) {
+				LOGGER.debug("PUT:"+sensorData.getName());
+				
 				Float resultData=Float.parseFloat(matcher.group(1));
+				LOGGER.debug("RESULT:"+resultData);
+				Float transformedResultData=null;
+				if(!StringUtils.isEmpty(sensorData.getTransformExpression())) {
+					GroovyShell gs=new GroovyShell();
+					gs.setVariable("VALUE", resultData);
+					Double resultDataAsDouble=(Double) gs.evaluate(new StringReader(sensorData.getTransformExpression()));
+					transformedResultData=resultDataAsDouble.floatValue();
+					LOGGER.debug("RESULT_TRANSFORM:"+transformedResultData);
+				}
 				SensorResultDataDTO sensorResultDataDTO=new SensorResultDataDTO();
 				sensorResultDataDTO.setResult(resultData);
+				sensorResultDataDTO.setTransformedResult(transformedResultData);
 				sensorResultDataDTO.setDescription(sensorData.getDescription());
 				sensorResultDataDTO.setCssName(sensorData.getCssName());
 				sensorResultDataDTO.setUnit(sensorData.getUnit());
 				sensorResultDTO.getResults().put(sensorData.getName(), sensorResultDataDTO);
-				LOGGER.debug("PUT:"+sensorData.getName());
+				
+				
 			}else {
 				LOGGER.error("Nieudane dopasowanie paternu z sensora "+sensor.getName()+" Odpowiedź: "+result+" Patern: "+sensorData.getRegexp());
 				return;
@@ -85,13 +102,22 @@ public class SensorTask {
 					lastSuccesfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
 					previousSuccessfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
 				}else{
-					LOGGER.debug("Odczyt "+lastSensorResult.get(sensorNumber).getResults().get(SensorResultDTO.TEMPERATURE).getResult()+" "+lastSensorResult.get(sensorNumber).getResults().get(SensorResultDTO.HUMIDITY).getResult()+" uznany za nieprawidłowy !!");
+					LOGGER.debug("Odczyt "+printSensorResults(lastSensorResult.get(sensorNumber).getResults())+" uznany za nieprawidłowy !!");
 					previousSuccessfullSensorResult.put(sensor.getNumber(), lastSensorResult.get(sensor.getNumber()));
 				}
 			}
 		}
 	}
 
+	
+	private String printSensorResults(Map<String, SensorResultDataDTO> results) {
+		String result="";
+		for(String key: results.keySet()) {
+			result+="key="+key+": "+results.get(key).getResult()+" ";
+		}
+		return result;
+		
+	}
 
 	private boolean checkErrors(SensorResultDTO previousSuccessfullSensorResult, SensorResultDTO lastSensorResult, Sensor sensor) {
 		if(previousSuccessfullSensorResult==null){

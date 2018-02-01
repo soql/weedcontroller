@@ -33,6 +33,10 @@ public class SensorData {
 	@Column
 	private Float maxError;
 
+	@Column
+	private String transformExpression;
+	
+	
 	public Integer getId() {
 		return id;
 	}
@@ -98,6 +102,15 @@ public class SensorData {
 	public void setCssName(String cssName) {
 		this.cssName = cssName;
 	}
+
+	public String getTransformExpression() {
+		return transformExpression;
+	}
+
+	public void setTransformExpression(String transformExpression) {
+		this.transformExpression = transformExpression;
+	}
+	
 	
 	
 	

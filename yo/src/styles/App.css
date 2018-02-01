@@ -31,6 +31,10 @@ body {
 	text-align: center;
 }
 
+.sensorTable {
+	width: 85%;	
+}
+
 .humidity {
 	font-size: 42px;
 	font-weight: bold;
