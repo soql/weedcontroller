@@ -8,6 +8,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -40,6 +42,7 @@ import pl.net.oth.weedcontroller.task.ruletask.RulesTask;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {UserService.class, PhaseDAO.class, PhaseService.class, SensorDAO.class, SensorService.class, RulesTask.class, TestConfig.class, RulesTask.class, Command.class, GpioMockExternalController.class, ConfigurationService.class, ConfigurationDAO.class, SMSController.class, RulesTask.class, SwitchService.class, SwitchDAO.class, SwitchLogDAO.class, UserDAO.class, GpioMockExternalController.class, SensorTask.class, SensorExternalController.class, RuleService.class, RuleDAO.class, SensorResultService.class, SensorResultDAO.class })
 @ActiveProfiles(profiles = "DEV")
+@DirtiesContext(classMode=ClassMode.AFTER_CLASS)
 public class StartDateTest {
 	@Autowired
 	private SensorService sensorService;
@@ -48,7 +51,7 @@ public class StartDateTest {
 	@Autowired
 	private Command command;
 	
-	@Test	
+	@Test		
 	public void test() {
 		 Sensor s=sensorService.getSensorByNumber(3);
 		 System.out.println(s.getName());
@@ -64,8 +67,8 @@ public class StartDateTest {
 					j++;
 					continue;
 				}
-			/*	System.out.println("JEST "+j+" do "+i+" = "+(list[j].getDate().getTime()-list[i].getDate().getTime())/SEC);
-				System.out.println("HuMI"+list[j].getHumidity()+" -> "+list[i].getHumidity());*/
+			/*	System.out.println("JEST "+j+" do "+i+" = "+(list[j].getDate().getTime()-list[i].getDate().getTime())/SEC);*/
+			/*	System.out.println("HuMI"+list[j].getHumidity()+" -> "+list[i].getHumidity()+" ("+list[j].getHumidity()-list[i].getHumidity()+")");*/
 				if(list[j].getHumidity()-list[i].getHumidity()>300) {
 					System.out.println("JEST "+j+" do "+i+" = "+(list[j].getDate().getTime()-list[i].getDate().getTime())/SEC);
 					System.out.println("HuMI"+list[j].getHumidity()+" -> "+list[i].getHumidity());

@@ -30,7 +30,7 @@ public class SensorResultDAO {
 	}
 
 	public List<SensorResultLog> getResultsForDate(Date dateFrom, Date dateTo, Sensor sensor) {
-		Query q=em.createQuery("SELECT e FROM SensorResultLog e where e.date>:dateFrom and e.date<=:dateTo and e.sensor=:sensor");
+		Query q=em.createQuery("SELECT e FROM SensorResultLog e where e.date>:dateFrom and e.date<=:dateTo and e.sensor=:sensor order by id asc");
 		q.setParameter("dateFrom", dateFrom);
 		q.setParameter("dateTo", dateTo);
 		q.setParameter("sensor", sensor);
