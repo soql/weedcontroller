@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -15,7 +16,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import pl.net.oth.weedcontroller.helpers.Helper;
+import pl.net.oth.weedcontroller.model.Camera;
 import pl.net.oth.weedcontroller.model.Configuration;
+import pl.net.oth.weedcontroller.service.CameraService;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 
 @org.springframework.context.annotation.Configuration
@@ -29,32 +32,57 @@ public class CameraTask {
 	public static final String CAMERA_ON="CAMERA_ON";
 	@Autowired
 	private ConfigurationService configurationService;
+	
+	@Autowired
+	private CameraService cameraService;
+	
 	@Scheduled(fixedDelay = 15000)		
-	public void takeFoto(){
+	public void takeFotos(){
 		Configuration cameraOn=configurationService.getByKey(CAMERA_ON);
 		if(cameraOn==null || cameraOn.getValue().equals("OFF")){
-			LOGGER.debug("Kamera wyłączona konfiguracyjnie");
+			LOGGER.debug("Kamery wyłączone konfiguracyjnie");
 			return;
 		}
+		
+		List<Camera> cameras=cameraService.getAllCameras();
+		for (Camera camera : cameras) {
+			takeFoto(camera);
+		}
+		
+	}
+	
+		
+	private void takeFoto(Camera camera) {
+		if(camera.getActive()==null || !camera.getActive().booleanValue())
+			return;
 		Process process;
 		try {		
 			String time=String.valueOf(new Date().getTime());
-			LOGGER.debug("Robię zdjęcie o id "+time);
-			process = new ProcessBuilder(IMAGE_FOLDER+"takeFoto.sh", time).start();
-			process.waitFor();
-			Configuration configuration=new pl.net.oth.weedcontroller.model.Configuration();
-			configuration.setKey(ConfigurationService.LAST_FOTO_KEY);
-			configuration.setValue(time);
-			configurationService.save(configuration);
+			LOGGER.debug("Robię zdjęcie z kamery "+camera.getName()+" o id "+time);
+			process = new ProcessBuilder(camera.getTakeFotoCommand(), time).start();
+			int result=process.waitFor();
+			LOGGER.debug("Kamera "+camera.getName()+" = "+result);
+			if(result!=0) {
+				LOGGER.error("Nieudane wykonanie zdjęca z kamery: "+camera.getName()+" = "+result);
+				return;
+			}
+			camera.setLastFoto(time);			
+			cameraService.save(camera);
 			LOGGER.debug("Zdjęcie zrobione pomyślnie");
 			removeOldFiles(true,"image");
 			removeOldFiles(true,"internal");
 		} catch (IOException e) {
+			LOGGER.error("Nieudane wykonanie zdjęca z kamery: "+camera.getName());
 			LOGGER.error(Helper.STACK_TRACE, e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Nieudane wykonanie zdjęca z kamery: "+camera.getName());
 			LOGGER.error(Helper.STACK_TRACE, e);
 		}
+		
 	}
+
+
+
 	private void removeOldFiles(boolean realDelete, String prefix) {
 		Map<Long, File> filesMap=new HashMap<>();
 		for (final File fileEntry : new File(IMAGE_FOLDER).listFiles()) {

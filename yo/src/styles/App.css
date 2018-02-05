@@ -44,6 +44,12 @@ body {
 	color: #FFFAF0;
 	text-align: center;
 }
+.lastReadFoto {
+	font-size: 26px;
+	font-weight: bold;
+	color: #abaaaa;
+	text-align: center;
+}
 
 .switchText_log_on {
 	font-size: 38px;
