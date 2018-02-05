@@ -29,20 +29,30 @@ class LiveView extends React.Component {
 	  imageLoaded(){
 		  this.setState({image: LiveViewStore.getImage()});
 	  }
-	  renderImage(element){
-		  
+	  renderImage(element){		  
 	  return (
-		  <div className="content">        			
-			<img className='image-preview' src={element} width="100%"/>		 
-		</div>)
+			  <div className="contentDiv">
+				  <div className="content">    
+				  <table>
+					  <tr><td className="lastReadFoto">
+					  	Ostatni odczyt: {element.time} sek.
+					  </td></tr>
+					  <tr><td>
+						<img className='image-preview' src={element.foto} width="100%"/>
+					  </td></tr>
+				  </table>
+						
+				</div>
+			</div>
+			)
 	  }
 	  
 	  
   render () {
 	  var settings = {
-		      dots: false,
+		      dots: true,
 		      infinite: true,
-		      speed: 2000,
+		      speed: 500,
 		      slidesToShow: 1,
 		      slidesToScroll: 1,
 		      autoplay: false,		      
@@ -55,10 +65,8 @@ class LiveView extends React.Component {
     return (
     	<div className="grid grid-pad">
         	<div className="col-1-1">        		
-        	  <Slider ref={c => this.slider = c } {...settings}>
-		        	<div className="contentDiv">
-		        		{rows[0]}		        			       
-		        		</div>
+        	  <Slider ref={c => this.slider = c } {...settings}>		        	
+		        	{rows}		        			       		        	
 		      </Slider>
         	</div>       	      
         </div>      		       	
