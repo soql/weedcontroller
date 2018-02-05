@@ -2,9 +2,11 @@ package pl.net.oth.weedcontroller.configuration;
 
 import javax.servlet.Filter;
 
-import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+@EnableWebMvc
 public class SpringMvcInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	@Override

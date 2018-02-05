@@ -13,7 +13,6 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
-@EnableWebMvc
 @ComponentScan(basePackages = "pl.net.oth.weedcontroller")
 @ImportResource("classpath:applicationContext.xml")
 public class WeedControllerConfiguration extends WebMvcConfigurerAdapter {
