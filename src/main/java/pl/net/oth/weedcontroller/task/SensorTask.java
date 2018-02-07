@@ -91,7 +91,7 @@ public class SensorTask {
 		lastSensorResult.put(sensor.getNumber(), sensorResultDTO);
 	}
 	
-	@Scheduled(fixedDelay = 15000)
+	@Scheduled(fixedDelay = 5000)
 	public void check() {
 		for(Sensor sensor:sensorService.getAllSensors()){			
 			readFromExternal(sensor);
