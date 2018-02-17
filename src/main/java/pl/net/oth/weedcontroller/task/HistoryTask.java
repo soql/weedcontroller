@@ -25,7 +25,7 @@ public class HistoryTask {
 	@Autowired
 	private SensorService sensorService;
 	
-	@Scheduled(fixedDelay = 30000)
+	@Scheduled(fixedDelay = 15000)
 	public void putSensorDataToDatabase(){
 		for(Sensor sensor:sensorService.getAllSensors()){
 			SensorResultDTO sensorResultDTO=sensorTask.getLastSuccesfullSensorResult().get(sensor.getNumber());

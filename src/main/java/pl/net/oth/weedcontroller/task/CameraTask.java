@@ -36,7 +36,7 @@ public class CameraTask {
 	@Autowired
 	private CameraService cameraService;
 	
-	@Scheduled(fixedDelay = 15000)		
+	@Scheduled(fixedDelay = 5000)		
 	public void takeFotos(){
 		Configuration cameraOn=configurationService.getByKey(CAMERA_ON);
 		if(cameraOn==null || cameraOn.getValue().equals("OFF")){

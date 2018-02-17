@@ -102,7 +102,7 @@ public class RulesTask {
 					
 	}
 	
-	@Scheduled(fixedDelay = 5000)
+	@Scheduled(fixedDelay = 3000)
 	private void checkAndExecuteRules() {
 		switchService.mergeGpioStates();
 		nowRuleTime=new Date();
