@@ -42,8 +42,7 @@ public class WeedControllerConfiguration extends WebMvcConfigurerAdapter impleme
     }
 
 	@Override
-	public void configureTasks(ScheduledTaskRegistrar arg0) {
-		System.out.println("EEEEEEEEEEEEEEEE");
+	public void configureTasks(ScheduledTaskRegistrar arg0) {		
 		 ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
 	        taskScheduler.setPoolSize(5);
 	        taskScheduler.initialize();
