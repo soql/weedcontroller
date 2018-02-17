@@ -52,10 +52,12 @@ public class SensorTask {
 	private Map<Integer,SensorResultDTO> previousSuccessfullSensorResult=new HashMap<>();
 	
 	public void readFromExternal(Sensor sensor){
+		long timeBefore=new Date().getTime();
 		String result=sensorExternalController.check(sensor.getCommand());
+		long timeAfter=new Date().getTime();
 		if(result==null)
 			return;
-		LOGGER.debug("Odczyt z sensora "+sensor.getName()+": "+result);		
+		LOGGER.debug("Odczyt z sensora "+sensor.getName()+": "+result+" ( czas trwania: "+(timeAfter-timeBefore)/(float)1000+" s. ).");		
 		SensorResultDTO sensorResultDTO = new SensorResultDTO();		
 		for(SensorData sensorData : sensor.getSensorDatas()) {			
 			Pattern pattern = Pattern.compile(sensorData.getRegexp());			
