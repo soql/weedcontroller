@@ -81,6 +81,12 @@ class AppActions {
             value: data
         });
     }
+    rolesReaded(data){
+    	AppDispatcher.dispatch({
+            actionType: 'ROLES_READED',
+            value: data
+        });
+    }
 }
 
 export default new AppActions() 

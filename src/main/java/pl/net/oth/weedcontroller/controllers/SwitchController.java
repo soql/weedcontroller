@@ -3,6 +3,8 @@ package pl.net.oth.weedcontroller.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,7 @@ public class SwitchController {
 		return switchService.getAllSwitchesWithStates();		
 	}
 	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/setState", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody Boolean setSwitch(@RequestParam("switchName") final String switchName,@RequestParam("switchState") final SwitchState switchState) {
 		return switchService.setSwitchState(switchName,switchState);

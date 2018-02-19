@@ -63,5 +63,12 @@ public class User {
 	public void setSendSMS(Boolean sendSMS) {
 		this.sendSMS = sendSMS;
 	}
+	public List<Role> getRoles() {
+		return roles;
+	}
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+	
 	
 }
