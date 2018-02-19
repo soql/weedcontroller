@@ -1,18 +1,20 @@
 package pl.net.oth.weedcontroller.model.dto;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class SensorResultDTO {
+	public static final String TEMPERATURE="TEMPERATURE";
+	public static final String HUMIDITY="HUMIDITY";
 	public Date lastSuccesfullRead;
-	public float temperature;
-	public float humidity;
-
+	public SortedMap<String, SensorResultDataDTO> results;		
 	
-	public SensorResultDTO(Date lastSuccesfullRead, float temperature, float humidity) {
-		super();
-		this.lastSuccesfullRead = lastSuccesfullRead;
-		this.temperature = temperature;
-		this.humidity = humidity;
+	public SensorResultDTO() {
+		super();		
+		
 	}
 
 	public Date getLastSuccesfullRead() {
@@ -23,20 +25,15 @@ public class SensorResultDTO {
 		this.lastSuccesfullRead = lastSuccesfullRead;
 	}
 
-	public float getTemperature() {
-		return temperature;
+	public Map<String, SensorResultDataDTO> getResults() {
+		if(results==null) 
+			results=new TreeMap<>();		
+		return results;
 	}
 
-	public void setTemperature(float temperature) {
-		this.temperature = temperature;
-	}
-
-	public float getHumidity() {
-		return humidity;
-	}
-
-	public void setHumidity(float humidity) {
-		this.humidity = humidity;
-	}
-
+	
+	
+	public void setResults(TreeMap<String, SensorResultDataDTO> results) {
+		this.results = results;
+	}	
 }

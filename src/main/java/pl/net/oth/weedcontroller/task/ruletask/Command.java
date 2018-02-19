@@ -97,9 +97,12 @@ public class Command {
 	public int getLastSwitchStateChangeTime(String switchName){
 		return switchService.getLastSwitchStateChangeTime(switchName);
 	}
+	public float gav(String type, String func, Integer minutes){
+		return getAggregatedValue(type, func, minutes).floatValue();
+	}
 	
-	public String ga(String type, String func, Integer hours){
-		return getAggregatedValue(type, func, hours);
+	public String gavAS(String type, String func, Integer minutes){
+		return getAggregatedValueAsString(type, func, minutes);
 	}
 	
 	public long getLastInternetConnection() {
@@ -112,7 +115,7 @@ public class Command {
 		return getLastInternetConnection(); 
 	}
 	
-	public String getAggregatedValue(String type, String func, Integer hours){
+	public Float getAggregatedValue(String type, String func, Integer minutes){
 		if(type.equals("TEMP")){
 			type="temperature";
 		}else if(type.equals("HUMI")){
@@ -121,9 +124,14 @@ public class Command {
 			LOGGER.error("Brak sensora dla "+type);
 			return null;
 		}
-		Date dateFrom=new Date(new Date().getTime()-(1000*60*60*hours.intValue()));
+		Date dateFrom=new Date(new Date().getTime()-(1000*60*minutes.intValue()));
 		Date dateTo=new Date();
-		return String.valueOf(new DecimalFormat("0.00##").format(sensorResultService.getAggregatedValue(type, func,dateFrom, dateTo, sensorService.getSensorByNumber(1))));
+		Float result=sensorResultService.getAggregatedValue(type, func,dateFrom, dateTo, sensorService.getSensorByNumber(1));
+		LOGGER.debug("getAggregatedValue ("+type+","+func+","+minutes.intValue()+"): "+result);
+		return result;
+	}
+	public String getAggregatedValueAsString(String type, String func, Integer minutes){
+		return String.valueOf(new DecimalFormat("0.00##").format(getAggregatedValue(type, func, minutes)));
 	}
 	
 

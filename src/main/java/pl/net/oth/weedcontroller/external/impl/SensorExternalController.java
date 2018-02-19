@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,31 +22,26 @@ public class SensorExternalController {
 	private final static Log LOGGER = LogFactory.getLog(SensorTask.class);
 	private static final String ERROR_MESSAGE = "Failed to get reading. Try again!";		
 
-	public SensorResultDTO check(String command) {
+	public String check(String command) {
 		Process process;
 		try {
 			process = new ProcessBuilder(command.split(" ")).start();
+			process.waitFor(15, TimeUnit.SECONDS);
 			InputStream is = process.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			String line = br.readLine();
-			Pattern pattern = Pattern.compile("Temp=(.*)?\\*  Humidity=(.*)?\\%");
-			Matcher matcher = pattern.matcher(line);
-			if (line.equals(ERROR_MESSAGE) || !matcher.matches()) {
+			if (line.equals(ERROR_MESSAGE)) {
 				LOGGER.error("Nieudane pobranie wartości z DHT22 - noException");
 				return null;
 			}
-			float temperature = Float.parseFloat(matcher.group(1));
-			float humidity = Float.parseFloat(matcher.group(2));
-
-			LOGGER.info("DHT22 read. Temperature:"+temperature + " Humidity:" + humidity);
-			
-			return new SensorResultDTO(new Date(), temperature, humidity);
-
-			
-
+			return line;
+												
 		} catch (IOException e) {
 			LOGGER.error("Nieudane pobranie wartości z DHT22"); 
+			LOGGER.error(Helper.STACK_TRACE, e);
+		} catch (InterruptedException e) {
+			LOGGER.error("Nieudane pobranie wartości z DHT22 - timeout"); 
 			LOGGER.error(Helper.STACK_TRACE, e);
 		}
 		return null;

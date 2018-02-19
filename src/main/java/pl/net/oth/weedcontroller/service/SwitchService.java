@@ -35,6 +35,7 @@ import pl.net.oth.weedcontroller.model.SwitchGpioLog;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.model.dto.PowerUsageDTO;
+import pl.net.oth.weedcontroller.model.dto.SwitchConfigurationDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchGpioDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchLogDTO;
@@ -167,24 +168,31 @@ public class SwitchService {
 	
 	public Boolean setSwitchState(String switchName, SwitchState state){		
 		LOGGER.info("Rzadanie zmiany przel. nr "+switchName+" na "+state+" przez uzytkownika "+getUser().getFullName());
-		Switch switch_=switchDAO.getSwitchByName(switchName);
-		publishSwitchStateEvent(switch_, state, getUser(), null);		
-		return setStateToExternalController(switch_, state);		
+		Switch switch_=switchDAO.getSwitchByName(switchName);			
+		Boolean result=setStateToExternalController(switch_, state);
+		if(result.booleanValue()) {
+			publishSwitchStateEvent(switch_, state, getUser(), null);
+		}
+		return result;
 	}
 	
 	
 	public Boolean setSwitchState(Switch switch_, SwitchState state, String ruleUser){		
-		LOGGER.info("Rzadanie zmiany przel. nr "+switch_.getName()+" na "+state+" przez rolę  "+ruleUser);				
-		publishSwitchStateEvent(switch_, state, null, ruleUser);		
-		return setStateToExternalController(switch_, state);		
+		LOGGER.info("Rzadanie zmiany przel. nr "+switch_.getName()+" na "+state+" przez rolę  "+ruleUser);							
+		Boolean result=setStateToExternalController(switch_, state);		
+		if(result.booleanValue()) {
+			publishSwitchStateEvent(switch_, state, null, ruleUser);
+		}
+		return result;
 	}
 	public Boolean setStateToExternalController(Switch switch_, SwitchState state) {
 		boolean result=false;
 		for(SwitchGPIO switchGPIO: switch_.getGpios()) {
 			if(switchGPIO.isActive()) {
-				result=gpioExternalController.setState(switchGPIO.getGpioNumber(), state, switch_.getRevert().booleanValue());
+				gpioExternalController.setState(switchGPIO.getGpioNumber(), state, switch_.getRevert().booleanValue());
+				result=true;
 			}else {
-				result=gpioExternalController.setState(switchGPIO.getGpioNumber(), SwitchState.OFF, switch_.getRevert().booleanValue());
+				gpioExternalController.setState(switchGPIO.getGpioNumber(), SwitchState.OFF, switch_.getRevert().booleanValue());				
 			}
 		}
 		return result;
@@ -205,28 +213,27 @@ public class SwitchService {
 		return userDAO.findByLogin(name);		
 	}
 	
-	public List<SwitchLogDTO> getLogs(int number){
-		List<SwitchLog> switchLogs=switchLogDAO.getSwitchLog(number);
-		List<SwitchGpioLog> switchGpioLogs=switchLogDAO.getSwitchGpioLog(number);
+	public List<SwitchLogDTO> getLogs(int number, List<String> switches){
+		List<SwitchLog> switchLogs=switchLogDAO.getSwitchLog(number, switches);
+		List<SwitchGpioLog> switchGpioLogs=switchLogDAO.getSwitchGpioLog(number, switches);
 		
 		List<SwitchLogDTO> result=new ArrayList<SwitchLogDTO>();
 		for (SwitchLog switchLog : switchLogs) {
 			String userName=switchLog.getUser()!=null?switchLog.getUser().getFullName():switchLog.getRuleUser();
-			result.add(new SwitchLogDTO(userName, switchLog.getSwitch_().getName(), switchLog.getState(), switchLog.getDate(), SwitchLogDTO.LOG_SWITCH));
+			result.add(new SwitchLogDTO(userName, switchLog.getSwitch_().getName(), switchLog.getState(), switchLog.getDate(), SwitchLogDTO.LOG_SWITCH, null));
 		}
 		for (SwitchGpioLog switchLog : switchGpioLogs) {
 			String userName=switchLog.getUser()!=null?switchLog.getUser().getFullName():switchLog.getRuleUser();
-			String descr=switchLog.getSwitchGpio().getParent().getName()+"("+switchLog.getSwitchGpio().getDescription()+")";
-			result.add(new SwitchLogDTO(userName, descr, switchLog.getState(), switchLog.getDate(), SwitchLogDTO.LOG_SWITCH_GPIO));
+			String descr=switchLog.getSwitchGpio().getParent().getName();
+			result.add(new SwitchLogDTO(userName, descr, switchLog.getState(), switchLog.getDate(), SwitchLogDTO.LOG_SWITCH_GPIO, switchLog.getSwitchGpio().getDescription()));
 		}
 		Collections.sort(result,new Comparator<SwitchLogDTO>() {
 			@Override
 			public int compare(SwitchLogDTO o1, SwitchLogDTO o2) {				
 				return (int)(o2.getRealDate().getTime()-o1.getRealDate().getTime());
 			}
-		});
-				
-		return result.subList(0, number);
+		});		
+		return result.subList(0, result.size()>number?number:result.size());
 	}
 	public List<SwitchLog> getLogsForDate(Switch switch_, Date dateFrom, Date DateTo){
 		return switchLogDAO.getLogsForDate(switch_, dateFrom, DateTo);
@@ -270,11 +277,11 @@ public class SwitchService {
 					}
 				}				
 				lastState=switchLog;
-			}
-			if(lastState!=null && lastState.getState().equals(SwitchState.ON)) {
-				long timeInMilisecounds=(lastState.getDate().getTime()-prevState.getDate().getTime());
+			}	
+			if(lastState.getState().equals(SwitchState.ON) && lastState.getDate().before(new Date(dateTo))) {
+				long timeInMilisecounds=(new Date(dateTo).getTime()-lastState.getDate().getTime());
 				milisecoundsOn+=timeInMilisecounds;
-				LOGGER.debug("Dodaję do "+switch_.getName()+" czas "+timeInMilisecounds+" za okres "+lastState.getDate()+" do "+prevState.getDate());
+				LOGGER.debug("Dodaję do "+switch_.getName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+new Date(dateTo)+" do "+lastState.getDate());
 			}
 			powerUsageDTO.setPowerOnTime(Helper.milisecondsToHours(milisecoundsOn));
 			powerUsageDTO.setCost(powerUsageDTO.getPowerOnTime()/1000*oneWatCost*powerUsageDTO.getPowerUsage());
@@ -309,6 +316,19 @@ public class SwitchService {
 		switchDAO.updateGpioActive(gpioNumber, active.booleanValue());		
 		mergeGpioStates();
 		return true;
+	}
+
+	public List<SwitchConfigurationDTO> getSwitchesCSSConfiguration() {
+		List<Switch> switches = switchDAO.getAllSwitches();
+		List<SwitchConfigurationDTO> result=new ArrayList<>();
+		for(Switch switch1:switches) {
+			SwitchConfigurationDTO switchConfiguration=new SwitchConfigurationDTO();
+			switchConfiguration.setName(switch1.getName());
+			switchConfiguration.setColor(switch1.getColor());
+			switchConfiguration.setActiveLog(true);;
+			result.add(switchConfiguration);
+		}
+		return result;
 	}
 	
 		

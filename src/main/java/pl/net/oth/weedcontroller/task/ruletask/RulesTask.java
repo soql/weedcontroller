@@ -39,6 +39,7 @@ import pl.net.oth.weedcontroller.model.Rule;
 import pl.net.oth.weedcontroller.model.SMSMessage;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.User;
+import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.PhaseService;
@@ -101,7 +102,7 @@ public class RulesTask {
 					
 	}
 	
-	@Scheduled(fixedDelay = 15000)
+	@Scheduled(fixedDelay = 3000)
 	private void checkAndExecuteRules() {
 		switchService.mergeGpioStates();
 		nowRuleTime=new Date();
@@ -156,18 +157,20 @@ public class RulesTask {
 		}
 		lastRuleTime=nowRuleTime;
 		lastSwitchStates=nowSwitchStates;
+		lastPhase=nowPhase;
 	}	
 	
 	private void fillGroovyShell(GroovyShell gs) {
 		gs.setVariable("r", command);
 		gs.setVariable("ON", SwitchState.ON);
 		gs.setVariable("OFF", SwitchState.OFF);
-		gs.setVariable("TEMP", sensorTask.getLastSuccesfullSensorResult().get(1).getTemperature());
-		gs.setVariable("HUMI", sensorTask.getLastSuccesfullSensorResult().get(1).getHumidity());
+		gs.setVariable("TEMP", sensorTask.getLastSuccesfullSensorResult().get(1).getResults().get(SensorResultDTO.TEMPERATURE).getResult());
+		gs.setVariable("HUMI", sensorTask.getLastSuccesfullSensorResult().get(1).getResults().get(SensorResultDTO.HUMIDITY).getResult());
 		if(sensorTask.getLastSuccesfullSensorResult().size()>1) {
-			gs.setVariable("TEMP_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getTemperature());
-			gs.setVariable("HUMI_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getHumidity());
+			gs.setVariable("TEMP_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getResults().get(SensorResultDTO.TEMPERATURE).getResult());
+			gs.setVariable("HUMI_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getResults().get(SensorResultDTO.HUMIDITY).getResult());
 		}
+		gs.setVariable("SENSORS_MAP", sensorTask.getLastSuccesfullSensorResult());
 		gs.setVariable("LAST_PHASE", phaseService.getPhaseById(lastPhase).getName());
 		gs.setVariable("ACTUAL_PHASE", phaseService.getPhaseById(nowPhase).getName());
 	}

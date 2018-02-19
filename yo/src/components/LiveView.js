@@ -3,8 +3,13 @@ require('normalize.css/normalize.css');
 require('styles/App.css');
 
 require('styles/simplegrid.css');
+
+require('slick-carousel/slick/slick.css');
+require('slick-carousel/slick/slick-theme.css');
+
 import axios from 'axios';
 import React from 'react';
+import Slider from 'react-slick';
 import LiveViewStore from'../stores/LiveViewStore';
  
 class LiveView extends React.Component {	
@@ -24,16 +29,35 @@ class LiveView extends React.Component {
 	  imageLoaded(){
 		  this.setState({image: LiveViewStore.getImage()});
 	  }
-	  renderImage(element){
-		  
+	  renderImage(element){		  
 	  return (
-		  <div className="content">        			
-			<img className='image-preview' src={element} width="100%"/>		 
-		</div>)
+			  <div className="contentDiv">
+				  <div className="content">    
+				  <table>
+					  <tr><td className="lastReadFoto">
+					  	Ostatni odczyt: {element.time} sek.
+					  </td></tr>
+					  <tr><td>
+						<img className='image-preview' src={element.foto} width="100%"/>
+					  </td></tr>
+				  </table>
+						
+				</div>
+			</div>
+			)
 	  }
 	  
 	  
   render () {
+	  var settings = {
+		      dots: true,
+		      infinite: true,
+		      speed: 500,
+		      slidesToShow: 1,
+		      slidesToScroll: 1,
+		      autoplay: false,		      
+		      pauseOnHover: false
+		    };
 	let rows=[];	  	  
 	this.state.image.forEach((element) => {		
 	  rows.push(this.renderImage(element));				  
@@ -41,7 +65,9 @@ class LiveView extends React.Component {
     return (
     	<div className="grid grid-pad">
         	<div className="col-1-1">        		
-        		{rows}
+        	  <Slider ref={c => this.slider = c } {...settings}>		        	
+		        	{rows}		        			       		        	
+		      </Slider>
         	</div>       	      
         </div>      		       	
     );

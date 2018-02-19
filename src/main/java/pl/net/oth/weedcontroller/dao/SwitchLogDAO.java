@@ -36,14 +36,22 @@ public class SwitchLogDAO {
 		em.persist(switchLog);
 	}
 	
-	public List<SwitchLog> getSwitchLog(int number){
-		Query query=em.createQuery("SELECT e FROM SwitchLog e order by id desc");
+	public List<SwitchLog> getSwitchLog(int number, List<String> switches){
+		if(switches==null || switches.size()==0) {
+			return new ArrayList<>();
+		}
+		Query query=em.createQuery("SELECT e FROM SwitchLog e where e.switch_.name in (:switchesNames) order by id desc");
+		query.setParameter("switchesNames", switches);
 		query.setMaxResults(number);
 		return (List<SwitchLog>)query.getResultList();
 	}
 
-	public List<SwitchGpioLog> getSwitchGpioLog(int number){
-		Query query=em.createQuery("SELECT e FROM SwitchGpioLog e order by id desc");
+	public List<SwitchGpioLog> getSwitchGpioLog(int number, List<String> switches){
+		if(switches==null || switches.size()==0) {
+			return new ArrayList<>();
+		}
+		Query query=em.createQuery("SELECT e FROM SwitchGpioLog e where e.switchGpio.parent.name in (:switchesNames) order by id desc");
+		query.setParameter("switchesNames", switches);
 		query.setMaxResults(number);
 		return (List<SwitchGpioLog>)query.getResultList();
 	}
@@ -65,6 +73,7 @@ public class SwitchLogDAO {
 						
 		List<SwitchLog> firstResults=(List<SwitchLog>) firstEntry.getResultList();
 		List<SwitchLog> lastResults=(List<SwitchLog>) lastEntry.getResultList();
+				
 		
 		if(results.size()==0 && firstResults.size()==0 && lastResults.size()==0) {
 			return resultsToReturn;
@@ -91,9 +100,7 @@ public class SwitchLogDAO {
 			lastResult.setDate(dateTo);
 			resultsToReturn.add((SwitchLog) lastResults.get(0));
 		}else {
-			if(results.size()>0) {
-				LOGGER.debug("Przestawiam ostatni rezultat dla "+switch_.getName()+" na "+dateTo);
-				resultsToReturn.get(resultsToReturn.size()-1).setDate(dateTo);
+			if(results.size()>0) {											
 			}else {
 				SwitchLog lastMock=new SwitchLog();
 				lastMock.setDate(dateTo);
@@ -101,7 +108,8 @@ public class SwitchLogDAO {
 				lastMock.setSwitch_(switch_);				
 				resultsToReturn.add(lastMock);
 			}
-		}				
+		}	
+						
 		return resultsToReturn;
 	}			
 }

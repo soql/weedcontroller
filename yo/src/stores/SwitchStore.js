@@ -36,7 +36,7 @@ class SwitchStore extends EventEmitter {
         switch (action.actionType) {
             case 'SWITCH_CHANGE':
                 this.switchChange(action.value);                
-                break;           
+                break;               
         }
 
         this.emitChange('STORE_' + action.actionType);

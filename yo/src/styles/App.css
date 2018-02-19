@@ -31,6 +31,10 @@ body {
 	text-align: center;
 }
 
+.sensorTable {
+	width: 85%;	
+}
+
 .humidity {
 	font-size: 42px;
 	font-weight: bold;
@@ -44,11 +48,23 @@ body {
 	color: #FFFAF0;
 	text-align: center;
 }
+.lastReadFoto {
+	font-size: 26px;
+	font-weight: bold;
+	color: #abaaaa;
+	text-align: center;
+}
 
-.switchText {
+.switchText_log_on {
 	font-size: 38px;
 	font-weight: bold;
 	color: 	#F8F8FF;
+	text-align: center;
+}
+.switchText_log_off {
+	font-size: 38px;
+	font-weight: bold;
+	color: 	#4a4a4a;
 	text-align: center;
 }
 
@@ -85,20 +101,13 @@ body {
     padding-left: 4px;
     padding-right: 4px;
 }
-.logTableTd-red{
-	border: 1px solid black;
-	color: #FF0000;
+.logTableTd{
+	border: 1px solid black;	
 	text-align: center;
     padding-left: 4px;
     padding-right: 4px;
 }
-.logTableTd-green{
-	border: 1px solid black;
-	color: #008000;
-	text-align: center;
-    padding-left: 4px;
-    padding-right: 4px;
-}
+
 .allCostTd{
 	border: 1px solid black;
 	color: #a90000;

@@ -19,10 +19,13 @@ public class Switch {
 	private Boolean revert;
 	@Column
 	private Double powerUsage;
-
+	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy="parent")	
 	private List<SwitchGPIO> gpios;
 
+	@Column
+	private String color;
+	
 	public String getName() {
 		return name;
 	}
@@ -53,7 +56,16 @@ public class Switch {
 
 	public void setGpios(List<SwitchGPIO> gpios) {
 		this.gpios = gpios;
-	}	
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+	
 	
 	
 }

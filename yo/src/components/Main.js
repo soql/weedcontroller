@@ -20,7 +20,8 @@ class Main extends React.Component {
     this.state = {blocking: false, 
     	switches: SwitchStore.getSwitches(), 
     	sensors: SensorStore.getSensors(),
-    	actualPhase: ConfigurationStore.getActualPhase()
+    	actualPhase: ConfigurationStore.getActualPhase(),
+    	switchesLogConf: ConfigurationStore.getSwitchesConfiguration()	
     	};
     }  
      
@@ -30,10 +31,16 @@ class Main extends React.Component {
 	  SwitchStore.addChangeListener('STORE_SWITCH_CHANGED', this.switchChanged.bind(this));	  
 	  SwitchStore.addChangeListener('STORE_SENSOR_CHANGED', this.sensorChanged.bind(this));	  	  
 	  ConfigurationStore.addChangeListener('STORE_ACTUAL_PHASE_CHANGED', this.actualPhaseChaged.bind(this));
+	  ConfigurationStore.addChangeListener('STORE_SWITCHES_LOG_CONF_CHANGED', this.switchesLogConfChanged.bind(this));	  
+	  ConfigurationStore.addChangeListener('STORE_SWITCHES_SWITCH_LOG_CHANGE', this.switchesLogConfChanged.bind(this));
 	  SwitchStore.tick();
 	  ConfigurationStore.tick();
   }
- 
+  switchesLogConfChanged(){
+	  this.setState({switchesLogConf: 
+		  ConfigurationStore.getSwitchesConfiguration()
+		 }); 
+  }
   componentWillUnmount(){
 	  SwitchStore.stopTimer();
   }
@@ -41,10 +48,8 @@ class Main extends React.Component {
 	  this.toggleBlocking(false);
 	  this.setState({switches: SwitchStore.getSwitches()});	 
   }   
-
   
-  actualPhaseChaged(){
-	  console.log("actualPhaseChaged "+ConfigurationStore.getActualPhase());
+  actualPhaseChaged(){	  
 	this.setState({actualPhase: ConfigurationStore.getActualPhase()});  
   }
   
@@ -70,23 +75,43 @@ class Main extends React.Component {
 	 AppActions.switchChange({switchState: sendState, switchName:element.name});	 			 
   }
   
+  onSwitchClick(element){
+	  console.log(this.state.switchesLogConf);
+	  let oneSwitchLogConf=this.state.switchesLogConf.find(e => {return e.name==element.name});
+	  AppActions.oneSwitchLogChange({switchName: element.name, switchLogState: !oneSwitchLogConf.activeLog});
+	 
+  }
+  
   
   renderSwitch(element){
 	  let classNameStr="switch";
 	  if(element.state=='ON'){
 		  classNameStr+=" switchOn" 
 	  };
+	  let oneSwitchLogConf=this.state.switchesLogConf.find(e => {return e.name==element.name});
+	  let switchClassNameStr="switchText_log_";
+	  if(oneSwitchLogConf.activeLog){
+		  switchClassNameStr+="on"; 
+	  }else{
+		  switchClassNameStr+="off"; 
+	  }
 	  return (
 			  <tr>
-			  <td className="switchText">{element.name}</td>
+			  <td className={switchClassNameStr}>
+			  	<div id={element.name+"_log"} onClick={this.onSwitchClick.bind(this,element)}>
+			  		{element.name}</div></td>
 			  <td className="switchTd">			  	
-			  		<div id={element.name} className={classNameStr} onClick={this.onButtonClick.bind(this, element)}></div>			  		
+			  		<div id={element.name+"_switch"} className={classNameStr} onClick={this.onButtonClick.bind(this, element)}></div>			  		
 			  </td>			  
 			  </tr>
 			  );
   }
   
-  renderSwitches(){	  
+  renderSwitches(){
+	  if(!this.state.switchesLogConf){
+		  return (<table>		    
+		  </table>);
+	  }
 	  let rows=[];	  	  
 	  this.state.switches.forEach((element) => {
 		  rows.push(this.renderSwitch(element));
@@ -100,15 +125,40 @@ class Main extends React.Component {
 			  </div>
 			 );  
   }
-  
+  renderSensorRow(element){
+	  let res=element.transformedResult!=null ?element.transformedResult: element.result;
+	  return (<tr><td className="header1">{element.description}: </td>
+	  	<td className={element.cssName}>
+	  		{parseFloat(res).toFixed(2)} 
+	  	</td>
+	  	<td className={element.cssName}>
+	  		{element.unit}
+	  	</td>
+	  </tr>)	  
+  }
+  renderSensorRows(element){
+	  let rows=[];
+	  Object.keys(element).forEach((value) => {
+		  console.log(value);
+		rows.push(this.renderSensorRow(element[value]))  
+	  })
+	  return rows;
+  }
   renderTable(element){
+	  let rows=[];
+	  rows.push(this.renderSensorRows(element.results));	  
 	  return (
-	  <table>
-	  <tr><td colSpan="2" className="sensorName">{element.sensorName}</td></tr>
-		<tr><td className="header1">Temp:</td><td className="temp">{element.temperature} &#8451;</td></tr>
-		<tr><td className="header1">Wilg:</td><td className="humidity">{element.humidity} %</td></tr>
-		<tr><td className="header1">Odczyt:</td><td className="lastRead">{element.lastReadTimeElapse} sek.</td></tr>
-	</table>)
+		  <table className="sensorTable">
+		  <tr>
+		  <td colSpan="2" className="sensorName">
+		  	{element.sensorName}
+		  </td>
+		  <td className="sensorName">
+		  	({element.lastReadTimeElapse})
+		  </td>
+		  </tr>
+		  {rows}			
+		</table>)
   }
   
   render () {	   

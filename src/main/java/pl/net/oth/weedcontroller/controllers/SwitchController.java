@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
+import pl.net.oth.weedcontroller.model.dto.SwitchConfigurationDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
 import pl.net.oth.weedcontroller.service.SwitchService;
 
@@ -37,5 +38,10 @@ public class SwitchController {
 	public @ResponseBody Boolean setManagedSwitch(@RequestParam("gpioNumber") final Integer gpioNumber,@RequestParam("gpioState") final Boolean active) {		
 		return switchService.setManagedSwitchState(gpioNumber,active);
 	}
+	@RequestMapping(value = "/getSwitchesConfiguration", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody List<SwitchConfigurationDTO> getSwitchesConfiguration() {		
+		return switchService.getSwitchesCSSConfiguration();
+	}
 }
+
 
