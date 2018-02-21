@@ -29,4 +29,8 @@ public class SensorService {
 	public Sensor getSensorByNumber(Integer number) {		
 		return sensorDAO.getSensorByNumber(number);
 	}
+
+	public List<Sensor> getSensorsWithCheck() {
+		return sensorDAO.getSensorsWithCheck();
+	}
 }

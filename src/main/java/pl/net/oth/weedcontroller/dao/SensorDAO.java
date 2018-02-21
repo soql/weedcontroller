@@ -30,4 +30,9 @@ public class SensorDAO {
 	public Sensor getSensorByNumber(Integer number){
 		return em.find(Sensor.class, number);
 	}
+
+	public List<Sensor> getSensorsWithCheck() {		
+		Query query=em.createQuery("SELECT e FROM Sensor e where e.checkChanges=true");		
+		return (List<Sensor>)query.getResultList();
+	}
 }

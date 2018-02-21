@@ -1,5 +1,6 @@
 package pl.net.oth.weedcontroller;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -59,44 +60,72 @@ public class StartDateTest {
 	@Test
 	public void test() {
 		Sensor s = sensorService.getSensorByNumber(3);
-		System.out.println(s.getName());
+		
+		String dateStart="2018-02-20 18:00:00";
+		System.out.println(parseDate(dateStart).getTime());
 		List<SensorResultLog> ser = sensorResultService
-				.getResultsForDate(new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 15), new Date(), s);
+				.getResultsForDate(parseDate(dateStart), new Date(), s);		
 		System.out.println(ser.size());
 		SensorResultLog[] list = new SensorResultLog[ser.size()];
 		ser.toArray(list);
 		System.out.println(list.length);
 		int SEC = 1000;
+		int HUMIDITY_LEVEL=600;
+		int MEASURMENT_TIME=300;
 		boolean active=false;
+		int besti=0;
+		int bestj=0;
+		int worsei=0;
+		int worsej=0;
+		
 		for (int i = 0; i < list.length;) {
 			for (int j = 0; j < list.length;) {
-				if (list[j].getDate().getTime() - list[i].getDate().getTime() < 900 * SEC) {
+				if (list[j].getDate().getTime() - list[i].getDate().getTime() < MEASURMENT_TIME * SEC) {
 					j++;
 					continue;
-				}
-				/*
-				 * System.out.println("JEST "+j+" do "+i+" = "+(list[j].getDate().getTime()-list
-				 * [i].getDate().getTime())/SEC);
-				 */
-				/*
-				 * System.out.println("HuMI"+list[j].getHumidity()+" -> "+list[i].getHumidity()
-				 * +" ("+list[j].getHumidity()-list[i].getHumidity()+")");
-				 */
-				if (list[i].getHumidity() - list[j].getHumidity() > 300) {
+				}				
+				if (list[i].getHumidity() - list[j].getHumidity() > HUMIDITY_LEVEL) {
 					if(!active) {
 						System.out.println("JEST " + formatDate(list[i].getDate()) + " do " + formatDate(list[j].getDate())
-								+ " = " + (list[j].getDate().getTime() - list[i].getDate().getTime()) / SEC);
-						System.out.println("Wykryto podlanie: " + list[j].getHumidity() + " -> " + list[i].getHumidity()
-								+ "(" + (list[i].getHumidity() - list[j].getHumidity()) + ")");					
+								+ " = " + (list[j].getDate().getTime() - list[i].getDate().getTime()) / SEC);										
 						active=true;
+						besti=i;
+						bestj=j;
+						worsei=i;
+						worsej=j;
+					}else {
+						if((list[i].getHumidity() - list[j].getHumidity())>(list[besti].getHumidity() - list[bestj].getHumidity())){
+							besti=i;
+							bestj=j;
+						}
+						if((list[i].getHumidity() - list[j].getHumidity())<(list[worsei].getHumidity() - list[worsej].getHumidity())){
+							worsei=i;
+							worsej=j;
+						}
 					}
 				}else {
+					if(active) {
+						System.out.println("Wykryto podlanie BEST: " + list[bestj].getHumidity() + " -> " + list[besti].getHumidity()
+								+ "(" + (list[besti].getHumidity() - list[bestj].getHumidity()) + ") ("+formatDate(list[besti].getDate())+" do "+formatDate(list[bestj].getDate())+")");	
+						System.out.println("Wykryto podlanie WORSE: " + list[worsej].getHumidity() + " -> " + list[worsei].getHumidity()
+								+ "(" + (list[worsei].getHumidity() - list[worsej].getHumidity()) + ") ("+formatDate(list[worsei].getDate())+" do "+formatDate(list[worsej].getDate())+")");	
+					}
 					active=false;
 				}
 				i++;
 			}
 		}
 		System.exit(0);
+	}
+
+	private Date parseDate(String dateStart) {		 
+		try {
+			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateStart);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public String formatDate(Date date) {

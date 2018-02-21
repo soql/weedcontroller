@@ -26,6 +26,10 @@ public class Sensor {
 	@OrderBy("id ASC")
 	private List<SensorData> sensorDatas;
 	
+	
+	
+	private Boolean checkChanges;
+	
 	public String getName() {
 		return name;
 	}
@@ -56,7 +60,16 @@ public class Sensor {
 
 	public void setSensorDatas(List<SensorData> sensorDatas) {
 		this.sensorDatas = sensorDatas;
+	}
+
+	public Boolean isCheckChanges() {
+		return checkChanges;
+	}
+
+	public void setCheckChanges(Boolean checkChanges) {
+		this.checkChanges = checkChanges;
 	}	
+	
 	
 	
 }
