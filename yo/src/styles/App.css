@@ -101,12 +101,18 @@ body {
     padding-left: 4px;
     padding-right: 4px;
 }
-.logTableTd{
-	border: 1px solid black;	
+
+.auditLogTable{
+	border-collapse: collapse;
+}
+.auditLogTd{
+	border: 1px solid black;
+	color: #fff;
 	text-align: center;
     padding-left: 4px;
     padding-right: 4px;
 }
+
 
 .allCostTd{
 	border: 1px solid black;
@@ -116,6 +122,9 @@ body {
 }
 
 .logTableTr{
+	border: 1px solid black;
+}
+.auditLogTableTr{
 	border: 1px solid black;
 }
 .checkbox {
