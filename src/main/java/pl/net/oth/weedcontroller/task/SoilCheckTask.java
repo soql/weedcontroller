@@ -15,8 +15,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import pl.net.oth.weedcontroller.helpers.Helper;
+import pl.net.oth.weedcontroller.model.ChangeDetection;
 import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.SensorResultLog;
+import pl.net.oth.weedcontroller.service.ChangeDetectionService;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.SensorResultService;
 import pl.net.oth.weedcontroller.service.SensorService;
@@ -31,6 +33,7 @@ public class SoilCheckTask {
 	private final static int SEC = 1000;
 	private final static int HUMIDITY_LEVEL=600;
 	private final static int MEASURMENT_TIME=300;
+	private final static int MIN_TIME_DIFFERENCE=30;
 	
 	@Autowired
 	private ConfigurationService configurationService;
@@ -40,6 +43,9 @@ public class SoilCheckTask {
 	
 	@Autowired
 	private SensorService sensorService;
+	
+	@Autowired
+	private ChangeDetectionService changeDetectionService;
 
 	@Scheduled(fixedDelay = 300000)
 	public void soilCheck() {		
@@ -85,7 +91,7 @@ public class SoilCheckTask {
 						}
 					}else {
 						if(active) {
-							confirmSoilChange(list, besti, bestj, worsei, worsej);						
+							confirmSoilChange(sensor, actualDate, list, besti, bestj, worsei, worsej);						
 						}
 						active=false;
 					}
@@ -98,11 +104,21 @@ public class SoilCheckTask {
 
 	
 
-	private void confirmSoilChange(SensorResultLog[] list, int besti, int bestj, int worsei, int worsej) {		
-		LOGGER.info("Wykryto podlanie BEST: " + list[bestj].getHumidity() + " -> " + list[besti].getHumidity()
-				+ "(" + (list[besti].getHumidity() - list[bestj].getHumidity()) + ") ("+formatDate(list[besti].getDate())+" do "+formatDate(list[bestj].getDate())+")");	
-		LOGGER.info("Wykryto podlanie WORSE: " + list[worsej].getHumidity() + " -> " + list[worsei].getHumidity()
-				+ "(" + (list[worsei].getHumidity() - list[worsej].getHumidity()) + ") ("+formatDate(list[worsei].getDate())+" do "+formatDate(list[worsej].getDate())+")");
+	private void confirmSoilChange(Sensor sensor,  Date actualDate, SensorResultLog[] list, int besti, int bestj, int worsei, int worsej) {
+		ChangeDetection lastChangeDetection=changeDetectionService.getLast();
+		if(lastChangeDetection==null || actualDate.getTime()-lastChangeDetection.getDate().getTime()>MIN_TIME_DIFFERENCE*SEC*60) {
+			LOGGER.info("Wykryto podlanie BEST: " + list[bestj].getHumidity() + " -> " + list[besti].getHumidity()
+					+ "(" + (list[besti].getHumidity() - list[bestj].getHumidity()) + ") ("+formatDate(list[besti].getDate())+" do "+formatDate(list[bestj].getDate())+")");	
+			LOGGER.info("Wykryto podlanie WORSE: " + list[worsej].getHumidity() + " -> " + list[worsei].getHumidity()
+					+ "(" + (list[worsei].getHumidity() - list[worsej].getHumidity()) + ") ("+formatDate(list[worsei].getDate())+" do "+formatDate(list[worsej].getDate())+")");
+			ChangeDetection changeDetection=new ChangeDetection();
+			changeDetection.setDate(actualDate);
+			changeDetection.setSensor(sensor);
+			changeDetection.setBest((int)(list[besti].getHumidity() - list[bestj].getHumidity()));
+			changeDetection.setBest((int)(list[worsei].getHumidity() - list[worsej].getHumidity()));
+			changeDetectionService.save(changeDetection);
+			
+		}
 	}
 
 
