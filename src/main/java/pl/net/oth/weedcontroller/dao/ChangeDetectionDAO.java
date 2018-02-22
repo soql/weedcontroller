@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import pl.net.oth.weedcontroller.model.ChangeDetection;
+import pl.net.oth.weedcontroller.model.Sensor;
 
 
 @Component
@@ -25,8 +26,9 @@ public class ChangeDetectionDAO {
 		em.persist(changeDetection);
 	}
 	
-	public ChangeDetection getLast(){
-		Query query=em.createQuery("SELECT e FROM ChangeDetection e where e.id=(select max(f.id) from ChangeDetection f)");
+	public ChangeDetection getLast(Sensor sensor){
+		Query query=em.createQuery("SELECT e FROM ChangeDetection e where e.id=(select max(f.id) from ChangeDetection f where f.sensor=:sensor)");
+		query.setParameter("sensor", sensor);
 		List<ChangeDetection> res=(List<ChangeDetection>)query.getResultList();
 		if(res==null || res.size()==0)
 			return null;

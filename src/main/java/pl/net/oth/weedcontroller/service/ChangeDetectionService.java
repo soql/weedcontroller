@@ -17,6 +17,7 @@ import pl.net.oth.weedcontroller.dao.RuleDAO;
 import pl.net.oth.weedcontroller.model.AuditLog;
 import pl.net.oth.weedcontroller.model.ChangeDetection;
 import pl.net.oth.weedcontroller.model.Rule;
+import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.dto.AuditLogDTO;
 
@@ -29,7 +30,7 @@ public class ChangeDetectionService {
 	public void save(ChangeDetection changeDetection){
 		changeDetectionDAO.persist(changeDetection);
 	}
-	public ChangeDetection getLast(){
-		return changeDetectionDAO.getLast();
+	public ChangeDetection getLast(Sensor sensor){
+		return changeDetectionDAO.getLast(sensor);
 	}
 }

@@ -49,10 +49,12 @@ public class SoilCheckTask {
 
 	@Scheduled(fixedDelay = 300000)
 	public void soilCheck() {		
+		LOGGER.info("Task od weryfikacji zmian wilgotności gleby - start");
 		Date startDate=getStartDate();
 		Date actualDate=new Date();
 		List<Sensor> sensors=sensorService.getSensorsWithCheck();
 		for (Sensor sensor : sensors) {
+			LOGGER.info("Weryfikacja zmian na sensorze "+sensor.getName());
 			List<SensorResultLog> sersorLogs = sensorResultService
 					.getResultsForDate(startDate, actualDate, sensor);
 			SensorResultLog[] list = new SensorResultLog[sersorLogs.size()];
@@ -97,34 +99,45 @@ public class SoilCheckTask {
 					}
 					i++;
 				}
+				i++;
 			}
 		}
 		updateConfig(actualDate);
+		LOGGER.info("Task od weryfikacji zmian wilgotności gleby - koniec");
 	}
 
 	
 
 	private void confirmSoilChange(Sensor sensor,  Date actualDate, SensorResultLog[] list, int besti, int bestj, int worsei, int worsej) {
-		ChangeDetection lastChangeDetection=changeDetectionService.getLast();
+		ChangeDetection lastChangeDetection=changeDetectionService.getLast(sensor);
 		if(lastChangeDetection==null || actualDate.getTime()-lastChangeDetection.getDate().getTime()>MIN_TIME_DIFFERENCE*SEC*60) {
-			LOGGER.info("Wykryto podlanie BEST: " + list[bestj].getHumidity() + " -> " + list[besti].getHumidity()
-					+ "(" + (list[besti].getHumidity() - list[bestj].getHumidity()) + ") ("+formatDate(list[besti].getDate())+" do "+formatDate(list[bestj].getDate())+")");	
-			LOGGER.info("Wykryto podlanie WORSE: " + list[worsej].getHumidity() + " -> " + list[worsei].getHumidity()
-					+ "(" + (list[worsei].getHumidity() - list[worsej].getHumidity()) + ") ("+formatDate(list[worsei].getDate())+" do "+formatDate(list[worsej].getDate())+")");
+			log(sensor, list,  besti,  bestj,  worsei,  worsej, true);
 			ChangeDetection changeDetection=new ChangeDetection();
-			changeDetection.setDate(actualDate);
+			changeDetection.setDate(list[besti].getDate());
 			changeDetection.setSensor(sensor);
 			changeDetection.setBest((int)(list[besti].getHumidity() - list[bestj].getHumidity()));
-			changeDetection.setBest((int)(list[worsei].getHumidity() - list[worsej].getHumidity()));
+			changeDetection.setWorse((int)(list[worsei].getHumidity() - list[worsej].getHumidity()));
 			changeDetectionService.save(changeDetection);
+			LOGGER.debug("Zapisano wynik");
+		}else {
+			log(sensor, list,  besti,  bestj,  worsei,  worsej, false);
 			
 		}
 	}
 
-
+	public void log(Sensor sensor, SensorResultLog[] list, int besti, int bestj, int worsei, int worsej, boolean ok){
+		if(!ok) {
+			LOGGER.error("Wykryto podlanie ale za mały odstęp czasowy !!");	
+		}
+		LOGGER.info("Wykryto podlanie "+sensor.getName());
+		LOGGER.info("BEST: " + list[bestj].getHumidity() + " -> " + list[besti].getHumidity()
+				+ "(" + (list[besti].getHumidity() - list[bestj].getHumidity()) + ") ("+formatDate(list[besti].getDate())+" do "+formatDate(list[bestj].getDate())+")");	
+		LOGGER.info("WORSE: " + list[worsej].getHumidity() + " -> " + list[worsei].getHumidity()
+				+ "(" + (list[worsei].getHumidity() - list[worsej].getHumidity()) + ") ("+formatDate(list[worsei].getDate())+" do "+formatDate(list[worsej].getDate())+")");		
+	}
 
 	private Date getStartDate() {
-		long timeFromConfig=Integer.parseInt(configurationService.getByKey(LAST_SOIL_CHECK).getValue());
+		long timeFromConfig=Long.parseLong(configurationService.getByKey(LAST_SOIL_CHECK).getValue());
 		return new Date(timeFromConfig-150*SEC);
 	}
 
