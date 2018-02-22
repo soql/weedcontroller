@@ -41,6 +41,10 @@ class AuditTable extends React.Component {
 	  });
 	  return (
 			  <table className="auditLogTable">
+			  <tr className="auditLogTableTr">  			
+	  			<td className="auditLogTdHeader">Login</td>
+	  			<td className="auditLogTdHeader">Data</td>
+	  			</tr>
 			    {rows}
 			  	<tr><td colSpan="4"><Button color="primary" size="1g" block onClick={this.showMoreLogs.bind(this)}>...</Button></td></tr>
 			  </table>

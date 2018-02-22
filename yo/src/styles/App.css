@@ -114,6 +114,14 @@ body {
     padding-left: 4px;
     padding-right: 4px;
 }
+.auditLogTdHeader{
+	border: 1px solid black;
+	color: #4e9a06;
+	font-weight: bold;
+	text-align: center;
+    padding-left: 4px;
+    padding-right: 4px;
+}
 .auditLogTdDate{
 	border: 1px solid black;
 	color: #fff;
