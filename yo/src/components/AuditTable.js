@@ -30,6 +30,7 @@ class AuditTable extends React.Component {
   			<tr className="auditLogTableTr">  			
   			<td className="auditLogTdLogin">{element.userName}</td>
   			<td className="auditLogTdDate">{element.date}</td>
+  			<td className="auditLogTdDate">{element.auditOperation}</td>
   			</tr>);
   }
   
@@ -44,6 +45,7 @@ class AuditTable extends React.Component {
 			  <tr className="auditLogTableTr">  			
 	  			<td className="auditLogTdHeader">Login</td>
 	  			<td className="auditLogTdHeader">Data</td>
+	  			<td className="auditLogTdHeader">Operacja</td>
 	  			</tr>
 			    {rows}
 			  	<tr><td colSpan="4"><Button color="primary" size="1g" block onClick={this.showMoreLogs.bind(this)}>...</Button></td></tr>
