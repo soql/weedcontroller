@@ -3,6 +3,7 @@ package pl.net.oth.weedcontroller.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,8 @@ import pl.net.oth.weedcontroller.service.SwitchService;
 public class AuditLogController {
 	@Autowired
 	private AuditLogService auditLogService;
+	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/getAuditLogs", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody List<AuditLogDTO> getSwitches(@RequestParam("number") final Integer number) {
 		return auditLogService.getAuditLog(number);

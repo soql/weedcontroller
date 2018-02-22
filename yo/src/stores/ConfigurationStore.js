@@ -18,7 +18,7 @@ class ConfigurationStore extends EventEmitter {
 	        this.tick();
 	      }
 	 tick(){ 
-		 this.readActualPhase();		  	
+		 this.readActualPhase();			 
 	    }
 	  emitChange(eventName) {
 	        this.emit(eventName);
@@ -65,7 +65,7 @@ class ConfigurationStore extends EventEmitter {
 	  	    	AppActions.switchesLogConfChanged();
 	  	    }); 	    	
 	    }
-	    readUserRoles(){
+	    readUserRoles(){	    	
 	    	 axios.get('userRoles').then(res => {
 		   	    	this.userRoles = res.data;
 		   	    }).then(res => {
@@ -77,6 +77,9 @@ class ConfigurationStore extends EventEmitter {
 	    }
 	    getActualPhase(){
 	    	return this.actualPhase;
+	    }
+	    getUserRoles(){
+	    	return this.userRoles;
 	    }
 	    getSwitchesConfiguration(){
 	    	return this.switchesConf;

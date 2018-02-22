@@ -15,7 +15,11 @@ class AuditTable extends React.Component {
   }
      
   componentWillMount(){
-	  AuditStore.addChangeListener('STORE_AUDIT_LOG_CHANGED', this.logChanged.bind(this));
+	  AuditStore.addChangeListener('STORE_AUDIT_LOG_CHANGED', this.logChanged.bind(this));	  
+	  AuditStore.startTimer();
+  }
+  componentWillUnmount(){
+	  AuditStore.stopTimer();
   }
   
   logChanged(){		  
@@ -24,12 +28,13 @@ class AuditTable extends React.Component {
   renderLog(element){
   	return (
   			<tr className="auditLogTableTr">  			
-  			<td className="auditLogTd">{element.userName}</td>
-  			<td className="auditLogTd">{element.date}</td>
+  			<td className="auditLogTdLogin">{element.userName}</td>
+  			<td className="auditLogTdDate">{element.date}</td>
   			</tr>);
   }
   
   renderAudit(){
+	  
 	  let rows=[];	  	  
 	  this.state.auditLogs.forEach((element) => {
 		  rows.push(this.renderLog(element));				  

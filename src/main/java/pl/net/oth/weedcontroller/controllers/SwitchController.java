@@ -27,8 +27,7 @@ public class SwitchController {
 	public @ResponseBody List<SwitchDTO> getSwitches() {
 		return switchService.getAllSwitchesWithStates();		
 	}
-	
-	@Secured("ROLE_ADMIN")
+		
 	@RequestMapping(value = "/setState", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody Boolean setSwitch(@RequestParam("switchName") final String switchName,@RequestParam("switchState") final SwitchState switchState) {
 		return switchService.setSwitchState(switchName,switchState);
