@@ -7,15 +7,20 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.User;
 
 @Component
+@EnableTransactionManagement
 public class UserDAO {
 	@PersistenceContext
 	private EntityManager em;
 
+	@Transactional(propagation=Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
 	public User findByLogin(String login) {
 		 return em.find(User.class, login);				
 	}

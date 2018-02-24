@@ -8,6 +8,7 @@ class ConfigurationStore extends EventEmitter {
 	        super();
 	        this.dispatchToken = AppDispatcher.register(this.dispatcherCallback.bind(this));
 	        this.getConfigAsDate("START_DATE");  
+	        this.readUserRoles();
 	        this.readActualPhase();
 	        this.readSwitchesConfiguration();
 	    }    
@@ -17,7 +18,7 @@ class ConfigurationStore extends EventEmitter {
 	        this.tick();
 	      }
 	 tick(){ 
-		 this.readActualPhase();		  	
+		 this.readActualPhase();			 
 	    }
 	  emitChange(eventName) {
 	        this.emit(eventName);
@@ -64,11 +65,21 @@ class ConfigurationStore extends EventEmitter {
 	  	    	AppActions.switchesLogConfChanged();
 	  	    }); 	    	
 	    }
+	    readUserRoles(){	    	
+	    	 axios.get('userRoles').then(res => {
+		   	    	this.userRoles = res.data;
+		   	    }).then(res => {
+		  	    	AppActions.rolesReaded();
+		  	    }); 	    	
+	    }
 	    getStartDate(){
 	    	return this.startDate;
 	    }
 	    getActualPhase(){
 	    	return this.actualPhase;
+	    }
+	    getUserRoles(){
+	    	return this.userRoles;
 	    }
 	    getSwitchesConfiguration(){
 	    	return this.switchesConf;

@@ -44,7 +44,12 @@ class AppActions {
             value: data
         });
     }    
-    
+    showMoreAuditLogs(data){
+        AppDispatcher.dispatch({
+                actionType: 'SHOW_MORE_AUDIT_LOGS',
+                value: data
+            });
+        }  
     imageLoaded(data){
     AppDispatcher.dispatch({
             actionType: 'IMAGE_LOADED',
@@ -78,6 +83,18 @@ class AppActions {
     oneSwitchLogChange(data){
     	AppDispatcher.dispatch({
             actionType: 'SWITCHES_SWITCH_LOG_CHANGE',
+            value: data
+        });
+    }
+    rolesReaded(data){
+    	AppDispatcher.dispatch({
+            actionType: 'ROLES_READED',
+            value: data
+        });
+    }
+    auditLogChanged(data){
+    	AppDispatcher.dispatch({
+            actionType: 'AUDIT_LOG_CHANGED',
             value: data
         });
     }

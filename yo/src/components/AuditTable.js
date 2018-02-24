@@ -6,47 +6,58 @@ import React from 'react';
 import axios from 'axios';
 import {Button} from 'reactstrap';
 import AppActions from '../actions/AppActions';
-import LogStore from '../stores/LogStore';
+import AuditStore from '../stores/AuditStore';
 
 class AuditTable extends React.Component {
   constructor (props) {
     super(props) ;
-    this.state = {logs: []};
+    this.state = {auditLogs: []};
   }
      
   componentWillMount(){
-	  AuditStore.addChangeListener('STORE_LOG_CHANGED', this.logChanged.bind(this));
+	  AuditStore.addChangeListener('STORE_AUDIT_LOG_CHANGED', this.logChanged.bind(this));	  
+	  AuditStore.startTimer();
+  }
+  componentWillUnmount(){
+	  AuditStore.stopTimer();
   }
   
   logChanged(){		  
-	  this.setState({logs: LogStore.getLogs()});	 
+	  this.setState({auditLogs: AuditStore.getAuditLogs()});	 
   } 
   renderLog(element){
   	return (
-  			<tr className="AuditTableTr">  			
-  			<td className="AuditTableTd">{element.name}</td>
-  			<td className="AuditTableTd">{element.time}</td>
+  			<tr className="auditLogTableTr">  			
+  			<td className="auditLogTdLogin">{element.userName}</td>
+  			<td className="auditLogTdDate">{element.date}</td>
+  			<td className="auditLogTdDate">{element.auditOperation}</td>
   			</tr>);
   }
   
   renderAudit(){
+	  
 	  let rows=[];	  	  
-	  this.state.logs.forEach((element) => {
+	  this.state.auditLogs.forEach((element) => {
 		  rows.push(this.renderLog(element));				  
 	  });
 	  return (
-			  <table className="AuditTable">
+			  <table className="auditLogTable">
+			  <tr className="auditLogTableTr">  			
+	  			<td className="auditLogTdHeader">Login</td>
+	  			<td className="auditLogTdHeader">Data</td>
+	  			<td className="auditLogTdHeader">Operacja</td>
+	  			</tr>
 			    {rows}
 			  	<tr><td colSpan="4"><Button color="primary" size="1g" block onClick={this.showMoreLogs.bind(this)}>...</Button></td></tr>
 			  </table>
 			 );   	    	  
   }
   showMoreLogs(){
-	  AppActions.showMoreLogs();
+	  AppActions.showMoreAuditLogs();
   }
   
   render(){
-	  return this.renderLogs()      	
+	  return this.renderAudit()      	
   }
   
  

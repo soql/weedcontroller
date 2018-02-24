@@ -33,7 +33,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import pl.net.oth.weedcontroller.helpers.Helper;
+import pl.net.oth.weedcontroller.model.Camera;
 import pl.net.oth.weedcontroller.model.SensorResultLog;
+import pl.net.oth.weedcontroller.model.dto.FotoDTO;
+import pl.net.oth.weedcontroller.service.CameraService;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.SensorResultService;
 import pl.net.oth.weedcontroller.service.SwitchService;
@@ -41,36 +44,39 @@ import pl.net.oth.weedcontroller.service.SwitchService;
 @Controller
 public class FotoController {
 	private final static Log LOGGER = LogFactory.getLog(FotoController.class);
-	
+
 	@Autowired
 	private ConfigurationService configurationService;
 
+	@Autowired
+	private CameraService cameraService;
+
 	@RequestMapping(value = "/getLastFoto", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody String[] getLastFoto() {
-		String fileName="/opt/camera/image-"+configurationService.getByKey(ConfigurationService.LAST_FOTO_KEY).getValue()+".jpg";
-		String fileNameInternal="/opt/camera/internal-"+configurationService.getByKey(ConfigurationService.LAST_FOTO_KEY).getValue()+".jpg";
-		LOGGER.debug("Rządanie pobrania pliku "+fileName);
-		LOGGER.debug("Rządanie pobrania pliku "+fileNameInternal);
-		BufferedImage image,internalImage;
-		try {
-			image = ImageIO
-					.read(new File(fileName));
-			internalImage = ImageIO
-					.read(new File(fileNameInternal));	
-			String[] cropPosition=configurationService.getByKey(ConfigurationService.HUMIDITY_POSITION).getValue().split(",");
-			return new String[]{
-					convertToBase64(getFullPhoto(image)),
-					convertToBase64(getFullPhoto(internalImage)),
-					convertToBase64(getPartPhoto(image, cropPosition[0],cropPosition[1], cropPosition[2], cropPosition[3]))					
-					};
-		} catch (IOException e) {
-			LOGGER.error(Helper.STACK_TRACE, e);
+	public @ResponseBody FotoDTO[] getLastFoto() {
+		List<Camera> allCameras = cameraService.getAllCameras();
+		FotoDTO[] result = new FotoDTO[allCameras.size()];
+
+		int i = 0;
+		for (Camera camera : allCameras) {
+			String fileName = "/opt/camera/" + camera.getName() + "-" + camera.getLastFoto() + ".jpg";
+			LOGGER.debug("Rządanie pobrania pliku " + fileName + " z kamery " + camera.getName());
+			BufferedImage image;
+			try {
+				result[i]=new FotoDTO();
+				image = ImageIO.read(new File(fileName));
+				result[i].setFoto(convertToBase64(getFullPhoto(image)));
+				long fotoTime=Long.parseLong(camera.getLastFoto());
+				result[i].setTime((int)(new Date().getTime()-fotoTime)/1000);
+				i++;
+			} catch (IOException e) {
+				LOGGER.error(Helper.STACK_TRACE, e);
+			}
 		}
-		return null;
-		
+		return result;
 	}
-	private byte[] getFullPhoto(BufferedImage image){
-		ByteArrayOutputStream imagebuffer=null;
+
+	private byte[] getFullPhoto(BufferedImage image) {
+		ByteArrayOutputStream imagebuffer = null;
 		try {
 			imagebuffer = new ByteArrayOutputStream();
 			ImageIO.write(image, "jpg", imagebuffer);
@@ -80,19 +86,22 @@ public class FotoController {
 		}
 		return null;
 	}
-	private byte[] getPartPhoto(BufferedImage image, String x, String y, String w, String h){
-		ByteArrayOutputStream imagebuffer=null;
+
+	private byte[] getPartPhoto(BufferedImage image, String x, String y, String w, String h) {
+		ByteArrayOutputStream imagebuffer = null;
 		try {
-			
+
 			imagebuffer = new ByteArrayOutputStream();
-			ImageIO.write(image.getSubimage(Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(w), Integer.parseInt(h)), "jpg", imagebuffer);
+			ImageIO.write(image.getSubimage(Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(w),
+					Integer.parseInt(h)), "jpg", imagebuffer);
 			return imagebuffer.toByteArray();
 		} catch (IOException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
 		}
 		return null;
 	}
-	private String convertToBase64(byte[] image){
-		return "data:image/png;base64," + DatatypeConverter.printBase64Binary(image);	
+
+	private String convertToBase64(byte[] image) {
+		return "data:image/png;base64," + DatatypeConverter.printBase64Binary(image);
 	}
 }

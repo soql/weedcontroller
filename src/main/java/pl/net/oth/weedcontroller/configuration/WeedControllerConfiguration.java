@@ -4,6 +4,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
@@ -15,7 +18,7 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration
 @ComponentScan(basePackages = "pl.net.oth.weedcontroller")
 @ImportResource("classpath:applicationContext.xml")
-public class WeedControllerConfiguration extends WebMvcConfigurerAdapter {
+public class WeedControllerConfiguration extends WebMvcConfigurerAdapter implements SchedulingConfigurer{
 	
 	@Bean(name="HelloWorld")
 	public ViewResolver viewResolver() {
@@ -36,4 +39,13 @@ public class WeedControllerConfiguration extends WebMvcConfigurerAdapter {
         
         
     }
+
+	@Override
+	public void configureTasks(ScheduledTaskRegistrar arg0) {		
+		 ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+	        taskScheduler.setPoolSize(5);
+	        taskScheduler.initialize();
+	        arg0.setTaskScheduler(taskScheduler);
+		
+	}
 }

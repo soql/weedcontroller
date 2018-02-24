@@ -48,6 +48,12 @@ body {
 	color: #FFFAF0;
 	text-align: center;
 }
+.lastReadFoto {
+	font-size: 26px;
+	font-weight: bold;
+	color: #abaaaa;
+	text-align: center;
+}
 
 .switchText_log_on {
 	font-size: 38px;
@@ -95,12 +101,35 @@ body {
     padding-left: 4px;
     padding-right: 4px;
 }
-.logTableTd{
-	border: 1px solid black;	
+
+.auditLogTable{
+	border-collapse: collapse;
+	width: 100%;
+}
+.auditLogTdLogin{
+	border: 1px solid black;
+	color: #fff;
+	font-weight: bold;
 	text-align: center;
     padding-left: 4px;
     padding-right: 4px;
 }
+.auditLogTdHeader{
+	border: 1px solid black;
+	color: #4e9a06;
+	font-weight: bold;
+	text-align: center;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.auditLogTdDate{
+	border: 1px solid black;
+	color: #fff;
+	text-align: center;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
 
 .allCostTd{
 	border: 1px solid black;
@@ -110,6 +139,9 @@ body {
 }
 
 .logTableTr{
+	border: 1px solid black;
+}
+.auditLogTableTr{
 	border: 1px solid black;
 }
 .checkbox {

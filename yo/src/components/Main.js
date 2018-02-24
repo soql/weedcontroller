@@ -9,6 +9,7 @@ import axios from 'axios';
 import 'react-block-ui/style.css';
 
 import LogTable from './LogTable';
+import AuditTable from './AuditTable';
 import AppActions from '../actions/AppActions';
 import SwitchStore from '../stores/SwitchStore';
 import SensorStore from '../stores/SensorStore';
@@ -21,7 +22,8 @@ class Main extends React.Component {
     	switches: SwitchStore.getSwitches(), 
     	sensors: SensorStore.getSensors(),
     	actualPhase: ConfigurationStore.getActualPhase(),
-    	switchesLogConf: ConfigurationStore.getSwitchesConfiguration()	
+    	switchesLogConf: ConfigurationStore.getSwitchesConfiguration(),
+    	roles: ConfigurationStore.getUserRoles()
     	};
     }  
      
@@ -33,6 +35,7 @@ class Main extends React.Component {
 	  ConfigurationStore.addChangeListener('STORE_ACTUAL_PHASE_CHANGED', this.actualPhaseChaged.bind(this));
 	  ConfigurationStore.addChangeListener('STORE_SWITCHES_LOG_CONF_CHANGED', this.switchesLogConfChanged.bind(this));	  
 	  ConfigurationStore.addChangeListener('STORE_SWITCHES_SWITCH_LOG_CHANGE', this.switchesLogConfChanged.bind(this));
+	  ConfigurationStore.addChangeListener('STORE_ROLES_READED', this.rolesLoaded.bind(this));
 	  SwitchStore.tick();
 	  ConfigurationStore.tick();
   }
@@ -40,6 +43,11 @@ class Main extends React.Component {
 	  this.setState({switchesLogConf: 
 		  ConfigurationStore.getSwitchesConfiguration()
 		 }); 
+  }
+  rolesLoaded(){
+	  console.log('Ustawiam role ');
+	  console.log(ConfigurationStore.getUserRoles());
+	  this.setState({roles: ConfigurationStore.getUserRoles()});
   }
   componentWillUnmount(){
 	  SwitchStore.stopTimer();
@@ -167,7 +175,7 @@ class Main extends React.Component {
 		  rows.push(this.renderTable(element));
 	  });
 	return (  
-    		    	
+    	<div>	    	
     <div className="grid grid-pad">	
     	<div className="col-1-3">
     		<div className="content">
@@ -185,9 +193,17 @@ class Main extends React.Component {
   			<div className="content">
       			<LogTable />
       		</div>
-      	</div>       
-    </div>  
+      	</div>  
+    </div>
     
+    <div className="grid grid-pad">	
+		<div className="col-1-3">    	
+			<div className="content">
+  				{this.state.roles && this.state.roles.includes('ROLE_ADMIN') && <AuditTable />}
+  			</div>
+  		</div>   
+    </div>  
+    </div>
     )
   }
  
