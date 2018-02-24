@@ -51,6 +51,9 @@ public class SoilCheckTask {
 	public void soilCheck() {		
 		LOGGER.info("Task od weryfikacji zmian wilgotności gleby - start");
 		Date startDate=getStartDate();
+		if(startDate==null) {
+			LOGGER.info("Funkcjonalność weryfikacji zmiany wilgotności wyłączona - brak konfiguracji ");
+		}
 		Date actualDate=new Date();
 		List<Sensor> sensors=sensorService.getSensorsWithCheck();
 		for (Sensor sensor : sensors) {
@@ -137,7 +140,10 @@ public class SoilCheckTask {
 	}
 
 	private Date getStartDate() {
-		long timeFromConfig=Long.parseLong(configurationService.getByKey(LAST_SOIL_CHECK).getValue());
+		pl.net.oth.weedcontroller.model.Configuration conf=configurationService.getByKey(LAST_SOIL_CHECK);
+		if(conf==null)
+			return null;
+		long timeFromConfig=Long.parseLong(conf.getValue());
 		return new Date(timeFromConfig-150*SEC);
 	}
 
