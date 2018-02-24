@@ -127,7 +127,7 @@ class Main extends React.Component {
 	  });
 	  return (
 			  <div>				  
-				  <table>
+				  <table className="switchTable">
 				  <tr><td className="phaseText" colSpan="2">{this.state.actualPhase}</td></tr>
 				  	{rows}
 				  </table>
