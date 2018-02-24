@@ -41,6 +41,7 @@ import pl.net.oth.weedcontroller.task.ruletask.Command;
 import pl.net.oth.weedcontroller.task.ruletask.RulesTask;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@Ignore
 @ContextConfiguration(classes = { UserService.class, PhaseDAO.class, PhaseService.class, SensorDAO.class,
 		SensorService.class, RulesTask.class, TestConfig.class, RulesTask.class, Command.class,
 		GpioMockExternalController.class, ConfigurationService.class, ConfigurationDAO.class, SMSController.class,
