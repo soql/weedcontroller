@@ -20,6 +20,7 @@ import pl.net.oth.weedcontroller.model.Rule;
 import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.dto.AuditLogDTO;
+import pl.net.oth.weedcontroller.model.dto.ChangeDetectionDTO;
 
 @Component
 public class ChangeDetectionService {
@@ -32,5 +33,13 @@ public class ChangeDetectionService {
 	}
 	public ChangeDetection getLast(Sensor sensor){
 		return changeDetectionDAO.getLast(sensor);
+	}
+	public List<ChangeDetectionDTO> getChangeDetectionLog(Integer number) {
+		List result=new ArrayList<ChangeDetectionDTO>();
+		List<ChangeDetection> changeDetections=changeDetectionDAO.getChangeDetectionLog(number);
+		for (ChangeDetection changeDetection : changeDetections) {			
+			result.add(new ChangeDetectionDTO(changeDetection.getSensor().getName(), changeDetection.getDate(), changeDetection.getWorse()));
+		}
+		return result;
 	}
 }

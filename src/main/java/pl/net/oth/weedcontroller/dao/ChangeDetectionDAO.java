@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
+import pl.net.oth.weedcontroller.model.AuditLog;
 import pl.net.oth.weedcontroller.model.ChangeDetection;
 import pl.net.oth.weedcontroller.model.Sensor;
 
@@ -33,6 +34,12 @@ public class ChangeDetectionDAO {
 		if(res==null || res.size()==0)
 			return null;
 		return res.get(0);
+	}
+
+	public List<ChangeDetection> getChangeDetectionLog(Integer number) {
+		Query query=em.createQuery("SELECT e FROM ChangeDetection e order by date desc");
+		query.setMaxResults(number);
+		return (List<ChangeDetection>)query.getResultList();
 	}			
 }
 

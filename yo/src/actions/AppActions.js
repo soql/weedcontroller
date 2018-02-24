@@ -98,6 +98,12 @@ class AppActions {
             value: data
         });
     }
+    changeDetectionLogChanged(data){
+    	AppDispatcher.dispatch({
+            actionType: 'CHANGE_DETECTION_LOG_CHANGED',
+            value: data
+        });
+    }
 }
 
 export default new AppActions() 

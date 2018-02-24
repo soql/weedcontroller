@@ -10,6 +10,7 @@ import 'react-block-ui/style.css';
 
 import LogTable from './LogTable';
 import AuditTable from './AuditTable';
+import ChangeDetectionTable from './ChangeDetectionTable';
 import AppActions from '../actions/AppActions';
 import SwitchStore from '../stores/SwitchStore';
 import SensorStore from '../stores/SensorStore';
@@ -202,7 +203,13 @@ class Main extends React.Component {
   				{this.state.roles && this.state.roles.includes('ROLE_ADMIN') && <AuditTable />}
   			</div>
   		</div>   
+  		<div className="col-1-3">    	
+  			<div className="content">
+  				{this.state.roles && this.state.roles.includes('ROLE_ADMIN') && <ChangeDetectionTable />}
+  			</div>
+  		</div> 
     </div>  
+         
     </div>
     )
   }
