@@ -116,7 +116,7 @@ public class SoilCheckTask {
 		if(lastChangeDetection==null || actualDate.getTime()-lastChangeDetection.getDate().getTime()>MIN_TIME_DIFFERENCE*SEC*60) {
 			log(sensor, list,  besti,  bestj,  worsei,  worsej, true);
 			ChangeDetection changeDetection=new ChangeDetection();
-			changeDetection.setDate(list[worsei].getDate());
+			changeDetection.setDate(list[worsej].getDate());
 			changeDetection.setSensor(sensor);
 			changeDetection.setBest((int)(list[besti].getHumidity() - list[bestj].getHumidity()));
 			changeDetection.setWorse((int)(list[worsei].getHumidity() - list[worsej].getHumidity()));

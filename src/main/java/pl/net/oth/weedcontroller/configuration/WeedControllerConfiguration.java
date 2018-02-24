@@ -1,5 +1,7 @@
 package pl.net.oth.weedcontroller.configuration;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +17,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import pl.net.oth.weedcontroller.dao.SensorResultDAO;
+
 @Configuration
+@EnableWebMvc
 @ComponentScan(basePackages = "pl.net.oth.weedcontroller")
 @ImportResource("classpath:applicationContext.xml")
 public class WeedControllerConfiguration extends WebMvcConfigurerAdapter implements SchedulingConfigurer{
+	
+	private final static Log LOGGER=LogFactory.getLog(WeedControllerConfiguration.class);
 	
 	@Bean(name="HelloWorld")
 	public ViewResolver viewResolver() {
@@ -41,7 +48,8 @@ public class WeedControllerConfiguration extends WebMvcConfigurerAdapter impleme
     }
 
 	@Override
-	public void configureTasks(ScheduledTaskRegistrar arg0) {		
+	public void configureTasks(ScheduledTaskRegistrar arg0) {	
+		LOGGER.info("Wątki zainicjalizowane");
 		 ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
 	        taskScheduler.setPoolSize(5);
 	        taskScheduler.initialize();
