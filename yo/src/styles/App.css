@@ -33,6 +33,7 @@ body {
 
 .sensorTable {
 	width: 85%;	
+	margin: 0 auto;
 }
 
 .humidity {
@@ -93,6 +94,7 @@ body {
 }
 .logTable{
 	border-collapse: collapse;
+	width: 100%
 }
 .logTableTd{
 	border: 1px solid black;
