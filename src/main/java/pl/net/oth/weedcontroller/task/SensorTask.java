@@ -81,6 +81,7 @@ public class SensorTask {
 				sensorResultDataDTO.setDescription(sensorData.getDescription());
 				sensorResultDataDTO.setCssName(sensorData.getCssName());
 				sensorResultDataDTO.setUnit(sensorData.getUnit());
+				sensorResultDTO.setVisibleOnGui(sensor.getVisibleOnGui());
 				sensorResultDTO.getResults().put(sensorData.getName(), sensorResultDataDTO);
 				
 				

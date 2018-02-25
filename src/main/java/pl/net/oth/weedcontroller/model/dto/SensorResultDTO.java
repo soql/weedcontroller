@@ -9,14 +9,15 @@ import java.util.TreeMap;
 public class SensorResultDTO {
 	public static final String TEMPERATURE="TEMPERATURE";
 	public static final String HUMIDITY="HUMIDITY";
+	public static final Object POWER = "POWER";
 	public Date lastSuccesfullRead;
 	public SortedMap<String, SensorResultDataDTO> results;		
-	
+	private Boolean visibleOnGui;
 	public SensorResultDTO() {
 		super();		
 		
 	}
-
+		
 	public Date getLastSuccesfullRead() {
 		return lastSuccesfullRead;
 	}
@@ -35,5 +36,14 @@ public class SensorResultDTO {
 	
 	public void setResults(TreeMap<String, SensorResultDataDTO> results) {
 		this.results = results;
-	}	
+	}
+
+	public Boolean getVisibleOnGui() {
+		return visibleOnGui;
+	}
+
+	public void setVisibleOnGui(Boolean visibleOnGui) {
+		this.visibleOnGui = visibleOnGui;
+	}
+	
 }

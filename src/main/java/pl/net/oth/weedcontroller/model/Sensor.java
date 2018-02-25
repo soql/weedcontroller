@@ -26,7 +26,7 @@ public class Sensor {
 	@OrderBy("id ASC")
 	private List<SensorData> sensorDatas;
 	
-	
+	private Boolean visibleOnGui;
 	
 	private Boolean checkChanges;
 	
@@ -60,16 +60,22 @@ public class Sensor {
 
 	public void setSensorDatas(List<SensorData> sensorDatas) {
 		this.sensorDatas = sensorDatas;
-	}
+	}	
 
-	public Boolean isCheckChanges() {
+	public Boolean getCheckChanges() {
 		return checkChanges;
 	}
 
 	public void setCheckChanges(Boolean checkChanges) {
 		this.checkChanges = checkChanges;
-	}	
-	
-	
-	
+	}
+
+	public Boolean getVisibleOnGui() {
+		return visibleOnGui;
+	}
+
+	public void setVisibleOnGui(Boolean visibleOnGui) {
+		this.visibleOnGui = visibleOnGui;
+	}
+
 }

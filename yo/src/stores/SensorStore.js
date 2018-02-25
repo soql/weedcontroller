@@ -37,7 +37,7 @@ class SensorStore extends EventEmitter {
         return true;
     }
     tick() {
-    	    axios.get('tempAndHumidity').then(res => {
+    	    axios.get('sensors').then(res => {
     	    	 console.log(res);
     	    	console.log(res.data);
     	    	this._sensors=res.data;    	    		    	

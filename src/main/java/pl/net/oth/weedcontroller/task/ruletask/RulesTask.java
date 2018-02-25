@@ -11,6 +11,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,6 +91,10 @@ public class RulesTask {
 	private Map<String, SwitchState> nowSwitchStates=null;
 	
 	private Map<String, SwitchState> lastSwitchStates=null;
+	
+	private Map<Integer, SensorResultDTO> nowSensorStates=null;
+	
+	private Map<Integer, SensorResultDTO> lastSensorStates=null;
 		
 	private Integer lastPhase=null;
 	
@@ -112,10 +117,13 @@ public class RulesTask {
 			return;
 		}
 		nowPhase=Integer.parseInt(nowPhaseConf.getValue());
+		nowSensorStates=buildSensorStateMap();
+		
 		if(sensorTask.getLastSuccesfullSensorResult()==null){
 			LOGGER.info("Brak rezultatów z sensora - przetwarznie reguł wstrzymane");
 			return;
 		}
+		
 		if(lastRuleTime==null){
 			LOGGER.info("Brak czasu poprzedniego wykonania - przetwarznie reguł wstrzymane");
 			lastRuleTime=nowRuleTime;
@@ -124,14 +132,22 @@ public class RulesTask {
 		if(lastPhase==null) {
 			LOGGER.info("Brak poprzedniej fazy - przetwarznie reguł wstrzymane");
 			lastPhase=nowPhase;
+			return;			
+		}			
+		
+		if(lastSensorStates==null) {
+			LOGGER.info("Brak poprzednich stanów sensora - przetwarznie reguł wstrzymane");
+			lastSensorStates=nowSensorStates;
 			return;
-			
 		}
-		GroovyShell gs=new GroovyShell();		
-	
-		fillGroovyShell(gs);
+		GroovyShell gs=new GroovyShell();
 		
 		nowSwitchStates=buildSwitchStateMap();		
+		
+		
+		fillGroovyShell(gs);
+		
+		
 		
 		LOGGER.info("Weryfikacja taskow. Poprzedni czas: "+sdf.format(lastRuleTime)+" Aktualny czas: "+sdf.format(nowRuleTime));
 				
@@ -158,6 +174,7 @@ public class RulesTask {
 		lastRuleTime=nowRuleTime;
 		lastSwitchStates=nowSwitchStates;
 		lastPhase=nowPhase;
+		lastSensorStates=nowSensorStates;
 	}	
 	
 	private void fillGroovyShell(GroovyShell gs) {
@@ -166,11 +183,13 @@ public class RulesTask {
 		gs.setVariable("OFF", SwitchState.OFF);
 		gs.setVariable("TEMP", sensorTask.getLastSuccesfullSensorResult().get(1).getResults().get(SensorResultDTO.TEMPERATURE).getResult());
 		gs.setVariable("HUMI", sensorTask.getLastSuccesfullSensorResult().get(1).getResults().get(SensorResultDTO.HUMIDITY).getResult());
+		gs.setVariable("POWER_STATE", sensorTask.getLastSuccesfullSensorResult().get(5).getResults().get(SensorResultDTO.POWER).getResult());
 		if(sensorTask.getLastSuccesfullSensorResult().size()>1) {
 			gs.setVariable("TEMP_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getResults().get(SensorResultDTO.TEMPERATURE).getResult());
 			gs.setVariable("HUMI_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getResults().get(SensorResultDTO.HUMIDITY).getResult());
 		}
-		gs.setVariable("SENSORS_MAP", sensorTask.getLastSuccesfullSensorResult());
+		gs.setVariable("NOW_SENSORS_MAP", nowSensorStates);
+		gs.setVariable("PREV_SENSORS_MAP", lastSensorStates);
 		gs.setVariable("LAST_PHASE", phaseService.getPhaseById(lastPhase).getName());
 		gs.setVariable("ACTUAL_PHASE", phaseService.getPhaseById(nowPhase).getName());
 	}
@@ -214,7 +233,9 @@ public class RulesTask {
 		}
 		return result;
 	}
-
+	private Map<Integer, SensorResultDTO> buildSensorStateMap() {
+		return new HashMap<Integer, SensorResultDTO>(sensorTask.getLastSuccesfullSensorResult());		
+	}
 	public Integer getActualRuleId() {
 		return actualRuleId;
 	}		

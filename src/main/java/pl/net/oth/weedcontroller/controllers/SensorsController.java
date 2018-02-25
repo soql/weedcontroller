@@ -19,8 +19,8 @@ import pl.net.oth.weedcontroller.service.SensorService;
 import pl.net.oth.weedcontroller.task.SensorTask;
 
 @Controller
-public class TempAndHumidityController {
-	private final static Log LOGGER = LogFactory.getLog(TempAndHumidityController.class);
+public class SensorsController {
+	private final static Log LOGGER = LogFactory.getLog(SensorsController.class);
 	
 	@Autowired
 	private SensorTask sensorTask;
@@ -28,8 +28,8 @@ public class TempAndHumidityController {
 	@Autowired
 	private SensorService sensorService;
 	
-	@RequestMapping(value = "/tempAndHumidity", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody List<SensorResultJson> getTempAndHumidity() {
+	@RequestMapping(value = "/sensors", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody List<SensorResultJson> getSensors() {
 		List<SensorResultJson> result=new ArrayList<>();
 		Map<Integer, SensorResultDTO> sensorResultDTO=sensorTask.getLastSuccesfullSensorResult();
 		if(sensorResultDTO==null){
@@ -38,8 +38,10 @@ public class TempAndHumidityController {
 		}
 		
 		for (Integer number : sensorResultDTO.keySet()) {
-			SensorResultDTO sensorResultDTO2=sensorResultDTO.get(number);
-			result.add(new SensorResultJson(sensorResultDTO2, sensorService.getNameByNumber(number)));
+			if(Boolean.TRUE.equals(sensorResultDTO.get(number).getVisibleOnGui())) {
+				SensorResultDTO sensorResultDTO2=sensorResultDTO.get(number);
+				result.add(new SensorResultJson(sensorResultDTO2, sensorService.getNameByNumber(number)));
+			}
 		}
 		return result;		
 	}
