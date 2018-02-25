@@ -40,6 +40,22 @@ public class ChangeDetectionDAO {
 		Query query=em.createQuery("SELECT e FROM ChangeDetection e order by date desc");
 		query.setMaxResults(number);
 		return (List<ChangeDetection>)query.getResultList();
+	}
+
+	public ChangeDetection getChangeDetectionToSend() {
+		Query query=em.createQuery("SELECT e FROM ChangeDetection e where e.notificationSended is null order by id asc");
+		List<ChangeDetection> results=query.getResultList();
+		if(results!=null && results.size()>0) {
+			return results.get(0);
+		}
+		return null;
+		
+	}
+	@Transactional
+	public void updateNotification(ChangeDetection changeDetection) {
+		changeDetection.setNotificationSended(true);
+		em.merge(changeDetection);
+		
 	}			
 }
 

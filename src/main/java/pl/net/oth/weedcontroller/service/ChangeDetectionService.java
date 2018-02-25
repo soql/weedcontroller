@@ -42,4 +42,11 @@ public class ChangeDetectionService {
 		}
 		return result;
 	}
+	public ChangeDetection getChangeDetectionToSend() {
+		return changeDetectionDAO.getChangeDetectionToSend();
+	}
+	public void updateNotification(ChangeDetection changeDetection) {
+		changeDetectionDAO.updateNotification(changeDetection);
+		
+	}
 }

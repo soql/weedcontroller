@@ -26,6 +26,10 @@ public class ChangeDetection {
 	
 	@Column
 	private Integer worse;
+	
+	@Column
+	private Boolean notificationSended;
+	
 
 	public Integer getId() {
 		return id;
@@ -66,5 +70,14 @@ public class ChangeDetection {
 	public void setWorse(Integer worse) {
 		this.worse = worse;
 	}
+
+	public Boolean getNotificationSended() {
+		return notificationSended;
+	}
+
+	public void setNotificationSended(Boolean notificationSended) {
+		this.notificationSended = notificationSended;
+	}
+	
 	
 }

@@ -42,6 +42,7 @@ import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
+import pl.net.oth.weedcontroller.service.ChangeDetectionService;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.PhaseService;
 import pl.net.oth.weedcontroller.service.RuleService;
@@ -79,6 +80,9 @@ public class RulesTask {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private ChangeDetectionService changeDetectionService;
 	
 	private Date lastRuleTime=null;
 	
@@ -192,6 +196,7 @@ public class RulesTask {
 		gs.setVariable("PREV_SENSORS_MAP", lastSensorStates);
 		gs.setVariable("LAST_PHASE", phaseService.getPhaseById(lastPhase).getName());
 		gs.setVariable("ACTUAL_PHASE", phaseService.getPhaseById(nowPhase).getName());
+		gs.setVariable("SOIL_DET_TO_SEND", changeDetectionService.getChangeDetectionToSend());
 	}
 
 	public void handleSMS(SMSMessage message) {

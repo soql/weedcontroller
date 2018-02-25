@@ -16,8 +16,10 @@ import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.dao.UserDAO;
 import pl.net.oth.weedcontroller.external.impl.SMSController;
 import pl.net.oth.weedcontroller.helpers.Helper;
+import pl.net.oth.weedcontroller.model.ChangeDetection;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.User;
+import pl.net.oth.weedcontroller.service.ChangeDetectionService;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.RuleService;
 import pl.net.oth.weedcontroller.service.SensorResultService;
@@ -52,6 +54,9 @@ public class Command {
 	
 	@Autowired
 	private SensorService sensorService;
+	
+	@Autowired
+	private ChangeDetectionService changeDetectionService;
 	
 	public long gCaL(String key){
 		return getConfigurationAsLong(key);
@@ -221,5 +226,11 @@ public class Command {
 		for (String phoneNumber : phoneNumbers) {
 			smsController.sendSMS(phoneNumber, text);
 		}
+	}
+	public void setChangeDetectionNotif(ChangeDetection changeDetection) {
+		changeDetectionService.updateNotification(changeDetection);
+	}
+	public void sCDN(ChangeDetection changeDetection) {
+		setChangeDetectionNotif(changeDetection);
 	}
 }
