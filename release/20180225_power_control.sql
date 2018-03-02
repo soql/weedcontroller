@@ -1,4 +1,4 @@
-update weedcontroller.Sensor set visibleOnGui=1 where number<>5
+update weedcontroller.Sensor set visibleOnGui=1 where number<>5;
 
 INSERT INTO `Sensor` (`number`,`command`,`name`,`checkChanges`,`visibleOnGui`) VALUES (5,'/opt/checkPower.sh','Prąd',NULL,0);
 

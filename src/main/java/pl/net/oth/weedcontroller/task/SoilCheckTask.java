@@ -31,7 +31,7 @@ public class SoilCheckTask {
 	public static final String LAST_SOIL_CHECK = "LAST_SOIL_CHECK";
 	
 	private final static int SEC = 1000;
-	private final static int HUMIDITY_LEVEL=600;
+	private final static int HUMIDITY_LEVEL=300;
 	private final static int MEASURMENT_TIME=300;
 	private final static int MIN_TIME_DIFFERENCE=30;
 	
