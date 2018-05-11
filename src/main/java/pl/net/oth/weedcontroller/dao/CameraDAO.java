@@ -16,7 +16,7 @@ public class CameraDAO {
 	private EntityManager em;		
 
 	public List<Camera> getAllCameras(){
-		Query query=em.createQuery("SELECT e FROM Camera e");		
+		Query query=em.createQuery("SELECT e FROM Camera e where e.active=true");		
 		return (List<Camera>)query.getResultList();
 	}
 

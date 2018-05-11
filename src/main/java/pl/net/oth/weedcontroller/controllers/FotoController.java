@@ -57,7 +57,7 @@ public class FotoController {
 		FotoDTO[] result = new FotoDTO[allCameras.size()];
 
 		int i = 0;
-		for (Camera camera : allCameras) {
+		for (Camera camera : allCameras) {			
 			String fileName = "/opt/camera/" + camera.getName() + "-" + camera.getLastFoto() + ".jpg";
 			LOGGER.debug("Rządanie pobrania pliku " + fileName + " z kamery " + camera.getName());
 			BufferedImage image;
