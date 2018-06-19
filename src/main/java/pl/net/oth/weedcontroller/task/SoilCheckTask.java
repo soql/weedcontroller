@@ -30,6 +30,8 @@ public class SoilCheckTask {
 	
 	public static final String LAST_SOIL_CHECK = "LAST_SOIL_CHECK";
 	
+	public static final String SOIL_CHECK_ENABLED = "SOIL_CHECK_ENABLED";
+	
 	private final static int SEC = 1000;
 	private final static int HUMIDITY_LEVEL=300;
 	private final static int MEASURMENT_TIME=300;
@@ -50,6 +52,10 @@ public class SoilCheckTask {
 	@Scheduled(fixedDelay = 300000)
 	public void soilCheck() {		
 		LOGGER.info("Task od weryfikacji zmian wilgotności gleby - start");
+		if(configurationService.getByKey(SOIL_CHECK_ENABLED)!=null && configurationService.getByKey(SOIL_CHECK_ENABLED).equals("false")) {
+			LOGGER.info("Task wyłączony konfiguracyjnie");
+			return;
+		}			
 		Date startDate=getStartDate();
 		if(startDate==null) {
 			LOGGER.info("Funkcjonalność weryfikacji zmiany wilgotności wyłączona - brak konfiguracji ");
