@@ -50,16 +50,15 @@ public class CameraTask {
 		}
 		
 		List<Camera> cameras=cameraService.getAllCameras();
+		LOGGER.debug("Ilość aktywnych kamer: "+cameras.size());
 		for (Camera camera : cameras) {
 			takeFoto(camera);
 		}
-		
+		removeOldFiles(true);		
 	}
 	
 		
-	private void takeFoto(Camera camera) {
-		if(camera.getActive()==null || !camera.getActive().booleanValue())
-			return;
+	private void takeFoto(Camera camera) {		
 		Process process;
 		try {		
 			Long time=new Date().getTime();
@@ -78,8 +77,7 @@ public class CameraTask {
 			cameraFoto.setTime(time);
 			cameraFoto.setFileName(camera.getName()+"-"+String.valueOf(time));
 			cameraFotoService.save(cameraFoto);
-			LOGGER.debug("Zdjęcie zrobione pomyślnie");
-			removeOldFiles(true);
+			LOGGER.debug("Zdjęcie zrobione pomyślnie");			
 					
 		} catch (IOException e) {
 			LOGGER.error("Nieudane wykonanie zdjęca z kamery: "+camera.getName());
