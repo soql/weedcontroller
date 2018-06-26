@@ -75,6 +75,22 @@ public class FotoController {
 		return result;
 	}
 
+	@RequestMapping(value = "/getFotoAsJpeg", method = RequestMethod.GET)
+	public @ResponseBody byte[] getFotoAsJPeg(String cameraName) {
+		Camera camera=cameraService.getCameraByName(cameraName);
+		
+		String fileName = "/opt/camera/" + camera.getName() + "-" + camera.getLastFoto() + ".jpg";
+		LOGGER.debug("Rządanie pobrania pliku " + fileName + " z kamery " + camera.getName());
+		BufferedImage image;
+		try {			
+			image = ImageIO.read(new File(fileName));
+			return getFullPhoto(image);
+		} catch (IOException e) {
+			LOGGER.error(Helper.STACK_TRACE, e);
+		}
+		return null;
+	}
+	
 	private byte[] getFullPhoto(BufferedImage image) {
 		ByteArrayOutputStream imagebuffer = null;
 		try {

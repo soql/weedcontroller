@@ -23,4 +23,9 @@ public class CameraDAO {
 	public void persist(Camera camera) {		
 		em.merge(camera);
 	}
+
+	public Camera getCameraByName(String cameraName) {
+		return em.find(Camera.class, cameraName);
+		
+	}
 }

@@ -18,6 +18,7 @@ import pl.net.oth.weedcontroller.external.impl.SMSController;
 import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.ChangeDetection;
 import pl.net.oth.weedcontroller.model.Switch;
+import pl.net.oth.weedcontroller.model.SwitchGPIO;
 import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.service.ChangeDetectionService;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
@@ -83,6 +84,11 @@ public class Command {
 		Switch s=switchService.getSwitchByName(switchName);		
 		return switchService.setSwitchState(s, SwitchState.valueOf(targetState), userName);		
 	}	
+	
+	public boolean setManagedSwitchState(String switchName, String targetState, String userName) {
+		SwitchGPIO s=switchService.getManagedSwitchByName(switchName);
+		return switchService.setManagedSwitchState(new Integer(s.getGpioNumber()),  targetState.equals(SwitchState.ON)?Boolean.TRUE:Boolean.FALSE);
+	}
 	
 	public boolean csnc(String switchName, SwitchState state){
 		return checkSwitchNowChange(switchName, state);

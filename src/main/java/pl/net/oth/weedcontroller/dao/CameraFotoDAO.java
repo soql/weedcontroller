@@ -19,8 +19,9 @@ public class CameraFotoDAO {
 	public void persist(CameraFoto cameraFoto) {		
 		em.merge(cameraFoto);
 	}
-	public void remove(CameraFoto cameraFoto) {		
-		em.remove(cameraFoto);
+	public void remove(CameraFoto cameraFoto) {	
+		if(cameraFoto!=null)
+			em.remove(cameraFoto);
 	}
 	public CameraFoto getByFileName(String fileName) {
 		Query q=em.createQuery("SELECT e FROM CameraFoto e where e.fileName=:fileName");

@@ -93,5 +93,15 @@ public class SwitchDAO {
 	public SwitchGPIO getSwitchGpioByNumber(Integer gpioNumber) {
 		return em.find(SwitchGPIO.class, gpioNumber);
 	}
+
+	public SwitchGPIO getManagedSwitchByName(String name) {
+		Query query=em.createQuery("SELECT e FROM SwitchGPIO e where e.name=:switchName");
+		query.setParameter("switchName", name);
+		List<SwitchGPIO> results=query.getResultList();
+		if(results.size()>0) {
+			query.getResultList().get(0);
+		}
+		return null;
+	}
 	
 }

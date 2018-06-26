@@ -149,7 +149,11 @@ public class SwitchService {
 	public Switch getSwitchByName(String name){
 		return switchDAO.getSwitchByName(name);
 	}
-		
+	
+	public SwitchGPIO getManagedSwitchByName(String name){
+		return switchDAO.getManagedSwitchByName(name);
+	}
+	
 	public SwitchState getStateByName(String name){
 		Switch switch1=getSwitchByName(name);
 		return getStateFromExternalController(switch1);		

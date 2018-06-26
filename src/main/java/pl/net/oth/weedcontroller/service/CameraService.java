@@ -26,4 +26,8 @@ public class CameraService {
 		cameraDAO.persist(camera);
 	}
 
+	public Camera getCameraByName(String cameraName) {
+		return cameraDAO.getCameraByName(cameraName);		
+	}
+
 }

@@ -1,23 +1,26 @@
 package pl.net.oth.weedcontroller.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
-
-import pl.net.oth.weedcontroller.dao.SensorResultDAO;
 
 @Configuration
 @EnableWebMvc
@@ -55,5 +58,24 @@ public class WeedControllerConfiguration extends WebMvcConfigurerAdapter impleme
 	        taskScheduler.initialize();
 	        arg0.setTaskScheduler(taskScheduler);
 		
+	}
+	@Override
+	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+	    converters.add(byteArrayHttpMessageConverter());
+	}
+	 
+	@Bean
+	public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
+	    ByteArrayHttpMessageConverter arrayHttpMessageConverter = new ByteArrayHttpMessageConverter();
+	    arrayHttpMessageConverter.setSupportedMediaTypes(getSupportedMediaTypes());
+	    return arrayHttpMessageConverter;
+	}
+	 
+	private List<MediaType> getSupportedMediaTypes() {
+	    List<MediaType> list = new ArrayList<MediaType>();
+	    list.add(MediaType.IMAGE_JPEG);
+	    list.add(MediaType.IMAGE_PNG);
+	    list.add(MediaType.APPLICATION_OCTET_STREAM);
+	    return list;
 	}
 }
