@@ -12,10 +12,12 @@ import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
@@ -26,6 +28,7 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -76,7 +79,7 @@ public class FotoController {
 	}
 
 	@RequestMapping(value = "/getFotoAsJpeg", method = RequestMethod.GET)
-	public @ResponseBody byte[] getFotoAsJPeg(String cameraName) {
+	public void getFotoAsJPeg(HttpServletResponse response, String cameraName) {
 		Camera camera=cameraService.getCameraByName(cameraName);
 		
 		String fileName = "/opt/camera/" + camera.getName() + "-" + camera.getLastFoto() + ".jpg";
@@ -84,11 +87,11 @@ public class FotoController {
 		BufferedImage image;
 		try {			
 			image = ImageIO.read(new File(fileName));
-			return getFullPhoto(image);
+			response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+			IOUtils.copy(new ByteArrayInputStream(getFullPhoto(image)), response.getOutputStream());
 		} catch (IOException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
-		}
-		return null;
+		}		
 	}
 	
 	private byte[] getFullPhoto(BufferedImage image) {

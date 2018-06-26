@@ -24,7 +24,6 @@ import pl.net.oth.weedcontroller.service.SensorResultService;
 import pl.net.oth.weedcontroller.service.SensorService;
 
 @Configuration
-@EnableScheduling
 public class SoilCheckTask {
 	private final static Log LOGGER = LogFactory.getLog(SoilCheckTask.class);
 	
@@ -48,8 +47,7 @@ public class SoilCheckTask {
 	
 	@Autowired
 	private ChangeDetectionService changeDetectionService;
-
-	@Scheduled(fixedDelay = 300000)
+	
 	public void soilCheck() {		
 		LOGGER.info("Task od weryfikacji zmian wilgotności gleby - start");
 		if(configurationService.getByKey(SOIL_CHECK_ENABLED)!=null && configurationService.getByKey(SOIL_CHECK_ENABLED).equals("false")) {
