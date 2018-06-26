@@ -74,7 +74,12 @@ public class SwitchDAO {
 		LOGGER.debug("getLastSwitchStateChangeTime "+date);
 		return date;
 	}
-	
+	public Date getLastManagedSwitchStateChangeTime(SwitchGPIO switchGpio) {
+		Query query=em.createQuery("SELECT e.date FROM SwitchGpioLog e where e.switchGpio.gpioNumber=:switchGpio and e.id=(SELECT max(f.id) FROM SwitchGpioLog f where f.switchGpio.gpioNumber in :switchGpio)");
+		query.setParameter("switchName", switchGpio.getGpioNumber());
+		Date date=new Date(((Timestamp) query.getResultList().get(0)).getTime());
+		LOGGER.debug("getLastManagedSwitchStateChangeTime "+date);
+		return date;	}
 	private List<Integer> getGpioList(Switch switch_){
 		List<Integer> gpioList=new ArrayList<>();
 		for(SwitchGPIO switchGPIO : switch_.getGpios()) {
@@ -103,5 +108,7 @@ public class SwitchDAO {
 		}
 		return null;
 	}
+
+
 	
 }

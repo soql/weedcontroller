@@ -90,6 +90,10 @@ public class Command {
 		return switchService.setManagedSwitchState(new Integer(s.getGpioNumber()),  targetState.equals(SwitchState.ON)?Boolean.TRUE:Boolean.FALSE);
 	}
 	
+	public boolean smss(String switchName, String targetState, String userName) {
+		return setManagedSwitchState(switchName, targetState, userName);
+	}
+	
 	public boolean csnc(String switchName, SwitchState state){
 		return checkSwitchNowChange(switchName, state);
 	}
@@ -108,6 +112,10 @@ public class Command {
 	public int getLastSwitchStateChangeTime(String switchName){
 		return switchService.getLastSwitchStateChangeTime(switchName);
 	}
+	public int getLastManagedSwitchStateChangeTime(String switchName){
+		return switchService.getLastManagedSwitchStateChangeTime(switchName);
+	}
+	
 	public float gav(String type, String func, Integer minutes){
 		return getAggregatedValue(type, func, minutes).floatValue();
 	}

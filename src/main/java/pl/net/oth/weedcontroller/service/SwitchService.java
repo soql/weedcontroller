@@ -256,6 +256,14 @@ public class SwitchService {
 		return time;
 	}
 	
+	public int getLastManagedSwitchStateChangeTime(String switchName) {
+		SwitchGPIO switchGpio=getManagedSwitchByName(switchName);
+		Date lastDate=switchDAO.getLastManagedSwitchStateChangeTime(switchGpio);
+		int time=(int) ((new Date().getTime()-lastDate.getTime())/1000/60);
+		LOGGER.debug("Czas od ost. zmiany statusu (managed switch) "+switchName+" = "+time);
+		return time;
+	}
+	
 	public List<PowerUsageDTO> calculatePowerUsage(final Long dateFrom, final Long dateTo ) {
 		List<PowerUsageDTO> resultsDTO=new ArrayList<PowerUsageDTO>();
 		List<Switch> allSwitches=getAllSwitches();
@@ -334,6 +342,8 @@ public class SwitchService {
 		}
 		return result;
 	}
+
+	
 	
 		
 }
