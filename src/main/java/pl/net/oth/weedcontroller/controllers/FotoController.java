@@ -67,7 +67,7 @@ public class FotoController {
 			try {
 				result[i]=new FotoDTO();
 				image = ImageIO.read(new File(fileName));
-				result[i].setFoto(convertToBase64(getFullPhoto(image)));
+				result[i].setFoto(convertToBase64(getFullPhoto(image)));				
 				long fotoTime=Long.parseLong(camera.getLastFoto());
 				result[i].setTime((int)(new Date().getTime()-fotoTime)/1000);
 				i++;
@@ -89,9 +89,11 @@ public class FotoController {
 			image = ImageIO.read(new File(fileName));
 			response.setContentType(MediaType.IMAGE_JPEG_VALUE);
 			IOUtils.copy(new ByteArrayInputStream(getFullPhoto(image)), response.getOutputStream());
+			image.flush();			
 		} catch (IOException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
 		}		
+		
 	}
 	
 	private byte[] getFullPhoto(BufferedImage image) {
@@ -99,7 +101,11 @@ public class FotoController {
 		try {
 			imagebuffer = new ByteArrayOutputStream();
 			ImageIO.write(image, "jpg", imagebuffer);
-			return imagebuffer.toByteArray();
+			
+			byte[] toReturn=imagebuffer.toByteArray();
+			imagebuffer.flush();
+			imagebuffer.close();
+			return toReturn;
 		} catch (IOException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
 		}
@@ -113,7 +119,9 @@ public class FotoController {
 			imagebuffer = new ByteArrayOutputStream();
 			ImageIO.write(image.getSubimage(Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(w),
 					Integer.parseInt(h)), "jpg", imagebuffer);
-			return imagebuffer.toByteArray();
+			byte[] toReturn=imagebuffer.toByteArray();
+			imagebuffer.flush();
+			return toReturn;
 		} catch (IOException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
 		}

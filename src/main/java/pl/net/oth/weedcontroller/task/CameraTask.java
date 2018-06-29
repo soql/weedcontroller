@@ -92,6 +92,7 @@ public class CameraTask {
 
 
 	private void removeOldFiles(boolean realDelete) {
+		LOGGER.debug("Rozpoczęto usuwanie plików");
 		List<Camera> cameras=cameraService.getAllCameras();
 			for (Camera camera : cameras) {
 			String prefix=camera.getName();
@@ -116,11 +117,12 @@ public class CameraTask {
 				if(entry.getKey().longValue()+IMAGE_TIME_TO_KEEP*60*60*1000<now){
 					LOGGER.debug("Usuwam plik: "+entry.getValue().getName());
 					if(realDelete) {
-						entry.getValue().delete();
 						cameraFotoService.remove(entry.getValue().getName());
+						entry.getValue().delete();						
 					}
 				}
 			}
 		}
+		LOGGER.debug("Zakończono usuwanie plików");
 	}
 }
