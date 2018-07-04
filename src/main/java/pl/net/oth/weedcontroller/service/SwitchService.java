@@ -319,9 +319,17 @@ public class SwitchService {
 	public void mergeGpioStates() {
 		gpioExternalController.mergeGpioStates(getAllSwitchesWithLastStates());
 	}
+	public Boolean setManagedSwitchState(Integer gpioNumber, Boolean active, String ruleUser){
+		SwitchState switchState=active?SwitchState.ON:SwitchState.OFF;	
+		LOGGER.info("Rzadanie zmiany przel. GPIO nr "+gpioNumber+" na "+switchState+" przez uzytkownika "+getUser().getFullName());
+		SwitchGPIO switchGPIO=switchDAO.getSwitchGpioByNumber(gpioNumber);
+		publishSwitchGpioStateEvent(switchGPIO, switchState, null, ruleUser);
+		switchDAO.updateGpioActive(gpioNumber, active.booleanValue());		
+		mergeGpioStates();
+		return true;
+	}
 	public Boolean setManagedSwitchState(Integer gpioNumber, Boolean active) {		
-		SwitchState switchState=active?SwitchState.ON:SwitchState.OFF;
-	
+		SwitchState switchState=active?SwitchState.ON:SwitchState.OFF;	
 		LOGGER.info("Rzadanie zmiany przel. GPIO nr "+gpioNumber+" na "+switchState+" przez uzytkownika "+getUser().getFullName());
 		SwitchGPIO switchGPIO=switchDAO.getSwitchGpioByNumber(gpioNumber);
 		publishSwitchGpioStateEvent(switchGPIO, switchState, getUser(), null);

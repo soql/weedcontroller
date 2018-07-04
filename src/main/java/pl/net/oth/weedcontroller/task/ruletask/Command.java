@@ -87,11 +87,14 @@ public class Command {
 	
 	public boolean setManagedSwitchState(String switchName, String targetState, String userName) {
 		SwitchGPIO s=switchService.getManagedSwitchByName(switchName);
-		return switchService.setManagedSwitchState(new Integer(s.getGpioNumber()),  targetState.equals(SwitchState.ON)?Boolean.TRUE:Boolean.FALSE);
+		return switchService.setManagedSwitchState(new Integer(23), targetState.equals(SwitchState.ON)?Boolean.TRUE:Boolean.FALSE, userName);
 	}
 	
 	public boolean smss(String switchName, String targetState, String userName) {
 		return setManagedSwitchState(switchName, targetState, userName);
+	}
+	public boolean smss(String switchName, String targetState) {
+		return setManagedSwitchState(switchName, targetState,  rulesTask.getActualRuleLogin());
 	}
 	
 	public boolean csnc(String switchName, SwitchState state){
