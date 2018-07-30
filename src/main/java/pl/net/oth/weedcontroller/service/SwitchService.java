@@ -274,7 +274,7 @@ public class SwitchService {
 		Double oneWatCost=getOneWatCost();		
 		for (SwitchGPIO switch_ : allSwitches) {
 			PowerUsageDTO powerUsageDTO=new PowerUsageDTO();
-			powerUsageDTO.setSwitchName(switch_.getParent().getName()+"("+switch_.getDescription()+")");
+			powerUsageDTO.setSwitchName(switch_.getParent().getName()+(switch_.getParent().getGpios().size()>1?"("+switch_.getDescription()+")":""));
 			powerUsageDTO.setMaxTime(Helper.milisecondsToHours(dateTo-dateFrom));
 			powerUsageDTO.setPowerUsage(switch_.getPowerUsage());
 			LOGGER.debug("Przelacznik "+powerUsageDTO.getSwitchName());

@@ -19,11 +19,15 @@ public class SensorDAO {
 	@PersistenceContext
 	private EntityManager em;
 	
-	public List<Sensor> getAllSensors(){
-		Query query=em.createQuery("SELECT e FROM Sensor e");		
+	public List<Sensor> getAllCommandSensors(){
+		Query query=em.createQuery("SELECT e FROM Sensor e where e.command is not null");		
 		return (List<Sensor>)query.getResultList();
 	}
-
+	
+	public List<Sensor> getAllMQTTSensors(){
+		Query query=em.createQuery("SELECT e FROM Sensor e where e.mqttTopic is not null");		
+		return (List<Sensor>)query.getResultList();
+	}
 	public String getNameByNumber(Integer number) {			
 		return em.find(Sensor.class, number).getName();
 	}

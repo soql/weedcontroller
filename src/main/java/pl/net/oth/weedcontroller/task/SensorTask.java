@@ -96,7 +96,7 @@ public class SensorTask {
 	
 	@Scheduled(fixedDelay = 2000)
 	public void check() {
-		for(Sensor sensor:sensorService.getAllSensors()){			
+		for(Sensor sensor:sensorService.getAllCommandSensors()){			
 			readFromExternal(sensor);
 			Integer sensorNumber=sensor.getNumber();
 			

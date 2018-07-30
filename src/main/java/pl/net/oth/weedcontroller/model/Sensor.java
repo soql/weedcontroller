@@ -22,6 +22,9 @@ public class Sensor {
 	@Column
 	private String command;
 
+	@Column
+	private String mqttTopic;
+	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy="parent")	
 	@OrderBy("id ASC")
 	private List<SensorData> sensorDatas;
@@ -77,5 +80,14 @@ public class Sensor {
 	public void setVisibleOnGui(Boolean visibleOnGui) {
 		this.visibleOnGui = visibleOnGui;
 	}
+
+	public String getMqttTopic() {
+		return mqttTopic;
+	}
+
+	public void setMqttTopic(String mqttTopic) {
+		this.mqttTopic = mqttTopic;
+	}
+	
 
 }

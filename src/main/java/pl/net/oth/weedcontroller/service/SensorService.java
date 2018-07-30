@@ -18,10 +18,12 @@ public class SensorService {
 	private SensorDAO sensorDAO;
 
 	
-	public List<Sensor> getAllSensors(){
-		return sensorDAO.getAllSensors();
+	public List<Sensor> getAllCommandSensors(){
+		return sensorDAO.getAllCommandSensors();
 	}
-
+	public List<Sensor> getAllMQTTSensors(){
+		return sensorDAO.getAllMQTTSensors();
+	}
 	public String getNameByNumber(Integer number) {		
 		return sensorDAO.getNameByNumber(number);
 	}
