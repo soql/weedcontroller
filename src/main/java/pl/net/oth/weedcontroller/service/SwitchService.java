@@ -71,7 +71,9 @@ public class SwitchService {
 	public void add(Switch s) {
 		switchDAO.persist(s);
 	}
-	
+	public List<SwitchGPIO >getAllManagedSwitches(){
+		return switchDAO.getAllManagedSwitches();
+	}
 	public List<Switch> getAllSwitches(){
 		return switchDAO.getAllSwitches();
 	}
@@ -242,7 +244,9 @@ public class SwitchService {
 	public List<SwitchLog> getLogsForDate(Switch switch_, Date dateFrom, Date DateTo){
 		return switchLogDAO.getLogsForDate(switch_, dateFrom, DateTo);
 	}
-
+	public List<SwitchGpioLog> getManagedSwitchLogsForDate(SwitchGPIO switch_, Date dateFrom, Date DateTo){
+		return switchLogDAO.getManagedSwitchLogsForDate(switch_, dateFrom, DateTo);
+	}
 	public String getLastSwitchStateChangeUser(String switchName, SwitchState state) {
 		Switch switch_=getSwitchByName(switchName);
 		return switchDAO.getLastSwitchStateChangeUser(switch_, state);
@@ -266,15 +270,15 @@ public class SwitchService {
 	
 	public List<PowerUsageDTO> calculatePowerUsage(final Long dateFrom, final Long dateTo ) {
 		List<PowerUsageDTO> resultsDTO=new ArrayList<PowerUsageDTO>();
-		List<Switch> allSwitches=getAllSwitches();
+		List<SwitchGPIO> allSwitches=getAllManagedSwitches();
 		Double oneWatCost=getOneWatCost();		
-		for (Switch switch_ : allSwitches) {
+		for (SwitchGPIO switch_ : allSwitches) {
 			PowerUsageDTO powerUsageDTO=new PowerUsageDTO();
-			powerUsageDTO.setSwitchName(switch_.getName());
+			powerUsageDTO.setSwitchName(switch_.getParent().getName()+"("+switch_.getDescription()+")");
 			powerUsageDTO.setMaxTime(Helper.milisecondsToHours(dateTo-dateFrom));
 			powerUsageDTO.setPowerUsage(switch_.getPowerUsage());
-			LOGGER.debug("Przelacznik "+switch_.getName());
-			List<SwitchLog> results=getLogsForDate(switch_, new Date(dateFrom), new Date(dateTo));
+			LOGGER.debug("Przelacznik "+powerUsageDTO.getSwitchName());
+			List<SwitchLog> results=getLogsForDate(switch_.getParent(), new Date(dateFrom), new Date(dateTo));
 			long milisecoundsOn=0;
 			SwitchLog lastState=null;
 			SwitchLog prevState=null;
@@ -283,9 +287,26 @@ public class SwitchService {
 				if(lastState!=null) {
 					LOGGER.debug("Resultat: "+lastState.getState()+" od "+lastState.getDate()+" do "+switchLog.getDate());
 					if(lastState.getState().equals(SwitchState.ON)) {
-						long timeInMilisecounds=(switchLog.getDate().getTime()-lastState.getDate().getTime());
-						milisecoundsOn+=timeInMilisecounds;
-						LOGGER.debug("Dodaję do "+switch_.getName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+lastState.getDate()+" do "+switchLog.getDate());
+						if(switch_.getParent().getGpios().size()>1) {
+							List<SwitchGpioLog> gpioResults=getManagedSwitchLogsForDate(switch_, lastState.getDate(), switchLog.getDate());
+							SwitchGpioLog lastGpioState=null;
+							SwitchGpioLog prevGpioState=null;
+							for (SwitchGpioLog switchGpioLog : gpioResults) {
+								prevGpioState=lastGpioState;	
+								if(lastGpioState!=null) {
+									if(lastGpioState.getState().equals(SwitchState.ON)) {
+										long timeInMilisecounds=(switchGpioLog.getDate().getTime()-lastGpioState.getDate().getTime());
+										milisecoundsOn+=timeInMilisecounds;
+										LOGGER.debug("Dodaję do "+powerUsageDTO.getSwitchName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+lastGpioState.getDate()+" do "+switchGpioLog.getDate());
+									}
+								}
+								lastGpioState=switchGpioLog;
+							}							
+						}else {
+							long timeInMilisecounds=(switchLog.getDate().getTime()-lastState.getDate().getTime());
+							milisecoundsOn+=timeInMilisecounds;
+							LOGGER.debug("Dodaję do "+powerUsageDTO.getSwitchName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+lastState.getDate()+" do "+switchLog.getDate());
+						}
 					}
 				}				
 				lastState=switchLog;
@@ -293,7 +314,7 @@ public class SwitchService {
 			if(lastState.getState().equals(SwitchState.ON) && lastState.getDate().before(new Date(dateTo))) {
 				long timeInMilisecounds=(new Date(dateTo).getTime()-lastState.getDate().getTime());
 				milisecoundsOn+=timeInMilisecounds;
-				LOGGER.debug("Dodaję do "+switch_.getName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+new Date(dateTo)+" do "+lastState.getDate());
+				LOGGER.debug("Dodaję do "+powerUsageDTO.getSwitchName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+new Date(dateTo)+" do "+lastState.getDate());
 			}
 			powerUsageDTO.setPowerOnTime(Helper.milisecondsToHours(milisecoundsOn));
 			powerUsageDTO.setCost(powerUsageDTO.getPowerOnTime()/1000*oneWatCost*powerUsageDTO.getPowerUsage());
@@ -321,17 +342,25 @@ public class SwitchService {
 	}
 	public Boolean setManagedSwitchState(Integer gpioNumber, Boolean active, String ruleUser){
 		SwitchState switchState=active?SwitchState.ON:SwitchState.OFF;	
-		LOGGER.info("Rzadanie zmiany przel. GPIO nr "+gpioNumber+" na "+switchState+" przez uzytkownika "+getUser().getFullName());
 		SwitchGPIO switchGPIO=switchDAO.getSwitchGpioByNumber(gpioNumber);
+		if(active.booleanValue()==switchGPIO.isActive()) {			
+			return false;
+		}
+		LOGGER.info("Rzadanie zmiany przel. GPIO nr "+gpioNumber+" na "+switchState+" przez uzytkownika "+ruleUser);
+		
 		publishSwitchGpioStateEvent(switchGPIO, switchState, null, ruleUser);
 		switchDAO.updateGpioActive(gpioNumber, active.booleanValue());		
 		mergeGpioStates();
 		return true;
 	}
 	public Boolean setManagedSwitchState(Integer gpioNumber, Boolean active) {		
-		SwitchState switchState=active?SwitchState.ON:SwitchState.OFF;	
-		LOGGER.info("Rzadanie zmiany przel. GPIO nr "+gpioNumber+" na "+switchState+" przez uzytkownika "+getUser().getFullName());
+		SwitchState switchState=active?SwitchState.ON:SwitchState.OFF;
 		SwitchGPIO switchGPIO=switchDAO.getSwitchGpioByNumber(gpioNumber);
+		if(active.booleanValue()==switchGPIO.isActive()) {			
+			return false;
+		}
+		LOGGER.info("Rzadanie zmiany przel. GPIO nr "+gpioNumber+" na "+switchState+" przez uzytkownika "+getUser().getFullName());
+		
 		publishSwitchGpioStateEvent(switchGPIO, switchState, getUser(), null);
 		switchDAO.updateGpioActive(gpioNumber, active.booleanValue());		
 		mergeGpioStates();

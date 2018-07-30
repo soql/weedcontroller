@@ -75,6 +75,7 @@
     "react-addons-css-transition-group": "^15.6.2",
     "react-addons-transition-group": "^15.5.2",
     "react-block-ui": "^0.2.6",
+    "react-burger-menu": "^2.5.2",
     "react-date-picker": "^5.3.28",
     "react-dom": "^15.5.4",
     "react-router-dom": "^4.1.1",

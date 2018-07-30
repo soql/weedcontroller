@@ -76,6 +76,16 @@ public class Command {
 		return switchService.getStateByName(switchName);		
 	}
 	
+	public SwitchState cmss(String switchName){
+		return checkManagedSwitchState(switchName);
+	}
+		
+	
+	public SwitchState checkManagedSwitchState(String switchName){
+		return switchService.getManagedSwitchByName(switchName).isActive()?SwitchState.ON:SwitchState.OFF;		
+	}
+	
+	
 	public boolean sss(String switchName, String targetState){			
 		return setSwitchState(switchName, targetState, rulesTask.getActualRuleLogin());		
 	}	
@@ -87,7 +97,7 @@ public class Command {
 	
 	public boolean setManagedSwitchState(String switchName, String targetState, String userName) {
 		SwitchGPIO s=switchService.getManagedSwitchByName(switchName);
-		return switchService.setManagedSwitchState(new Integer(23), targetState.equals(SwitchState.ON)?Boolean.TRUE:Boolean.FALSE, userName);
+		return switchService.setManagedSwitchState(s.getGpioNumber(), targetState.equals(SwitchState.ON.name())?Boolean.TRUE:Boolean.FALSE, userName);
 	}
 	
 	public boolean smss(String switchName, String targetState, String userName) {
@@ -111,7 +121,9 @@ public class Command {
 	public int glssct(String switchName){
 		return getLastSwitchStateChangeTime(switchName);
 	}
-	
+	public int glmssct(String switchName){
+		return getLastManagedSwitchStateChangeTime(switchName);
+	}
 	public int getLastSwitchStateChangeTime(String switchName){
 		return switchService.getLastSwitchStateChangeTime(switchName);
 	}

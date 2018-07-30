@@ -20,6 +20,8 @@ public class SwitchGPIO {
 	@ManyToOne
 	private Switch parent;
 	
+	@Column
+	private Double powerUsage;
 	
 	public int getGpioNumber() {
 		return gpioNumber;
@@ -53,6 +55,13 @@ public class SwitchGPIO {
 		this.parent = parent;
 	}
 
+	public Double getPowerUsage() {
+		return powerUsage;
+	}
+
+	public void setPowerUsage(Double powerUsage) {
+		this.powerUsage = powerUsage;
+	}
 	
 	
 	

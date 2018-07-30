@@ -37,6 +37,10 @@ public class SwitchDAO {
 	public void saveOrUpdate(SwitchGPIO switchGpio) {
 		em.persist(switchGpio);
 	}
+	public List<SwitchGPIO> getAllManagedSwitches(){
+		Query query=em.createQuery("SELECT e FROM SwitchGPIO e");
+		return (List<SwitchGPIO>)query.getResultList();
+	}
 	
 	public List<Switch> getAllSwitches(){
 		Query query=em.createQuery("SELECT e FROM Switch e");
@@ -104,7 +108,7 @@ public class SwitchDAO {
 		query.setParameter("switchName", name);
 		List<SwitchGPIO> results=query.getResultList();
 		if(results.size()>0) {
-			results.get(0);
+			return results.get(0);
 		}
 		return null;
 	}

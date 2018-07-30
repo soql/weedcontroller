@@ -27,7 +27,7 @@ import pl.net.oth.weedcontroller.service.ConfigurationService;
 @EnableScheduling
 public class CameraTask {	
 	private final static Log LOGGER=LogFactory.getLog(CameraTask.class);
-	public static final String IMAGE_FOLDER="/opt/camera/";
+	public static final String IMAGE_FOLDER="IMAGE_FOLDER";
 	/*In hours*/
 	public static final long IMAGE_TIME_TO_KEEP=10;
 	
@@ -93,12 +93,13 @@ public class CameraTask {
 
 	private void removeOldFiles(boolean realDelete) {
 		LOGGER.debug("Rozpoczęto usuwanie plików");
+		String imageFolder=configurationService.getByKey(IMAGE_FOLDER).getValue();
 		List<Camera> cameras=cameraService.getAllCameras();
 			for (Camera camera : cameras) {
 			String prefix=camera.getName();
 			
 			Map<Long, File> filesMap=new HashMap<>();
-			for (final File fileEntry : new File(IMAGE_FOLDER).listFiles()) {
+			for (final File fileEntry : new File(imageFolder).listFiles()) {
 				String name=fileEntry.getName();
 				if(!name.contains(prefix+"-"))
 					continue;

@@ -17,8 +17,6 @@ public class Switch {
 	private String name;		
 	@Column
 	private Boolean revert;
-	@Column
-	private Double powerUsage;
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy="parent")	
 	private List<SwitchGPIO> gpios;
@@ -40,14 +38,6 @@ public class Switch {
 
 	public void setRevert(Boolean revert) {
 		this.revert = revert;
-	}
-
-	public Double getPowerUsage() {
-		return powerUsage;
-	}
-
-	public void setPowerUsage(Double powerUsage) {
-		this.powerUsage = powerUsage;
 	}
 	
 	public List<SwitchGPIO> getGpios() {
