@@ -285,8 +285,12 @@ public class SwitchService {
 			for (SwitchLog switchLog : results) {	
 				prevState=lastState;
 				if(lastState!=null) {
-					LOGGER.debug("Resultat: "+lastState.getState()+" od "+lastState.getDate()+" do "+switchLog.getDate());
+					LOGGER.debug("Resultat: "+lastState.getState()+" od "+lastState.getDate()+" do "+switchLog.getDate());					
 					if(lastState.getState().equals(SwitchState.ON)) {
+						long timeInMilisecounds=(switchLog.getDate().getTime()-lastState.getDate().getTime());
+						milisecoundsOn+=timeInMilisecounds;
+						LOGGER.debug("Dodaję do "+powerUsageDTO.getSwitchName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+lastState.getDate()+" do "+switchLog.getDate());
+						
 						if(switch_.getParent().getGpios().size()>1) {
 							List<SwitchGpioLog> gpioResults=getManagedSwitchLogsForDate(switch_, lastState.getDate(), switchLog.getDate());
 							SwitchGpioLog lastGpioState=null;
@@ -294,18 +298,14 @@ public class SwitchService {
 							for (SwitchGpioLog switchGpioLog : gpioResults) {
 								prevGpioState=lastGpioState;	
 								if(lastGpioState!=null) {
-									if(lastGpioState.getState().equals(SwitchState.ON)) {
-										long timeInMilisecounds=(switchGpioLog.getDate().getTime()-lastGpioState.getDate().getTime());
-										milisecoundsOn+=timeInMilisecounds;
-										LOGGER.debug("Dodaję do "+powerUsageDTO.getSwitchName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+lastGpioState.getDate()+" do "+switchGpioLog.getDate());
+									if(lastGpioState.getState().equals(SwitchState.OFF)) {
+										timeInMilisecounds=(switchGpioLog.getDate().getTime()-lastGpioState.getDate().getTime());
+										milisecoundsOn-=timeInMilisecounds;
+										LOGGER.debug("Odejmuję od "+powerUsageDTO.getSwitchName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+lastGpioState.getDate()+" do "+switchGpioLog.getDate());
 									}
 								}
 								lastGpioState=switchGpioLog;
 							}							
-						}else {
-							long timeInMilisecounds=(switchLog.getDate().getTime()-lastState.getDate().getTime());
-							milisecoundsOn+=timeInMilisecounds;
-							LOGGER.debug("Dodaję do "+powerUsageDTO.getSwitchName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+lastState.getDate()+" do "+switchLog.getDate());
 						}
 					}
 				}				
