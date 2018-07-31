@@ -14,10 +14,9 @@ public class SensorResultLog {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;	
 	@ManyToOne
-	private Sensor sensor;
+	private SensorData sensorData;
 	private Date date;
-	private float temperature;
-	private float humidity;
+	private float value;	
 
 	public Integer getId() {
 		return id;
@@ -35,28 +34,22 @@ public class SensorResultLog {
 		this.date = date;
 	}
 
-	public float getTemperature() {
-		return temperature;
+	public SensorData getSensorData() {
+		return sensorData;
 	}
 
-	public void setTemperature(float temperature) {
-		this.temperature = temperature;
+	public void setSensorData(SensorData sensorData) {
+		this.sensorData = sensorData;
 	}
 
-	public float getHumidity() {
-		return humidity;
+	public float getValue() {
+		return value;
 	}
 
-	public void setHumidity(float humidity) {
-		this.humidity = humidity;
+	public void setValue(float value) {
+		this.value = value;
 	}
 
-	public Sensor getSensor() {
-		return sensor;
-	}
-
-	public void setSensor(Sensor sensor) {
-		this.sensor = sensor;
-	}
+	
 
 }

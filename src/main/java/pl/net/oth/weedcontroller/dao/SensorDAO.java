@@ -39,4 +39,13 @@ public class SensorDAO {
 		Query query=em.createQuery("SELECT e FROM Sensor e where e.checkChanges=true");		
 		return (List<Sensor>)query.getResultList();
 	}
+
+	public Sensor getSensorByMQTTTopic(String topic) {
+		Query query=em.createQuery("SELECT e FROM Sensor e where e.mqttTopic=:topic");
+		query.setParameter("topic", topic);
+		List<Sensor> result=query.getResultList();
+		if(result.size()>0)
+			return result.get(0);
+		return null;
+	}
 }

@@ -24,6 +24,7 @@ public class SensorService {
 	public List<Sensor> getAllMQTTSensors(){
 		return sensorDAO.getAllMQTTSensors();
 	}
+	
 	public String getNameByNumber(Integer number) {		
 		return sensorDAO.getNameByNumber(number);
 	}
@@ -34,5 +35,9 @@ public class SensorService {
 
 	public List<Sensor> getSensorsWithCheck() {
 		return sensorDAO.getSensorsWithCheck();
+	}
+	
+	public Sensor getSensorByMQTTTopic(String topic) {
+		return sensorDAO.getSensorByMQTTTopic(topic);
 	}
 }

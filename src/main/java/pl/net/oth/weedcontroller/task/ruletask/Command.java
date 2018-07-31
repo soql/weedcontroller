@@ -150,16 +150,10 @@ public class Command {
 	}
 	
 	public Float getAggregatedValue(String type, String func, Integer minutes){
-		if(type.equals("TEMP")){
-			type="temperature";
-		}else if(type.equals("HUMI")){
-			type="humidity";
-		}else{
-			LOGGER.error("Brak sensora dla "+type);
-			return null;
-		}
+		/*TODO weryfikacja czy istnieje sensorData=type dla sensora 1*/
 		Date dateFrom=new Date(new Date().getTime()-(1000*60*minutes.intValue()));
 		Date dateTo=new Date();
+		/*TODO hardcode 1*/
 		Float result=sensorResultService.getAggregatedValue(type, func,dateFrom, dateTo, sensorService.getSensorByNumber(1));
 		LOGGER.debug("getAggregatedValue ("+type+","+func+","+minutes.intValue()+"): "+result);
 		return result;

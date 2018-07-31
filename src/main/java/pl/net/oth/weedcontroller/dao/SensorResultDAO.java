@@ -29,21 +29,23 @@ public class SensorResultDAO {
 		em.persist(sensorResult);
 	}
 
-	public List<SensorResultLog> getResultsForDate(Date dateFrom, Date dateTo, Sensor sensor) {
-		Query q=em.createQuery("SELECT e FROM SensorResultLog e where e.date>:dateFrom and e.date<=:dateTo and e.sensor=:sensor order by id asc");
+	public List<SensorResultLog> getResultsForDate(Date dateFrom, Date dateTo, Sensor sensor, String sensorDataName) {
+		Query q=em.createQuery("SELECT e FROM SensorResultLog e where e.date>:dateFrom and e.date<=:dateTo and e.sensorData.parent=:sensor and e.sensorData.name=:sensorDataName order by id asc");
 		q.setParameter("dateFrom", dateFrom);
 		q.setParameter("dateTo", dateTo);
 		q.setParameter("sensor", sensor);
+		q.setParameter("sensorDataName", sensorDataName);
 		return q.getResultList();
 	}
 
 	public float getAggregatedValue(String type, String func, Date dateFrom, Date dateTo, Sensor sensor) {
 		
-		Query q=em.createQuery("SELECT "+func+"(e."+type+") FROM SensorResultLog e where e.date>:dateFrom and e.date<=:dateTo and e.sensor=:sensor");
+		Query q=em.createQuery("SELECT "+func+"(e.value) FROM SensorResultLog e where e.date>:dateFrom and e.date<=:dateTo and e.sensorData.parent=:sensor and e.sensorData.name=:type");
 		System.out.println(dateFrom+" "+dateTo);
 		q.setParameter("dateFrom", dateFrom);
 		q.setParameter("dateTo", dateTo);
 		q.setParameter("sensor", sensor);
+		q.setParameter("type", type);
 		Object result=q.getSingleResult();
 		if(result instanceof Double){
 			return ((Double)result).floatValue();

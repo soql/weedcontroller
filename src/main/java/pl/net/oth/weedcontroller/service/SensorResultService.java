@@ -23,8 +23,8 @@ public class SensorResultService {
 		sensorResultDAO.persist(s);
 	}
 	
-	public List<SensorResultLog> getResultsForDate(Date dateFrom, Date dateTo, Sensor sensor){
-		return sensorResultDAO.getResultsForDate(dateFrom, dateTo, sensor);
+	public List<SensorResultLog> getResultsForDate(Date dateFrom, Date dateTo, Sensor sensor, String sensorDataName){
+		return sensorResultDAO.getResultsForDate(dateFrom, dateTo, sensor, sensorDataName);
 	}
 
 	public float getAggregatedValue(String type, String func, Date dateFrom, Date dateTo, Sensor sensor){

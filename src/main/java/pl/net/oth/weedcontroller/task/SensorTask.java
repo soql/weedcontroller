@@ -51,13 +51,32 @@ public class SensorTask {
 	
 	private Map<Integer,SensorResultDTO> previousSuccessfullSensorResult=new HashMap<>();
 	
+	/*TODO refactor do jednej*/
 	public void readFromExternal(Sensor sensor){
 		long timeBefore=new Date().getTime();
 		String result=sensorExternalController.check(sensor.getCommand());
 		long timeAfter=new Date().getTime();
 		if(result==null)
 			return;
-		LOGGER.debug("Odczyt z sensora "+sensor.getName()+": "+result+" ( czas trwania: "+(timeAfter-timeBefore)/(float)1000+" s. ).");		
+		LOGGER.debug("Odczyt z sensora "+sensor.getName()+": "+result+" ( czas trwania: "+(timeAfter-timeBefore)/(float)1000+" s. ).");
+		SensorResultDTO sensorResultDTO = parseSensorResponse(result, sensor);		
+		sensorResultDTO.setLastSuccesfullRead(new Date());
+		lastSensorResult.put(sensor.getNumber(), sensorResultDTO);
+	}
+	
+	public void readFromMqtt(Sensor sensor, String mqttMessage){
+		long timeBefore=new Date().getTime();
+		String result=mqttMessage;
+		long timeAfter=new Date().getTime();
+		if(result==null)
+			return;
+		LOGGER.debug("Odczyt z sensora MQTT "+sensor.getName()+": "+result+" ( czas trwania: "+(timeAfter-timeBefore)/(float)1000+" s. ).");
+		SensorResultDTO sensorResultDTO = parseSensorResponse(result, sensor);		
+		sensorResultDTO.setLastSuccesfullRead(new Date());
+		lastSensorResult.put(sensor.getNumber(), sensorResultDTO);
+	}
+	
+	private SensorResultDTO parseSensorResponse(String result, Sensor sensor) {
 		SensorResultDTO sensorResultDTO = new SensorResultDTO();		
 		for(SensorData sensorData : sensor.getSensorDatas()) {			
 			Pattern pattern = Pattern.compile(sensorData.getRegexp());			
@@ -82,36 +101,34 @@ public class SensorTask {
 				sensorResultDataDTO.setCssName(sensorData.getCssName());
 				sensorResultDataDTO.setUnit(sensorData.getUnit());
 				sensorResultDTO.setVisibleOnGui(sensor.getVisibleOnGui());
-				sensorResultDTO.getResults().put(sensorData.getName(), sensorResultDataDTO);
-				
-				
+				sensorResultDTO.getResults().put(sensorData.getName(), sensorResultDataDTO);											
 			}else {
-				LOGGER.error("Nieudane dopasowanie paternu z sensora "+sensor.getName()+" Odpowiedź: "+result+" Patern: "+sensorData.getRegexp());
-				return;
-			}
-		}		
-		sensorResultDTO.setLastSuccesfullRead(new Date());
-		lastSensorResult.put(sensor.getNumber(), sensorResultDTO);
+				LOGGER.error("Nieudane dopasowanie paternu z sensora "+sensor.getName()+" Odpowiedź: "+result+" Patern: "+sensorData.getRegexp());				
+			}			
+		}	
+		return sensorResultDTO;
 	}
-	
+
 	@Scheduled(fixedDelay = 2000)
 	public void check() {
 		for(Sensor sensor:sensorService.getAllCommandSensors()){			
-			readFromExternal(sensor);
-			Integer sensorNumber=sensor.getNumber();
-			
-			if(lastSensorResult.get(sensorNumber)!=null){			
-				if(!checkErrors(previousSuccessfullSensorResult.get(sensorNumber), lastSensorResult.get(sensorNumber), sensor)){
-					lastSuccesfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
-					previousSuccessfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
-				}else{
-					LOGGER.debug("Odczyt "+printSensorResults(lastSensorResult.get(sensorNumber).getResults())+" uznany za nieprawidłowy !!");
-					previousSuccessfullSensorResult.put(sensor.getNumber(), lastSensorResult.get(sensor.getNumber()));
-				}
+			readFromExternal(sensor);						
+			checkSensorCorrectResult(sensor);
+		}
+	}
+	public void checkSensorCorrectResult(Sensor sensor) {
+		Integer sensorNumber=sensor.getNumber();
+		
+		if(lastSensorResult.get(sensorNumber)!=null){			
+			if(!checkErrors(previousSuccessfullSensorResult.get(sensorNumber), lastSensorResult.get(sensorNumber), sensor)){
+				lastSuccesfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
+				previousSuccessfullSensorResult.put(sensorNumber, lastSensorResult.get(sensorNumber));
+			}else{
+				LOGGER.debug("Odczyt "+printSensorResults(lastSensorResult.get(sensorNumber).getResults())+" uznany za nieprawidłowy !!");
+				previousSuccessfullSensorResult.put(sensor.getNumber(), lastSensorResult.get(sensor.getNumber()));
 			}
 		}
 	}
-
 	
 	private String printSensorResults(Map<String, SensorResultDataDTO> results) {
 		String result="";

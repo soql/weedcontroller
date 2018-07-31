@@ -18,8 +18,10 @@ import org.springframework.stereotype.Component;
 import pl.net.oth.weedcontroller.external.impl.GpioPiExternalController;
 import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.Sensor;
+import pl.net.oth.weedcontroller.model.dto.SensorResultDataDTO;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.SensorService;
+import pl.net.oth.weedcontroller.task.SensorTask;
 
 @Component
 public class SensorMqttClient implements MqttCallback {
@@ -34,6 +36,9 @@ public class SensorMqttClient implements MqttCallback {
 	@Autowired
 	private SensorService sensorService;
 	
+	@Autowired
+	private SensorTask sensorTask;
+	
 	@PostConstruct
 	public void init() {
 		LOGGER.info("Inicjalizacja MQTT");
@@ -41,7 +46,7 @@ public class SensorMqttClient implements MqttCallback {
 		connOpt = new MqttConnectOptions();
 		
 		connOpt.setCleanSession(true);
-		connOpt.setKeepAliveInterval(30);
+		connOpt.setKeepAliveInterval(3);
 		
 		try {
 			myClient = new MqttClient("tcp://zjc.oth.net.pl:1883", clientID);
@@ -76,6 +81,9 @@ public class SensorMqttClient implements MqttCallback {
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		LOGGER.debug("Odebrano wiadomość MQTT. Topic: "+topic+" 	"+message);
+		Sensor sensor=sensorService.getSensorByMQTTTopic(topic);
+		sensorTask.readFromMqtt(sensor, message.toString());
+		sensorTask.checkSensorCorrectResult(sensor);
 
 	}
 
