@@ -26,7 +26,7 @@ import pl.net.oth.weedcontroller.task.SensorTask;
 
 @Component
 public class SensorMqttClient implements MqttCallback {
-	private final static Log LOGGER = LogFactory.getLog(GpioPiExternalController.class);
+	private final static Log LOGGER = LogFactory.getLog(SensorMqttClient.class);
 	
 	private final static String MQTT_ADDRESS="MQTT_ADDRESS";
 	
