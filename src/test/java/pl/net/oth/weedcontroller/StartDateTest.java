@@ -60,7 +60,7 @@ public class StartDateTest {
 
 	@Test
 	public void test() {
-		Sensor s = sensorService.getSensorByNumber(3);			
+		/*Sensor s = sensorService.getSensorByNumber(3);			
 		
 		String dateStart="2018-02-20 18:00:00";
 		System.out.println(parseDate(dateStart).getTime());
@@ -115,7 +115,7 @@ public class StartDateTest {
 				}
 				i++;
 			}
-		}
+		}*/
 		System.exit(0);
 	}
 

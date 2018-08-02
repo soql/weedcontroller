@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import pl.net.oth.weedcontroller.external.impl.GpioPiExternalController;
 import pl.net.oth.weedcontroller.helpers.Helper;
+import pl.net.oth.weedcontroller.model.Configuration;
 import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDataDTO;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
@@ -26,6 +27,8 @@ import pl.net.oth.weedcontroller.task.SensorTask;
 @Component
 public class SensorMqttClient implements MqttCallback {
 	private final static Log LOGGER = LogFactory.getLog(GpioPiExternalController.class);
+	
+	private final static String MQTT_ADDRESS="MQTT_ADDRESS";
 	
 	private MqttClient myClient;
 	private MqttConnectOptions connOpt;
@@ -49,13 +52,15 @@ public class SensorMqttClient implements MqttCallback {
 		connOpt.setKeepAliveInterval(3);
 		
 		try {
-			myClient = new MqttClient("tcp://zjc.oth.net.pl:1883", clientID);
+			String mqttAddress=configurationService.getByKey(MQTT_ADDRESS).getValue();
+			myClient = new MqttClient(mqttAddress, clientID);
 			myClient.setCallback(this);
 			myClient.connect(connOpt);	
 			subscripeTopics();
 			
 		}catch(Exception e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
+			init();
 		}
 	}
 
@@ -74,8 +79,8 @@ public class SensorMqttClient implements MqttCallback {
 
 	@Override
 	public void connectionLost(Throwable cause) {
-		LOGGER.error("Utracono połączenie z MQTT");
-
+		LOGGER.error("Utracono połączenie z MQTT");		
+		init();
 	}
 
 	@Override
