@@ -187,11 +187,7 @@ public class RulesTask {
 		gs.setVariable("OFF", SwitchState.OFF);
 		gs.setVariable("TEMP", sensorTask.getLastSuccesfullSensorResult().get(1).getResults().get(SensorResultDTO.TEMPERATURE).getResult());
 		gs.setVariable("HUMI", sensorTask.getLastSuccesfullSensorResult().get(1).getResults().get(SensorResultDTO.HUMIDITY).getResult());
-		/*gs.setVariable("POWER_STATE", sensorTask.getLastSuccesfullSensorResult().get(5).getResults().get(SensorResultDTO.POWER).getResult());*/
-		if(sensorTask.getLastSuccesfullSensorResult().size()>1) {
-			gs.setVariable("TEMP_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getResults().get(SensorResultDTO.TEMPERATURE).getResult());
-			gs.setVariable("HUMI_Z", sensorTask.getLastSuccesfullSensorResult().get(2).getResults().get(SensorResultDTO.HUMIDITY).getResult());
-		}
+		
 		gs.setVariable("NOW_SENSORS_MAP", nowSensorStates);
 		gs.setVariable("PREV_SENSORS_MAP", lastSensorStates);
 		gs.setVariable("LAST_PHASE", phaseService.getPhaseById(lastPhase).getName());
