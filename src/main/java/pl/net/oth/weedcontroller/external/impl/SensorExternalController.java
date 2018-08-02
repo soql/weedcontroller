@@ -31,7 +31,7 @@ public class SensorExternalController {
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			String line = br.readLine();
-			if (line.equals(ERROR_MESSAGE)) {
+			if (line==null || line.equals(ERROR_MESSAGE)) {
 				LOGGER.error("Nieudane pobranie wartości z DHT22 - noException");
 				return null;
 			}

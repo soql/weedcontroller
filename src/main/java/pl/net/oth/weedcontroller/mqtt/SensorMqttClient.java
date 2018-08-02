@@ -1,6 +1,7 @@
 package pl.net.oth.weedcontroller.mqtt;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -45,21 +46,28 @@ public class SensorMqttClient implements MqttCallback {
 	@PostConstruct
 	public void init() {
 		LOGGER.info("Inicjalizacja MQTT");
-		String clientID = "WEED_CONTROLLER";
+		String clientID = "WEED_CONTROLLER ";
 		connOpt = new MqttConnectOptions();
 		
 		connOpt.setCleanSession(true);
 		connOpt.setKeepAliveInterval(3);
+		connOpt.setMqttVersion(3);
 		
 		try {
 			String mqttAddress=configurationService.getByKey(MQTT_ADDRESS).getValue();
 			myClient = new MqttClient(mqttAddress, clientID);
-			myClient.setCallback(this);
+			myClient.setCallback(this);						
 			myClient.connect(connOpt);	
 			subscripeTopics();
 			
 		}catch(Exception e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			init();
 		}
 	}
@@ -67,8 +75,9 @@ public class SensorMqttClient implements MqttCallback {
 	private void subscripeTopics() {
 		List<Sensor> mqttSensors=sensorService.getAllMQTTSensors();
 		mqttSensors.stream().forEach(sensor -> {
-			try {
-				myClient.subscribe(sensor.getMqttTopic());
+			LOGGER.info("Rejestruję sensor MQTT "+sensor.getMqttTopic());
+			try {				
+				myClient.subscribe(sensor.getMqttTopic());				
 			} catch (MqttException e) {
 				LOGGER.error(Helper.STACK_TRACE, e);
 			}
@@ -80,6 +89,12 @@ public class SensorMqttClient implements MqttCallback {
 	@Override
 	public void connectionLost(Throwable cause) {
 		LOGGER.error("Utracono połączenie z MQTT");		
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		init();
 	}
 

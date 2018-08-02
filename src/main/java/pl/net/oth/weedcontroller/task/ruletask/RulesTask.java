@@ -60,6 +60,8 @@ import pl.net.oth.weedcontroller.task.SensorTask;
 public class RulesTask {
 	private final static Log LOGGER=LogFactory.getLog(RulesTask.class);
 	
+	private final static String ACTUAL_TEMP_SENSOR_ID="ACTUAL_TEMP_SENSOR_ID";
+	
 	@Autowired
 	private SwitchService switchService;	
 		
@@ -185,6 +187,7 @@ public class RulesTask {
 		gs.setVariable("r", command);
 		gs.setVariable("ON", SwitchState.ON);
 		gs.setVariable("OFF", SwitchState.OFF);
+		int sensorId=getActualInternalSensorId();
 		gs.setVariable("TEMP", sensorTask.getLastSuccesfullSensorResult().get(1).getResults().get(SensorResultDTO.TEMPERATURE).getResult());
 		gs.setVariable("HUMI", sensorTask.getLastSuccesfullSensorResult().get(1).getResults().get(SensorResultDTO.HUMIDITY).getResult());
 		
@@ -193,6 +196,19 @@ public class RulesTask {
 		gs.setVariable("LAST_PHASE", phaseService.getPhaseById(lastPhase).getName());
 		gs.setVariable("ACTUAL_PHASE", phaseService.getPhaseById(nowPhase).getName());
 		gs.setVariable("SOIL_DET_TO_SEND", changeDetectionService.getChangeDetectionToSend());
+	}
+
+	private int getActualInternalSensorId() {
+		pl.net.oth.weedcontroller.model.Configuration sensorId=configurationService.getByKey(ACTUAL_TEMP_SENSOR_ID);
+		if(sensorId==null)
+			return 1;
+		try {
+			int i=Integer.parseInt(sensorId.getValue());
+			return i;
+		} catch (NumberFormatException e) {
+			return 1;			
+		}
+		
 	}
 
 	public void handleSMS(SMSMessage message) {

@@ -20,12 +20,12 @@ public class SensorDAO {
 	private EntityManager em;
 	
 	public List<Sensor> getAllCommandSensors(){
-		Query query=em.createQuery("SELECT e FROM Sensor e where e.command is not null and e.active=true");		
+		Query query=em.createQuery("SELECT e FROM Sensor e where e.command is not null and e.mqttTopic is null and e.active=true");		
 		return (List<Sensor>)query.getResultList();
 	}
 	
 	public List<Sensor> getAllMQTTSensors(){
-		Query query=em.createQuery("SELECT e FROM Sensor e where e.mqttTopic is not null and e.active=true");		
+		Query query=em.createQuery("SELECT e FROM Sensor e where e.mqttTopic is not null and e.command is null and e.active=true");		
 		return (List<Sensor>)query.getResultList();
 	}
 	public String getNameByNumber(Integer number) {			
