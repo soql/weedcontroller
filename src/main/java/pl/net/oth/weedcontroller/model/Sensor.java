@@ -21,6 +21,9 @@ public class Sensor {
 
 	@Column
 	private String command;
+	
+	@Column
+	private Boolean active;
 
 	@Column
 	private String mqttTopic;
@@ -87,6 +90,14 @@ public class Sensor {
 
 	public void setMqttTopic(String mqttTopic) {
 		this.mqttTopic = mqttTopic;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 	
 

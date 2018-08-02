@@ -69,7 +69,8 @@ public class FotoController {
 				image = ImageIO.read(new File(fileName));
 				result[i].setFoto(convertToBase64(getFullPhoto(image)));				
 				long fotoTime=Long.parseLong(camera.getLastFoto());
-				result[i].setTime((int)(new Date().getTime()-fotoTime)/1000);
+				result[i].setTime((int)(new Date().getTime()-fotoTime)/1000);				
+				image.flush();
 				i++;
 			} catch (IOException e) {
 				LOGGER.error(Helper.STACK_TRACE, e);
@@ -104,7 +105,7 @@ public class FotoController {
 			
 			byte[] toReturn=imagebuffer.toByteArray();
 			imagebuffer.flush();
-			imagebuffer.close();
+			imagebuffer.close();			
 			return toReturn;
 		} catch (IOException e) {
 			LOGGER.error(Helper.STACK_TRACE, e);
