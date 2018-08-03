@@ -39,6 +39,9 @@ public class SensorData {
 	@Column
 	private String transformExpression;
 	
+
+	@Column
+	private String ruleAlias;
 	
 	public Integer getId() {
 		return id;
@@ -120,5 +123,14 @@ public class SensorData {
 
 	public void setMaxValue(Float maxValue) {
 		this.maxValue = maxValue;
-	}			
+	}
+
+	public String getRuleAlias() {
+		return ruleAlias;
+	}
+
+	public void setRuleAlias(String ruleAlias) {
+		this.ruleAlias = ruleAlias;
+	}	
+	
 }

@@ -38,6 +38,7 @@ import pl.net.oth.weedcontroller.helpers.PinHelper;
 import pl.net.oth.weedcontroller.model.Phase;
 import pl.net.oth.weedcontroller.model.Rule;
 import pl.net.oth.weedcontroller.model.SMSMessage;
+import pl.net.oth.weedcontroller.model.SensorData;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
@@ -47,6 +48,7 @@ import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.PhaseService;
 import pl.net.oth.weedcontroller.service.RuleService;
 import pl.net.oth.weedcontroller.service.SensorResultService;
+import pl.net.oth.weedcontroller.service.SensorService;
 import pl.net.oth.weedcontroller.service.SwitchService;
 import pl.net.oth.weedcontroller.service.UserService;
 import pl.net.oth.weedcontroller.task.SensorTask;
@@ -64,6 +66,9 @@ public class RulesTask {
 	
 	@Autowired
 	private SwitchService switchService;	
+	
+	@Autowired
+	private SensorService sensorService;	
 		
 	@Autowired
 	private SensorTask sensorTask;
@@ -188,14 +193,26 @@ public class RulesTask {
 		gs.setVariable("ON", SwitchState.ON);
 		gs.setVariable("OFF", SwitchState.OFF);
 		int sensorId=getActualInternalSensorId();
-		gs.setVariable("TEMP", sensorTask.getLastSuccesfullSensorResult().get(1).getResults().get(SensorResultDTO.TEMPERATURE).getResult());
-		gs.setVariable("HUMI", sensorTask.getLastSuccesfullSensorResult().get(1).getResults().get(SensorResultDTO.HUMIDITY).getResult());
+		
+		setAliasVariable(gs);
 		
 		gs.setVariable("NOW_SENSORS_MAP", nowSensorStates);
 		gs.setVariable("PREV_SENSORS_MAP", lastSensorStates);
 		gs.setVariable("LAST_PHASE", phaseService.getPhaseById(lastPhase).getName());
 		gs.setVariable("ACTUAL_PHASE", phaseService.getPhaseById(nowPhase).getName());
 		gs.setVariable("SOIL_DET_TO_SEND", changeDetectionService.getChangeDetectionToSend());
+	}
+
+	private void setAliasVariable(GroovyShell gs) {
+		sensorService.getAllSensorDataWithAlias().stream().forEach(sensorData -> {			
+			SensorResultDTO sensorResultDTO=sensorTask.getLastSuccesfullSensorResult().get(sensorData.getParent().getNumber());
+			if(sensorResultDTO!=null) {
+				float value=sensorResultDTO.getResults().get(sensorData.getDescription()).getResult();
+				LOGGER.debug("Ustawiono zmienną dla reguł "+sensorData.getRuleAlias()+" = "+value);
+				gs.setVariable(sensorData.getRuleAlias(), value);
+			}
+		});
+		
 	}
 
 	private int getActualInternalSensorId() {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import pl.net.oth.weedcontroller.model.Configuration;
 import pl.net.oth.weedcontroller.model.Rule;
 import pl.net.oth.weedcontroller.model.Sensor;
+import pl.net.oth.weedcontroller.model.SensorData;
 
 @Component
 public class SensorDAO {
@@ -47,5 +48,10 @@ public class SensorDAO {
 		if(result.size()>0)
 			return result.get(0);
 		return null;
+	}
+
+	public List<SensorData> getAllSensorDataWithAlias() {
+		Query query=em.createQuery("SELECT e FROM SensorData e where e.ruleAlias is not null");		
+		return (List<SensorData>)query.getResultList();
 	}
 }

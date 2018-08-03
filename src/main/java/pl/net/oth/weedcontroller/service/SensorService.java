@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.net.oth.weedcontroller.dao.SensorDAO;
 import pl.net.oth.weedcontroller.dao.SensorResultDAO;
 import pl.net.oth.weedcontroller.model.Sensor;
+import pl.net.oth.weedcontroller.model.SensorData;
 import pl.net.oth.weedcontroller.model.SensorResultLog;
 
 @Component
@@ -39,5 +40,8 @@ public class SensorService {
 	
 	public Sensor getSensorByMQTTTopic(String topic) {
 		return sensorDAO.getSensorByMQTTTopic(topic);
+	}
+	public List<SensorData> getAllSensorDataWithAlias() {
+		return sensorDAO.getAllSensorDataWithAlias();
 	}
 }
