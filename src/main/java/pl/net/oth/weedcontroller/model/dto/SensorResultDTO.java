@@ -13,6 +13,7 @@ public class SensorResultDTO {
 	public Date lastSuccesfullRead;
 	public SortedMap<String, SensorResultDataDTO> results;		
 	private Boolean visibleOnGui;
+	private Integer sortOrder;
 	public SensorResultDTO() {
 		super();		
 		
@@ -44,6 +45,14 @@ public class SensorResultDTO {
 
 	public void setVisibleOnGui(Boolean visibleOnGui) {
 		this.visibleOnGui = visibleOnGui;
+	}
+
+	public Integer getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(Integer sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 	
 }

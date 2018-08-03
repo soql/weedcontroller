@@ -2,8 +2,12 @@ package pl.net.oth.weedcontroller.controllers;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,12 +39,15 @@ public class SensorsController {
 		if(sensorResultDTO==null){
 			LOGGER.error("Brak udanego odczytu");
 			return null;
-		}
+		}		
 		
-		for (Integer number : sensorResultDTO.keySet()) {
-			if(Boolean.TRUE.equals(sensorResultDTO.get(number).getVisibleOnGui())) {
-				SensorResultDTO sensorResultDTO2=sensorResultDTO.get(number);
-				result.add(new SensorResultJson(sensorResultDTO2, sensorService.getNameByNumber(number)));
+		List<Entry<Integer, SensorResultDTO>> keySet=sensorResultDTO.entrySet().stream().sorted((e1, e2) -> {
+			return Integer.compare(e1.getValue().getSortOrder(), e2.getValue().getSortOrder());
+			}).collect(Collectors.toList());
+		for (Entry<Integer, SensorResultDTO>  entry : keySet) {
+			if(Boolean.TRUE.equals(sensorResultDTO.get(entry.getKey()).getVisibleOnGui())) {
+				SensorResultDTO sensorResultDTO2=sensorResultDTO.get(entry.getKey());
+				result.add(new SensorResultJson(sensorResultDTO2, sensorService.getNameByNumber(entry.getKey())));
 			}
 		}
 		return result;		

@@ -30,6 +30,7 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.PinState;
 
 import groovy.lang.GroovyShell;
+import groovy.lang.MissingPropertyException;
 import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.dao.UserDAO;
 import pl.net.oth.weedcontroller.external.impl.SMSController;
@@ -175,6 +176,9 @@ public class RulesTask {
 					LOGGER.info("Reguła "+rule.getId()+" spełniona - wykonuję rządanie.");
 					gs.evaluate(new StringReader(rule.getExpression_()));
 				}
+			}catch(MissingPropertyException e ) {
+				LOGGER.error("Błąd podczas weryfikacji/wykonania warunku reguly nr "+rule.getId()+". Brak definicji zmiennej "+e.getProperty());
+				continue;
 			}catch(Exception e){
 				LOGGER.error("Błąd podczas weryfikacji/wykonania warunku reguly nr "+rule.getId());
 				LOGGER.error(Helper.STACK_TRACE,e);				
@@ -207,7 +211,7 @@ public class RulesTask {
 		sensorService.getAllSensorDataWithAlias().stream().forEach(sensorData -> {			
 			SensorResultDTO sensorResultDTO=sensorTask.getLastSuccesfullSensorResult().get(sensorData.getParent().getNumber());
 			if(sensorResultDTO!=null) {
-				float value=sensorResultDTO.getResults().get(sensorData.getDescription()).getResult();
+				float value=sensorResultDTO.getResults().get(sensorData.getName()).getResult();
 				LOGGER.debug("Ustawiono zmienną dla reguł "+sensorData.getRuleAlias()+" = "+value);
 				gs.setVariable(sensorData.getRuleAlias(), value);
 			}

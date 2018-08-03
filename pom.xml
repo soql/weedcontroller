@@ -34,8 +34,9 @@
 		</dependency>
 		<dependency>
     		<groupId>org.apache.tomcat</groupId>
-    		<artifactId>tomcat-util</artifactId>
+    		<artifactId>tomcat-coyote</artifactId>
     		<version>8.0.53</version>
+    		<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

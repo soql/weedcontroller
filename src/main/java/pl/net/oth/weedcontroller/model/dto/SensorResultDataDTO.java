@@ -8,6 +8,7 @@ public class SensorResultDataDTO {
 	private String unit;
 	
 	
+	
 	public Float getResult() {
 		return result;
 	}
@@ -39,7 +40,5 @@ public class SensorResultDataDTO {
 	}
 	public void setUnit(String unit) {
 		this.unit = unit;
-	}
-	
-	
+	}		
 }

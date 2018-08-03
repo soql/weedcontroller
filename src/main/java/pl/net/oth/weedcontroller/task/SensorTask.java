@@ -100,7 +100,9 @@ public class SensorTask {
 				sensorResultDataDTO.setDescription(sensorData.getDescription());
 				sensorResultDataDTO.setCssName(sensorData.getCssName());
 				sensorResultDataDTO.setUnit(sensorData.getUnit());
+				sensorResultDTO.setSortOrder(sensor.getSortOrder());
 				sensorResultDTO.setVisibleOnGui(sensor.getVisibleOnGui());
+				
 				sensorResultDTO.getResults().put(sensorData.getName(), sensorResultDataDTO);											
 			}else {
 				LOGGER.error("Nieudane dopasowanie paternu z sensora "+sensor.getName()+" Odpowiedź: "+result+" Patern: "+sensorData.getRegexp());				

@@ -36,6 +36,9 @@ public class Sensor {
 	
 	private Boolean checkChanges;
 	
+	@Column
+	private Integer sortOrder;
+	
 	public String getName() {
 		return name;
 	}
@@ -98,6 +101,14 @@ public class Sensor {
 
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	public Integer getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(Integer sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 	
 

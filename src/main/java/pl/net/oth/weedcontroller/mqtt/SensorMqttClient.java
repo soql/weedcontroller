@@ -46,7 +46,7 @@ public class SensorMqttClient implements MqttCallback {
 	@PostConstruct
 	public void init() {
 		LOGGER.info("Inicjalizacja MQTT");
-		String clientID = "WEED_CONTROLLER ";
+		String clientID = "WEED_CONTROLLER "+UUID.randomUUID();
 		connOpt = new MqttConnectOptions();
 		
 		connOpt.setCleanSession(true);
