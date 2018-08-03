@@ -41,9 +41,19 @@ public class SensorsController {
 			return null;
 		}		
 		
-		List<Entry<Integer, SensorResultDTO>> keySet=sensorResultDTO.entrySet().stream().sorted((e1, e2) -> {
-			return Integer.compare(e1.getValue().getSortOrder(), e2.getValue().getSortOrder());
-			}).collect(Collectors.toList());
+		List<Entry<Integer, SensorResultDTO>> keySet;
+		if(sensorResultDTO.size()>1) {
+			keySet=sensorResultDTO.entrySet().stream().sorted((e1, e2) -> {
+				if(e1.getValue()!=null && e2.getValue()!=null) {
+					return Integer.compare(e1.getValue().getSortOrder(), e2.getValue().getSortOrder());
+				}else {
+					return 0;
+				}
+				}).collect(Collectors.toList());
+		}else {
+			keySet=sensorResultDTO.entrySet().stream().collect(Collectors.toList());
+		}
+		
 		for (Entry<Integer, SensorResultDTO>  entry : keySet) {
 			if(Boolean.TRUE.equals(sensorResultDTO.get(entry.getKey()).getVisibleOnGui())) {
 				SensorResultDTO sensorResultDTO2=sensorResultDTO.get(entry.getKey());
