@@ -23,7 +23,7 @@ import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 
 import pl.net.oth.weedcontroller.SwitchState;
-import pl.net.oth.weedcontroller.external.GpioExternalController;
+import pl.net.oth.weedcontroller.external.SwitchController;
 import pl.net.oth.weedcontroller.helpers.PinHelper;
 import pl.net.oth.weedcontroller.model.dto.SwitchDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchGpioDTO;
@@ -32,7 +32,7 @@ import pl.net.oth.weedcontroller.task.SensorTask;
 
 @Profile("PROD")
 @Configuration
-public class GpioPiExternalController implements GpioExternalController{
+public class GpioPiExternalController implements SwitchController{
 	private final static Log LOGGER = LogFactory.getLog(GpioPiExternalController.class);
 	
 	private GpioController gpio;

@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import pl.net.oth.weedcontroller.SwitchType;
+
 @Entity
 public class SwitchGPIO {
 	
@@ -28,6 +30,9 @@ public class SwitchGPIO {
 	
 	@Column
 	private Double powerUsage;
+	
+	@Column
+	private SwitchType switchType;
 	
 	public int getGpioNumber() {
 		return gpioNumber;
@@ -67,6 +72,22 @@ public class SwitchGPIO {
 
 	public void setPowerUsage(Double powerUsage) {
 		this.powerUsage = powerUsage;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public SwitchType getSwitchType() {
+		return switchType;
+	}
+
+	public void setSwitchType(SwitchType switchType) {
+		this.switchType = switchType;
 	}
 	
 	

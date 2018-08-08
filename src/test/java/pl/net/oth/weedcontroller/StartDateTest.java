@@ -23,7 +23,7 @@ import pl.net.oth.weedcontroller.dao.SensorResultDAO;
 import pl.net.oth.weedcontroller.dao.SwitchDAO;
 import pl.net.oth.weedcontroller.dao.SwitchLogDAO;
 import pl.net.oth.weedcontroller.dao.UserDAO;
-import pl.net.oth.weedcontroller.external.GpioExternalController;
+import pl.net.oth.weedcontroller.external.SwitchController;
 import pl.net.oth.weedcontroller.external.impl.GpioMockExternalController;
 import pl.net.oth.weedcontroller.external.impl.SMSController;
 import pl.net.oth.weedcontroller.external.impl.SensorExternalController;

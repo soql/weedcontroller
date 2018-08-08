@@ -26,7 +26,7 @@ import pl.net.oth.weedcontroller.dao.SwitchLogDAO;
 import pl.net.oth.weedcontroller.dao.UserDAO;
 import pl.net.oth.weedcontroller.event.ChangeSwitchGpioStateEvent;
 import pl.net.oth.weedcontroller.event.ChangeSwitchStateEvent;
-import pl.net.oth.weedcontroller.external.GpioExternalController;
+import pl.net.oth.weedcontroller.external.SwitchController;
 import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.Configuration;
 import pl.net.oth.weedcontroller.model.Switch;
@@ -61,7 +61,7 @@ public class SwitchService {
 	private UserDAO userDAO;
 	
 	@Autowired
-	private GpioExternalController gpioExternalController;
+	private SwitchController gpioExternalController;
 	
 	@Autowired
 	private ConfigurationService configurationService;
