@@ -26,6 +26,7 @@ import pl.net.oth.weedcontroller.dao.SwitchLogDAO;
 import pl.net.oth.weedcontroller.dao.UserDAO;
 import pl.net.oth.weedcontroller.event.ChangeSwitchGpioStateEvent;
 import pl.net.oth.weedcontroller.event.ChangeSwitchStateEvent;
+import pl.net.oth.weedcontroller.external.ExternalSwitchDispatcher;
 import pl.net.oth.weedcontroller.external.SwitchController;
 import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.Configuration;
@@ -44,9 +45,7 @@ import pl.net.oth.weedcontroller.model.dto.SwitchLogDTO;
 @EnableTransactionManagement
 public class SwitchService {	
 	private final static Log LOGGER = LogFactory.getLog(SwitchService.class);
-
-	private static final String ONE_WAT_COST = "ONE_WAT_COST";
-	
+		
 	@Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
@@ -61,7 +60,7 @@ public class SwitchService {
 	private UserDAO userDAO;
 	
 	@Autowired
-	private SwitchController gpioExternalController;
+	private ExternalSwitchDispatcher externalSwitchDispatcher;
 	
 	@Autowired
 	private ConfigurationService configurationService;
@@ -71,7 +70,7 @@ public class SwitchService {
 	public void add(Switch s) {
 		switchDAO.persist(s);
 	}
-	public List<SwitchGPIO >getAllManagedSwitches(){
+	public List<SwitchGPIO> getAllManagedSwitches(){
 		return switchDAO.getAllManagedSwitches();
 	}
 	public List<Switch> getAllSwitches(){
@@ -114,35 +113,10 @@ public class SwitchService {
 	}
 	
 	private SwitchState getStateFromExternalController(Switch switch_) {
-		for(SwitchGPIO switchGPIO: switch_.getGpios()){
-			if(switchGPIO.isActive()) {
-				return gpioExternalController.getState(switchGPIO.getGpioNumber(), switch_.getRevert().booleanValue());
-			}
-		}
-		LOGGER.error("Brak aktywnego GPIO dla "+switch_.getName());
-		return SwitchState.OFF;
+		return externalSwitchDispatcher.getStateFromExternalController(switch_);
 	}
 
-	public List<SwitchDTO> getAllSwitchesWithLastStates(){
-		List<Switch> switches=switchDAO.getAllSwitches();
-		List<SwitchDTO> result=new ArrayList<SwitchDTO>();
-		for (Switch switch_ : switches) {
-			SwitchDTO switchDTO=new SwitchDTO();	
-			switchDTO.setName(switch_.getName());
-			switchDTO.setIsRevert(switch_.getRevert());
-			switchDTO.setState(getLastState(switch_));
-			switchDTO.setGpio(new ArrayList<SwitchGpioDTO>());
-			for(SwitchGPIO switchGPIO : switch_.getGpios()) {
-				SwitchGpioDTO switchGpioDTO=new SwitchGpioDTO();
-				switchGpioDTO.setActive(switchGPIO.isActive());
-				switchGpioDTO.setGpioNumber(switchGPIO.getGpioNumber());
-				switchGpioDTO.setName(switchGPIO.getDescription());
-				switchDTO.getGpio().add(switchGpioDTO);
-			}
-			result.add(switchDTO);
-		}
-		return result;
-	}
+	
 	
 	private SwitchState getLastState(Switch switch_) {
 		return switchDAO.getLastState(switch_);
@@ -166,7 +140,7 @@ public class SwitchService {
 		List<Integer> result=new ArrayList<Integer>();
 		for (Switch switch_ : switches) {	
 			for(SwitchGPIO switchGPIO: switch_.getGpios()) {
-				result.add(switchGPIO.getGpioNumber());
+				result.add(switchGPIO.getId());
 			}
 		}
 		return result;
@@ -192,16 +166,7 @@ public class SwitchService {
 		return result;
 	}
 	public Boolean setStateToExternalController(Switch switch_, SwitchState state) {
-		boolean result=false;
-		for(SwitchGPIO switchGPIO: switch_.getGpios()) {
-			if(switchGPIO.isActive()) {
-				gpioExternalController.setState(switchGPIO.getGpioNumber(), state, switch_.getRevert().booleanValue());
-				result=true;
-			}else {
-				gpioExternalController.setState(switchGPIO.getGpioNumber(), SwitchState.OFF, switch_.getRevert().booleanValue());				
-			}
-		}
-		return result;
+		return externalSwitchDispatcher.setStateToExternalController(switch_, state);
 	}
 	
 	private void publishSwitchStateEvent(Switch switch_, SwitchState state, User user, String ruleUser) {		
@@ -268,77 +233,10 @@ public class SwitchService {
 		return time;
 	}
 	
-	public List<PowerUsageDTO> calculatePowerUsage(final Long dateFrom, final Long dateTo ) {
-		List<PowerUsageDTO> resultsDTO=new ArrayList<PowerUsageDTO>();
-		List<SwitchGPIO> allSwitches=getAllManagedSwitches();
-		Double oneWatCost=getOneWatCost();		
-		for (SwitchGPIO switch_ : allSwitches) {
-			PowerUsageDTO powerUsageDTO=new PowerUsageDTO();
-			powerUsageDTO.setSwitchName(switch_.getParent().getName()+(switch_.getParent().getGpios().size()>1?"("+switch_.getDescription()+")":""));
-			powerUsageDTO.setMaxTime(Helper.milisecondsToHours(dateTo-dateFrom));
-			powerUsageDTO.setPowerUsage(switch_.getPowerUsage());
-			LOGGER.debug("Przelacznik "+powerUsageDTO.getSwitchName());
-			List<SwitchLog> results=getLogsForDate(switch_.getParent(), new Date(dateFrom), new Date(dateTo));
-			long milisecoundsOn=0;
-			SwitchLog lastState=null;
-			SwitchLog prevState=null;
-			for (SwitchLog switchLog : results) {	
-				prevState=lastState;
-				if(lastState!=null) {
-					LOGGER.debug("Resultat: "+lastState.getState()+" od "+lastState.getDate()+" do "+switchLog.getDate());					
-					if(lastState.getState().equals(SwitchState.ON)) {
-						long timeInMilisecounds=(switchLog.getDate().getTime()-lastState.getDate().getTime());
-						milisecoundsOn+=timeInMilisecounds;
-						LOGGER.debug("Dodaję do "+powerUsageDTO.getSwitchName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+lastState.getDate()+" do "+switchLog.getDate());
-						
-						if(switch_.getParent().getGpios().size()>1) {
-							List<SwitchGpioLog> gpioResults=getManagedSwitchLogsForDate(switch_, lastState.getDate(), switchLog.getDate());
-							SwitchGpioLog lastGpioState=null;
-							SwitchGpioLog prevGpioState=null;
-							for (SwitchGpioLog switchGpioLog : gpioResults) {
-								prevGpioState=lastGpioState;	
-								if(lastGpioState!=null) {
-									if(lastGpioState.getState().equals(SwitchState.OFF)) {
-										timeInMilisecounds=(switchGpioLog.getDate().getTime()-lastGpioState.getDate().getTime());
-										milisecoundsOn-=timeInMilisecounds;
-										LOGGER.debug("Odejmuję od "+powerUsageDTO.getSwitchName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+lastGpioState.getDate()+" do "+switchGpioLog.getDate());
-									}
-								}
-								lastGpioState=switchGpioLog;
-							}							
-						}
-					}
-				}				
-				lastState=switchLog;
-			}	
-			if(lastState.getState().equals(SwitchState.ON) && lastState.getDate().before(new Date(dateTo))) {
-				long timeInMilisecounds=(new Date(dateTo).getTime()-lastState.getDate().getTime());
-				milisecoundsOn+=timeInMilisecounds;
-				LOGGER.debug("Dodaję do "+powerUsageDTO.getSwitchName()+" czas "+timeInMilisecounds+"("+Helper.milisecondsToHours(timeInMilisecounds)+ "h) za okres "+new Date(dateTo)+" do "+lastState.getDate());
-			}
-			powerUsageDTO.setPowerOnTime(Helper.milisecondsToHours(milisecoundsOn));
-			powerUsageDTO.setCost(powerUsageDTO.getPowerOnTime()/1000*oneWatCost*powerUsageDTO.getPowerUsage());
-			resultsDTO.add(powerUsageDTO);
-		}
-		
-		return resultsDTO;
-	}
+	
 
-	private Double getOneWatCost() {
-		Configuration oneWatCost=configurationService.getByKey(ONE_WAT_COST);
-		if(oneWatCost!=null) {			
-			try {
-				return Double.parseDouble(oneWatCost.getValue());
-			} catch (NumberFormatException e) {
-				return new Double(0);
-			}
-		
-		}
-		return new Double(0);
-	}
-
-	public void mergeGpioStates() {
-		gpioExternalController.mergeGpioStates(getAllSwitchesWithLastStates());
+	public void mergeStates() {
+		externalSwitchDispatcher.mergeStates();		
 	}
 	public Boolean setManagedSwitchState(Integer gpioNumber, Boolean active, String ruleUser){
 		SwitchState switchState=active?SwitchState.ON:SwitchState.OFF;	
@@ -350,7 +248,7 @@ public class SwitchService {
 		
 		publishSwitchGpioStateEvent(switchGPIO, switchState, null, ruleUser);
 		switchDAO.updateGpioActive(gpioNumber, active.booleanValue());		
-		mergeGpioStates();
+		mergeStates();
 		return true;
 	}
 	public Boolean setManagedSwitchState(Integer gpioNumber, Boolean active) {		
@@ -363,7 +261,7 @@ public class SwitchService {
 		
 		publishSwitchGpioStateEvent(switchGPIO, switchState, getUser(), null);
 		switchDAO.updateGpioActive(gpioNumber, active.booleanValue());		
-		mergeGpioStates();
+		externalSwitchDispatcher.mergeStates();
 		return true;
 	}
 
@@ -379,6 +277,13 @@ public class SwitchService {
 		}
 		return result;
 	}
+	public List<SwitchGPIO> getAllMqttSwitches() {
+		return switchDAO.getAllMqttSwitches();
+	}
+	public SwitchGPIO getSwitchByMQTTTopic(String topic) {
+		return switchDAO.getSwitchByMQTTTopic(topic);
+	}
+	
 
 	
 	

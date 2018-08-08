@@ -33,6 +33,7 @@ import groovy.lang.GroovyShell;
 import groovy.lang.MissingPropertyException;
 import pl.net.oth.weedcontroller.SwitchState;
 import pl.net.oth.weedcontroller.dao.UserDAO;
+import pl.net.oth.weedcontroller.external.ExternalSwitchDispatcher;
 import pl.net.oth.weedcontroller.external.impl.SMSController;
 import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.helpers.PinHelper;
@@ -92,6 +93,8 @@ public class RulesTask {
 	@Autowired
 	private ChangeDetectionService changeDetectionService;
 	
+	@Autowired
+	private ExternalSwitchDispatcher externalSwitchDispatcher;
 	private Date lastRuleTime=null;
 	
 	private Date nowRuleTime=null;
@@ -121,7 +124,7 @@ public class RulesTask {
 	
 	@Scheduled(fixedDelay = 3000)
 	private void checkAndExecuteRules() {
-		switchService.mergeGpioStates();
+		externalSwitchDispatcher.mergeStates();
 		nowRuleTime=new Date();
 		pl.net.oth.weedcontroller.model.Configuration nowPhaseConf=configurationService.getByKey(ConfigurationService.ACTUAL_PHASE);
 		if(nowPhaseConf==null) {

@@ -42,6 +42,11 @@ public class SwitchDAO {
 		return (List<SwitchGPIO>)query.getResultList();
 	}
 	
+	public List<SwitchGPIO> getAllMqttSwitches(){
+		Query query=em.createQuery("SELECT e FROM SwitchGPIO e where e.switchType=1 and e.mqttTopic is not null");
+		return (List<SwitchGPIO>)query.getResultList();
+	}
+	
 	public List<Switch> getAllSwitches(){
 		Query query=em.createQuery("SELECT e FROM Switch e");
 		return (List<Switch>)query.getResultList();
@@ -106,6 +111,16 @@ public class SwitchDAO {
 	public SwitchGPIO getManagedSwitchByName(String name) {
 		Query query=em.createQuery("SELECT e FROM SwitchGPIO e where e.description=:switchName");
 		query.setParameter("switchName", name);
+		List<SwitchGPIO> results=query.getResultList();
+		if(results.size()>0) {
+			return results.get(0);
+		}
+		return null;
+	}
+
+	public SwitchGPIO getSwitchByMQTTTopic(String topic) {
+		Query query=em.createQuery("SELECT e FROM SwitchGPIO e where e.mqttTopic=:mqttTopic");
+		query.setParameter("mqttTopic", topic);
 		List<SwitchGPIO> results=query.getResultList();
 		if(results.size()>0) {
 			return results.get(0);

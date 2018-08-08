@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Entity
 public class Switch {
 	@Id	
-	@Column(columnDefinition="varchar(255) default 'BRAK'")	
+	@Column(columnDefinition="varchar(255) default 'NULL'")	
 	private String name;		
 	@Column
 	private Boolean revert;

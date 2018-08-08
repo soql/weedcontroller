@@ -17,7 +17,7 @@ public class SwitchGPIO {
 	private Integer id;
 		
 	@Column
-	private int gpioNumber;
+	private Integer gpioNumber;
 	
 	@Column
 	private boolean active;
@@ -34,11 +34,16 @@ public class SwitchGPIO {
 	@Column
 	private SwitchType switchType;
 	
-	public int getGpioNumber() {
+	@Column
+	private String mqttTopic;
+	
+	
+
+	public Integer getGpioNumber() {
 		return gpioNumber;
 	}
 
-	public void setGpioNumber(int gpioNumber) {
+	public void setGpioNumber(Integer gpioNumber) {
 		this.gpioNumber = gpioNumber;
 	}
 
@@ -88,6 +93,14 @@ public class SwitchGPIO {
 
 	public void setSwitchType(SwitchType switchType) {
 		this.switchType = switchType;
+	}
+
+	public String getMqttTopic() {
+		return mqttTopic;
+	}
+
+	public void setMqttopic(String mqqTopic) {
+		this.mqttTopic=mqqTopic;
 	}
 	
 	

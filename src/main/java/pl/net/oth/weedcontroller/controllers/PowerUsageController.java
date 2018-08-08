@@ -18,6 +18,7 @@ import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.dto.PowerUsageDTO;
 import pl.net.oth.weedcontroller.model.dto.SwitchLogDTO;
+import pl.net.oth.weedcontroller.service.PowerService;
 import pl.net.oth.weedcontroller.service.SwitchService;
 
 
@@ -25,9 +26,9 @@ import pl.net.oth.weedcontroller.service.SwitchService;
 public class PowerUsageController {	
 	private final static Log LOGGER=LogFactory.getLog(PowerUsageController.class);
 	@Autowired
-	private SwitchService switchService;
+	private PowerService powerService;
 	@RequestMapping(value = "/calculatePowerUsage", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody List<PowerUsageDTO> calculatePowerUsage(@RequestParam("dateFrom") final Long dateFrom,@RequestParam("dateTo") final Long dateTo ) {			
-		return switchService.calculatePowerUsage(dateFrom, dateTo);
+		return powerService.calculatePowerUsage(dateFrom, dateTo);
 	}		
 }

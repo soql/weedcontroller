@@ -43,7 +43,7 @@ public class GpioMockExternalController implements SwitchController{
 	
 	private Map<Integer, SwitchState> gpioPinDigitalOutput;
 	
-	@PostConstruct
+	@Override
 	public void init() {
 		LOGGER.info("Inicjalizacja GPIO");
 		gpio = new HashMap<Integer, SwitchState>();
@@ -53,20 +53,7 @@ public class GpioMockExternalController implements SwitchController{
 		for (Integer integer : switches) {			
 			 gpioPinDigitalOutput.put(integer.intValue(),SwitchState.OFF);
 			 LOGGER.info("Ustawienie pinu "+integer+" pomyślne.");
-		}
-		LOGGER.info("Odtworzenie stanów PINów.");
-		List<SwitchDTO> switchesWithLastState=switchService.getAllSwitchesWithLastStates();
-		for (SwitchDTO switchDTO : switchesWithLastState) {
-			for(SwitchGpioDTO switchGpioDTO: switchDTO.getGpio()) {
-				if(switchGpioDTO.getActive().booleanValue()) {
-					LOGGER.info("AKTYWNY PIN nr "+ switchGpioDTO.getGpioNumber()+ " ("+switchDTO.getName()+") ustawiamy na "+switchDTO.getState());
-					setState( switchGpioDTO.getGpioNumber(), switchDTO.getState(), switchService.getSwitchByName(switchDTO.getName()).getRevert());
-				}else {
-					LOGGER.info("NIEAKTYWNY PIN nr "+ switchGpioDTO.getGpioNumber()+ " ("+switchDTO.getName()+") ustawiamy na "+SwitchState.OFF);
-					setState( switchGpioDTO.getGpioNumber(), SwitchState.OFF, switchService.getSwitchByName(switchDTO.getName()).getRevert());
-				}
-			}
-		}
+		}			
 	}
 
 	public SwitchState getState(int gpioNumber, boolean revert) {		
