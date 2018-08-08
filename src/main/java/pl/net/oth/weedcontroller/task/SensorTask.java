@@ -73,9 +73,9 @@ public class SensorTask {
 			return;
 		LOGGER.debug("Odczyt z sensora MQTT "+sensor.getName()+": "+result+" ( czas trwania: "+(timeAfter-timeBefore)/(float)1000+" s. ).");
 		try {
-		SensorResultDTO sensorResultDTO = parseSensorResponse(result, sensor);		
-		sensorResultDTO.setLastSuccesfullRead(new Date());
-		lastSensorResult.put(sensor.getNumber(), sensorResultDTO);
+			SensorResultDTO sensorResultDTO = parseSensorResponse(result, sensor);		
+			sensorResultDTO.setLastSuccesfullRead(new Date());
+			lastSensorResult.put(sensor.getNumber(), sensorResultDTO);
 		}catch(Exception e) {
 			LOGGER.error("Błąd przy obsłudze odpowiedzi z MQTT "+sensor.getName());
 			LOGGER.error(Helper.STACK_TRACE, e);

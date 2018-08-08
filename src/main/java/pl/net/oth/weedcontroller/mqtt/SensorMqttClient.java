@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,6 +73,11 @@ public class SensorMqttClient implements MqttCallback {
 		}
 	}
 
+	@PreDestroy
+	private void predestroy() {
+		myClient.close();
+	}
+	
 	private void subscripeTopics() {
 		List<Sensor> mqttSensors=sensorService.getAllMQTTSensors();
 		mqttSensors.stream().forEach(sensor -> {
