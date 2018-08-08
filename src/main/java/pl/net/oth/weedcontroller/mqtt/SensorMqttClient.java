@@ -75,7 +75,11 @@ public class SensorMqttClient implements MqttCallback {
 
 	@PreDestroy
 	private void predestroy() {
-		myClient.close();
+		try {
+			myClient.close();
+		} catch (MqttException e) {
+			LOGGER.error(Helper.STACK_TRACE, e);
+		}
 	}
 	
 	private void subscripeTopics() {
