@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 
 import groovy.lang.GroovyShell;
 import pl.net.oth.weedcontroller.external.impl.SensorExternalController;
+import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.SensorData;
 import pl.net.oth.weedcontroller.model.dto.SensorResultDTO;
@@ -71,9 +72,14 @@ public class SensorTask {
 		if(result==null)
 			return;
 		LOGGER.debug("Odczyt z sensora MQTT "+sensor.getName()+": "+result+" ( czas trwania: "+(timeAfter-timeBefore)/(float)1000+" s. ).");
-		SensorResultDTO sensorResultDTO = parseSensorResponse(result, sensor);		
-		sensorResultDTO.setLastSuccesfullRead(new Date());
-		lastSensorResult.put(sensor.getNumber(), sensorResultDTO);
+		try {
+			SensorResultDTO sensorResultDTO = parseSensorResponse(result, sensor);		
+			sensorResultDTO.setLastSuccesfullRead(new Date());
+			lastSensorResult.put(sensor.getNumber(), sensorResultDTO);
+		}catch(Exception e) {
+			LOGGER.error("Błąd przy obsłudze odpowiedzi z MQTT "+sensor.getName());
+			LOGGER.error(Helper.STACK_TRACE, e);
+		}
 	}
 	
 	private SensorResultDTO parseSensorResponse(String result, Sensor sensor) {
