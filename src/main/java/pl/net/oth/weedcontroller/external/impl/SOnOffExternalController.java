@@ -32,8 +32,9 @@ public class SOnOffExternalController {
 	
 	@Autowired
 	private SwitchService switchService;
-		
-	public void init() {		
+	
+	@PostConstruct
+	private void init() {		
 		sonoffSwitchesStates=new HashMap<>();
 		
 		switchService.getAllMqttSwitches().stream().forEach(switch_ -> {

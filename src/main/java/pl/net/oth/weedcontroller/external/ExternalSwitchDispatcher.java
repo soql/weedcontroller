@@ -39,7 +39,7 @@ public class ExternalSwitchDispatcher {
 		gpioExternalController.init();
 		LOGGER.info("Odtworzenie stanów PINów.");
 		mergeStates();
-		sonoffExternalController.init();
+		//sonoffExternalController.init();
 	}
 	
 	public Boolean setStateToExternalController(Switch switch_, SwitchState state) {			
