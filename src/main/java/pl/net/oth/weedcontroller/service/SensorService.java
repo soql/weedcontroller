@@ -34,6 +34,10 @@ public class SensorService {
 		return sensorDAO.getSensorByNumber(number);
 	}
 
+	public Sensor getSensorByName(String name) {		
+		return sensorDAO.getSensorByName(name);
+	}
+	
 	public List<Sensor> getSensorsWithCheck() {
 		return sensorDAO.getSensorsWithCheck();
 	}

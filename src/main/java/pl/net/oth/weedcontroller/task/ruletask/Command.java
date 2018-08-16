@@ -17,6 +17,7 @@ import pl.net.oth.weedcontroller.dao.UserDAO;
 import pl.net.oth.weedcontroller.external.impl.SMSController;
 import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.ChangeDetection;
+import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.SwitchGPIO;
 import pl.net.oth.weedcontroller.model.User;
@@ -131,12 +132,12 @@ public class Command {
 		return switchService.getLastManagedSwitchStateChangeTime(switchName);
 	}
 	
-	public float gav(String type, String func, Integer minutes){
-		return getAggregatedValue(type, func, minutes).floatValue();
+	public float gav(String sensorName, String type, String func, Integer minutes){
+		return getAggregatedValue(sensorName, type, func, minutes).floatValue();
 	}
 	
-	public String gavAS(String type, String func, Integer minutes){
-		return getAggregatedValueAsString(type, func, minutes);
+	public String gavAS(String sensorName, String type, String func, Integer minutes){
+		return getAggregatedValueAsString(sensorName, type, func, minutes);
 	}
 	
 	public long getLastInternetConnection() {
@@ -149,17 +150,17 @@ public class Command {
 		return getLastInternetConnection(); 
 	}
 	
-	public Float getAggregatedValue(String type, String func, Integer minutes){
-		/*TODO weryfikacja czy istnieje sensorData=type dla sensora 1*/
+	public Float getAggregatedValue(String sensorName, String type, String func, Integer minutes){
+		/*TODO weryfikacja czy istnieje sensorData=type dla sensora sensorName*/
 		Date dateFrom=new Date(new Date().getTime()-(1000*60*minutes.intValue()));
 		Date dateTo=new Date();
-		/*TODO hardcode 1*/
-		Float result=sensorResultService.getAggregatedValue(type, func,dateFrom, dateTo, sensorService.getSensorByNumber(1));
-		LOGGER.debug("getAggregatedValue ("+type+","+func+","+minutes.intValue()+"): "+result);
+		Sensor s=sensorService.getSensorByName(sensorName);
+		Float result=sensorResultService.getAggregatedValue(type, func,dateFrom, dateTo, s);
+		LOGGER.debug("getAggregatedValue ("+sensorName+"("+(s!=null?s.getNumber():"null")+"),"+type+","+func+","+minutes.intValue()+"): "+result);
 		return result;
 	}
-	public String getAggregatedValueAsString(String type, String func, Integer minutes){
-		return String.valueOf(new DecimalFormat("0.00##").format(getAggregatedValue(type, func, minutes)));
+	public String getAggregatedValueAsString(String sensorName, String type, String func, Integer minutes){
+		return String.valueOf(new DecimalFormat("0.00##").format(getAggregatedValue(sensorName, type, func, minutes)));
 	}
 	
 

@@ -54,4 +54,13 @@ public class SensorDAO {
 		Query query=em.createQuery("SELECT e FROM SensorData e where e.ruleAlias is not null");		
 		return (List<SensorData>)query.getResultList();
 	}
+
+	public Sensor getSensorByName(String name) {
+		Query query=em.createQuery("SELECT e FROM Sensor e where e.name=:value");
+		query.setParameter("value", name);
+		List<Sensor> result=query.getResultList();
+		if(result.size()>0)
+			return result.get(0);
+		return null;
+	}
 }

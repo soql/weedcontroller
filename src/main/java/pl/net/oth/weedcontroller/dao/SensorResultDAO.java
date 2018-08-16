@@ -53,7 +53,7 @@ public class SensorResultDAO {
 		if(result instanceof Float){
 			return ((Float)result).floatValue();
 		}
-		LOGGER.error("Nie można rozpoznać typu wyniku dla "+result);
+		LOGGER.error("Nie można rozpoznać typu wyniku dla "+result+" . Parametry "+type+" func="+func+" sensor="+(sensor!=null?sensor.getName():"null"));
 		return 0;
 	}
 
