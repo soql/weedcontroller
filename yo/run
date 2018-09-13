@@ -1,1 +1,1 @@
-npm run dist; cp /home/psokolowski/Workspace/eclipse-workspace/WeedController/weedcontroller/yo/dist/assets/* /home/psokolowski/Workspace/eclipse-workspace/WeedController/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/weedcontroller/assets/
+npm run dist; cp /home/psokolowski/Workspace/jee-photon/workspaces/weedcontroller/yo/dist/assets/*  /home/psokolowski/Workspace/jee-photon/workspaces/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/weedcontroller/assets/

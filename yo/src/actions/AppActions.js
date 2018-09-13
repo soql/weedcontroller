@@ -110,6 +110,12 @@ class AppActions {
             value: data
         });
     }
+    bioBizzLoaded(data){
+    	AppDispatcher.dispatch({
+            actionType: 'BIO_BIZZ_DATA_LOADED',
+            value: data
+        });
+    }
 }
 
 export default new AppActions() 

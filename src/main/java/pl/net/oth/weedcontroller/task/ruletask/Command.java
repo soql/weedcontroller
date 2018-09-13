@@ -23,6 +23,7 @@ import pl.net.oth.weedcontroller.model.SwitchGPIO;
 import pl.net.oth.weedcontroller.model.User;
 import pl.net.oth.weedcontroller.service.ChangeDetectionService;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
+import pl.net.oth.weedcontroller.service.PhaseService;
 import pl.net.oth.weedcontroller.service.RuleService;
 import pl.net.oth.weedcontroller.service.SensorResultService;
 import pl.net.oth.weedcontroller.service.SensorService;
@@ -47,6 +48,9 @@ public class Command {
 	
 	@Autowired
 	private SwitchService switchService;
+	
+	@Autowired
+	private PhaseService phaseService;
 	
 	@Autowired
 	private ConfigurationService configurationService;
@@ -175,17 +179,7 @@ public class Command {
 	}
 	
 	public int getNumberOfDays(){
-		pl.net.oth.weedcontroller.model.Configuration configuration=configurationService.getByKey("START_DATE");
-		if(configuration==null){
-			return 0;
-		}
-		try {
-			Date startDate=Helper.START_DATE_FORMAT.parse(configuration.getValue());
-			return (int) ((new Date().getTime()-startDate.getTime())/1000/60/60/24);
-		} catch (ParseException e) {
-			LOGGER.error(Helper.STACK_TRACE, e);
-			return 0;
-		}			
+		return phaseService.getNumberOfDays();
 	}
 	
 	public boolean cron(String secounds, String minutes, String hours, String dayOfMonth, String month, String dayOfWeek){		

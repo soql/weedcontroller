@@ -9,6 +9,7 @@ import LiveView from './components/LiveView';
 import Logout from './components/Logout';
 import PowerUsage from './components/PowerUsage';
 import GpioManager from './components/GpioManager';
+import BioBizz from './components/BioBizz';
 import { Link, Match } from 'react-router-dom';
 import { slide as Menu } from 'react-burger-menu'
 
@@ -17,7 +18,7 @@ ReactDOM.render((
 		<div>
 			<Menu isOpen={ false }>  
 				<Link className="menu-item" to="/">Główna</Link>
-				<Link className="menu-item" to="wykresy">Wykresy</Link>
+				<Link className="menu-item" to="bioBizz">Bio-Bizz</Link>
 				<Link className="menu-item" to="live">Live</Link>
 				<Link className="menu-item" to="powerUsage">Prąd</Link>
 				<Link className="menu-item" to="nawilzacze">Nawilżacze</Link>
@@ -26,7 +27,7 @@ ReactDOM.render((
 			</Menu>
 			<Switch>
 				<Route exact path="/" component={Main}/>				
-				<Route exact path="/wykresy" component={ChartGenerator} />
+				<Route exact path="/bioBizz" component={BioBizz} />
 				<Route exact path="/live" component={LiveView} />
 				<Route exact path="/powerUsage" component={PowerUsage} />
 				<Route exact path="/logout" component={Logout} />
