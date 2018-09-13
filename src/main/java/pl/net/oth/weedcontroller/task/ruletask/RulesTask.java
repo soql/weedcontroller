@@ -198,8 +198,7 @@ public class RulesTask {
 	private void fillGroovyShell(GroovyShell gs) {
 		gs.setVariable("r", command);
 		gs.setVariable("ON", SwitchState.ON);
-		gs.setVariable("OFF", SwitchState.OFF);
-		int sensorId=getActualInternalSensorId();
+		gs.setVariable("OFF", SwitchState.OFF);		
 		
 		setAliasVariable(gs);
 		
@@ -220,20 +219,7 @@ public class RulesTask {
 			}
 		});
 		
-	}
-
-	private int getActualInternalSensorId() {
-		pl.net.oth.weedcontroller.model.Configuration sensorId=configurationService.getByKey(ACTUAL_TEMP_SENSOR_ID);
-		if(sensorId==null)
-			return 1;
-		try {
-			int i=Integer.parseInt(sensorId.getValue());
-			return i;
-		} catch (NumberFormatException e) {
-			return 1;			
-		}
-		
-	}
+	}	
 
 	public void handleSMS(SMSMessage message) {
 		LOGGER.info("Odpalono handleSMS dla "+message.getPhoneNumber()+" / "+message.getText());
