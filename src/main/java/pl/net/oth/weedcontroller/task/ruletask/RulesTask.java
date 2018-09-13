@@ -49,6 +49,7 @@ import pl.net.oth.weedcontroller.service.ChangeDetectionService;
 import pl.net.oth.weedcontroller.service.ConfigurationService;
 import pl.net.oth.weedcontroller.service.PhaseService;
 import pl.net.oth.weedcontroller.service.RuleService;
+import pl.net.oth.weedcontroller.service.RuleVariableService;
 import pl.net.oth.weedcontroller.service.SensorResultService;
 import pl.net.oth.weedcontroller.service.SensorService;
 import pl.net.oth.weedcontroller.service.SwitchService;
@@ -77,6 +78,9 @@ public class RulesTask {
 		
 	@Autowired
 	private RuleService ruleService;	
+	
+	@Autowired
+	private RuleVariableService ruleVariableService;
 	
 	@Autowired
 	private Command command;
@@ -201,12 +205,28 @@ public class RulesTask {
 		gs.setVariable("OFF", SwitchState.OFF);		
 		
 		setAliasVariable(gs);
+		setRulesVariables(gs);
 		
 		gs.setVariable("NOW_SENSORS_MAP", nowSensorStates);
 		gs.setVariable("PREV_SENSORS_MAP", lastSensorStates);
 		gs.setVariable("LAST_PHASE", phaseService.getPhaseById(lastPhase).getName());
 		gs.setVariable("ACTUAL_PHASE", phaseService.getPhaseById(nowPhase).getName());
 		gs.setVariable("SOIL_DET_TO_SEND", changeDetectionService.getChangeDetectionToSend());
+	}
+
+	private void setRulesVariables(GroovyShell gs) {
+		ruleVariableService.getAll().stream().forEach(ruleVariable -> {
+			try {
+				float value=Float.parseFloat(ruleVariable.getValue());
+				LOGGER.debug("Ustawiono liczbową stałą zminną dla reguł "+ruleVariable.getName()+" = "+ruleVariable.getValue());
+				gs.setVariable(ruleVariable.getName(), value);
+			} catch (NumberFormatException e) {
+				LOGGER.debug("Ustawiono stałą zminną dla reguł "+ruleVariable.getName()+" = "+ruleVariable.getValue());
+				gs.setVariable(ruleVariable.getName(), ruleVariable.getValue());
+			}
+			
+		});
+		
 	}
 
 	private void setAliasVariable(GroovyShell gs) {
