@@ -17,10 +17,7 @@ class BioBizz extends React.Component {
 	    super(props)
 	    this.state = {
 	    	bioBizzData: BioBizzStore.getBioBizz(),	    	
-	    	weeks: [
-	    			{label: '1', value: 1},
-	    			{label: '2', value: 2}
-	    			]
+	    	weeks: [{'nr':'1'},{'nr':'2'},{'nr':'3'},{'nr':'4'},{'nr':'5'},{'nr':'6'},{'nr':'7'},{'nr':'8'},{'nr':'9'},{'nr':'10'}]
 	    	};
 	 }  	    
 	     
@@ -32,22 +29,24 @@ class BioBizz extends React.Component {
 		  
 	  }
 	  
-	  renderOneRow(element){
+	  renderOneRow(key, element){
 			return (
 		  			<tr className="logTableTr">  			
-		  			<td className="logTableTd">{element.bioBizzName}</td>
-		  			<td className="logTableTd">{element.quantity} ml</td>		  			
+		  			<td className="logTableTd">{key}</td>
+		  			<td className="logTableTd">{element} ml</td>		  			
 		  			</tr>);
 		}
 	  
 	  renderBioBizzTable(){
 		  let rows=[];	  	  
-		  this.state.bioBizzData.forEach((element) => {
-			  rows.push(this.renderOneRow(element));				  
+		  console.log(this.state.bioBizzData.bioBizzData);
+		  Object.keys(this.state.bioBizzData.bioBizzData).forEach((key) => {
+			  console.log(key);
+			  console.log(this.state.bioBizzData.bioBizzData[key]);
+			  rows.push(this.renderOneRow(key, this.state.bioBizzData.bioBizzData[key]));				  
 		  });		  
 		  
-		  return (
-				  this.state.bioBizzData.length>0 && 
+		  return (				  
 				  <table className="logTable">
 				  <tr className="logTableTr">  			
 		  			<th className="logTableTd">BioBizz</th>
@@ -57,27 +56,52 @@ class BioBizz extends React.Component {
 				  </table>
 				 ); 
 	}
+	  createWeeksOptions() {
+		     let items = [];         
+		     this.state.weeks.map((e, key) => {             
+		          items.push(<option key={e.nr} value={e.nr}>{e.nr}</option>);
+		     });
+		     return items;
+		 }    
+	  createPhaseOptions() {
+		     let items = [];         
+		     !!this.state.bioBizzData && !!this.state.bioBizzData.phases && this.state.bioBizzData.phases.map((e, key) => {             
+		          items.push(<option key={e.id} value={e.id}>{e.name}</option>);
+		     });
+		     return items;
+		 }  
 	render(){
 	
-		return (
+		return (				
 				<div className="grid grid-pad">
 		        	<div className="col-1-1">
 		        		<div className="content">
 		        		<table>
 		        			<tr>
+		        				<td className=".switchText_log_on">
+		        					Tydzień: 
+        						</td>
 		        				<td>
-		        					<Input type="select" options={this.state.weeks}/>
+		        					<Input type="select" label="Tydzień: ">
+		        						{this.createWeeksOptions()}
+		        					</Input>
 					        	</td>
-					        </tr><tr>
-					        	<td>
-					        			        		  
-					        	</td>
-			        		  </tr>
+					        </tr>
+					        <tr>
+					    		<td className=".switchText_log_on">
+        							Faza: 
+        								</td>
+					    		<td>
+					    			<Input type="select" label="Faza: ">
+					    				{this.createPhaseOptions()}
+					    			</Input>
+					    		</td>
+			        		</tr>
 			        		  </table>		        		 
 		        		</div>
 		        	</div>
 		        	<div>
-		        		{this.renderBioBizzTable()}
+		        		{!!this.state.bioBizzData && !!this.state.bioBizzData.bioBizzData && this.renderBioBizzTable()}
 		        	</div>
 	        	</div>
 				);

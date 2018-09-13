@@ -30,7 +30,7 @@ public class BioBizzService {
 	private BioBizzDAO bioBizzDAO;
 		
 	@Autowired
-	private PhaseDAO phaseDAO;
+	private PhaseService phaseService;
 	
 	public List<BioBizz> getData(Phase phase, Integer day){		
 		Integer week=day/7;
@@ -39,5 +39,16 @@ public class BioBizzService {
 			week=2;
 		}
 		return bioBizzDAO.getData(phase, week);
+	}
+
+	public Integer getActualWeek() {
+		
+		Integer week=phaseService.getNumberOfDays()/7;
+		/*TODO hardcode*/
+		if(phaseService.getActualPhase().getId().equals(1) && week>2) {
+			week=2;
+		}
+		return week;
 	}	
+	
 }

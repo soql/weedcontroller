@@ -57,5 +57,9 @@ public class PhaseService {
 			LOGGER.error(Helper.STACK_TRACE, e);
 			return 0;
 		}		
+	}
+
+	public List<Phase> getAll() {
+		return phaseDAO.getAll();
 	}	
 }

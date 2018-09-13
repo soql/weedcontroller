@@ -1,6 +1,8 @@
 package pl.net.oth.weedcontroller.controllers;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import pl.net.oth.weedcontroller.model.BioBizz;
 import pl.net.oth.weedcontroller.model.Configuration;
+import pl.net.oth.weedcontroller.model.Phase;
 import pl.net.oth.weedcontroller.model.dto.BioBizzDTO;
 import pl.net.oth.weedcontroller.model.dto.ChangeDetectionDTO;
 import pl.net.oth.weedcontroller.service.BioBizzService;
@@ -31,8 +34,16 @@ public class BioBizzController {
 	private PhaseService phaseService;	
 	
 	@RequestMapping(value = "/getBioBizz", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody List<BioBizz> getNowBioBizz() {
+	public @ResponseBody BioBizzDTO getNowBioBizz() {
+		BioBizzDTO bioBizzDTO=new BioBizzDTO();
 		LOGGER.debug("/getBioBizz phaseId="+phaseService.getActualPhase().getId()+" days="+phaseService.getNumberOfDays());
-		return bioBizzService.getData(phaseService.getActualPhase(), phaseService.getNumberOfDays());
+		bioBizzDTO.setPhases(phaseService.getAll());
+		bioBizzDTO.setActualPhase(phaseService.getActualPhase());
+		bioBizzDTO.setActualWeek(bioBizzService.getActualWeek());
+		List<BioBizz>bioBizzData=bioBizzService.getData(phaseService.getActualPhase(), phaseService.getNumberOfDays());
+		bioBizzDTO.setBioBizzData(bioBizzData.stream().collect(Collectors.toMap(BioBizz::getBioBizzName, BioBizz::getQuantity)));
+		
+		return bioBizzDTO;
+		
 	}
 }

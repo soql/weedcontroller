@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import pl.net.oth.weedcontroller.model.AuditLog;
+import pl.net.oth.weedcontroller.model.Camera;
 import pl.net.oth.weedcontroller.model.Phase;
 import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.Switch;
@@ -26,5 +27,10 @@ public class PhaseDAO {
 			
 	public Phase getPhaseById(Integer id){
 		return em.find(Phase.class, id);
+	}
+
+	public List<Phase> getAll() {
+		Query query=em.createQuery("SELECT e FROM Phase e");		
+		return (List<Phase>)query.getResultList();
 	}			
 }
