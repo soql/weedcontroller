@@ -201,7 +201,7 @@ public class SwitchService {
 		Collections.sort(result,new Comparator<SwitchLogDTO>() {
 			@Override
 			public int compare(SwitchLogDTO o1, SwitchLogDTO o2) {				
-				return (int)(o2.getRealDate().getTime()-o1.getRealDate().getTime());
+				return (o2.getRealDate().getTime()-o1.getRealDate().getTime()>0?1:-1);
 			}
 		});		
 		return result.subList(0, result.size()>number?number:result.size());
