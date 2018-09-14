@@ -17,6 +17,8 @@ import pl.net.oth.weedcontroller.dao.UserDAO;
 import pl.net.oth.weedcontroller.external.impl.SMSController;
 import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.ChangeDetection;
+import pl.net.oth.weedcontroller.model.Phase;
+import pl.net.oth.weedcontroller.model.PhaseChange;
 import pl.net.oth.weedcontroller.model.Sensor;
 import pl.net.oth.weedcontroller.model.Switch;
 import pl.net.oth.weedcontroller.model.SwitchGPIO;
@@ -232,6 +234,13 @@ public class Command {
 	
 	public void delayRule(int minutes){
 		ruleService.setNextTimeExecution(rulesTask.getActualRuleId(), minutes);
+	}
+	
+	public void changePhase(String phase) {
+		PhaseChange phaseChange=new PhaseChange();
+		phaseChange.setPhase(phaseService.getPhaseByName(phase));
+		phaseChange.setDate(new Date());
+		phaseService.save(phaseChange);
 	}
 	
 	public void sendSMS(String text){

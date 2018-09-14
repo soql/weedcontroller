@@ -22,6 +22,7 @@ import pl.net.oth.weedcontroller.helpers.Helper;
 import pl.net.oth.weedcontroller.model.AuditLog;
 import pl.net.oth.weedcontroller.model.Configuration;
 import pl.net.oth.weedcontroller.model.Phase;
+import pl.net.oth.weedcontroller.model.PhaseChange;
 import pl.net.oth.weedcontroller.model.Rule;
 import pl.net.oth.weedcontroller.model.SwitchLog;
 import pl.net.oth.weedcontroller.model.dto.AuditLogDTO;
@@ -36,6 +37,10 @@ public class PhaseService {
 	@Autowired
 	private ConfigurationDAO configurationDAO;
 		
+	public void save(PhaseChange phaseChange) {
+		phaseDAO.save(phaseChange);
+	}
+	
 	public Phase getPhaseById(Integer id){				
 		return phaseDAO.getPhaseById(id);
 	}
@@ -61,5 +66,9 @@ public class PhaseService {
 
 	public List<Phase> getAll() {
 		return phaseDAO.getAll();
+	}
+
+	public Phase getPhaseByName(String phase) {
+		return phaseDAO.getPhaseByName(phase);
 	}	
 }
