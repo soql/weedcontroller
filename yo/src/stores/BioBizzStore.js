@@ -9,7 +9,7 @@ class BioBizzStore extends EventEmitter {
         super();
         this.dispatchToken = AppDispatcher.register(this.dispatcherCallback.bind(this))
         this.bioBizz = [];
-        this.tick();  	  	
+        this.getBioBizzDataNow();  	  	
     }      
       
     emitChange(eventName) {
@@ -26,21 +26,34 @@ class BioBizzStore extends EventEmitter {
     
       dispatcherCallback(action) {
     	console.log("dipatcher "+action.actionType); 
-    	 switch (action.actionType) {                   
-     }
+    	 switch (action.actionType) {  
+    	 case 'BIO_BIZZ_DATA_CHANGED':
+    		 console.log("MAMY TO");
+         	console.log(action.value);
+               this.getBioBizzData(action.value.week, action.value.phaseId);                
+               break;     
+           }        
         this.emitChange('STORE_' + action.actionType);
 
         return true;
     }
     
-    tick(){
+   getBioBizzDataNow(){
   	  console.log('get Bio Bizz');  	  
-  	  axios.get('getBioBizz').then(res => {
+  	  axios.get('getBioBizzNow').then(res => {
   		  this.bioBizz = res.data;  		  
   	  }).then(res => {
 	    	AppActions.bioBizzLoaded();
 	    });
-    }    
+    }  
+   getBioBizzData(week, phaseId){
+	   console.log('get Bio Bizz');  	  
+	  	  axios.get('getBioBizz?week='+week+"&phaseId="+phaseId).then(res => {
+	  		  this.bioBizz = res.data;  		  
+	  	  }).then(res => {
+		    	AppActions.bioBizzLoaded();
+		    });
+   }
           
       getBioBizz(){
     	  return this.bioBizz;

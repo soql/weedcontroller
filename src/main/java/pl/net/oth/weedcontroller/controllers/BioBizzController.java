@@ -33,7 +33,7 @@ public class BioBizzController {
 	@Autowired
 	private PhaseService phaseService;	
 	
-	@RequestMapping(value = "/getBioBizz", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/getBioBizzNow", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody BioBizzDTO getNowBioBizz() {
 		BioBizzDTO bioBizzDTO=new BioBizzDTO();
 		LOGGER.debug("/getBioBizz phaseId="+phaseService.getActualPhase().getId()+" days="+phaseService.getNumberOfDays());
@@ -41,6 +41,20 @@ public class BioBizzController {
 		bioBizzDTO.setActualPhase(phaseService.getActualPhase());
 		bioBizzDTO.setActualWeek(bioBizzService.getActualWeek());
 		List<BioBizz>bioBizzData=bioBizzService.getData(phaseService.getActualPhase(), phaseService.getNumberOfDays());
+		bioBizzDTO.setBioBizzData(bioBizzData.stream().collect(Collectors.toMap(BioBizz::getBioBizzName, BioBizz::getQuantity)));
+		
+		return bioBizzDTO;
+		
+	}
+	
+	@RequestMapping(value = "/getBioBizz", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody BioBizzDTO getNowBioBizz(@RequestParam("week") final Integer week, @RequestParam("phaseId") final Integer phaseId) {
+		BioBizzDTO bioBizzDTO=new BioBizzDTO();
+		LOGGER.debug("/getBioBizz phaseId="+phaseId+" days="+week);
+		bioBizzDTO.setPhases(phaseService.getAll());
+		bioBizzDTO.setActualPhase(phaseService.getPhaseById(phaseId));
+		bioBizzDTO.setActualWeek(week);
+		List<BioBizz>bioBizzData=bioBizzService.getData(phaseService.getPhaseById(phaseId), week*7);
 		bioBizzDTO.setBioBizzData(bioBizzData.stream().collect(Collectors.toMap(BioBizz::getBioBizzName, BioBizz::getQuantity)));
 		
 		return bioBizzDTO;

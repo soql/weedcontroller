@@ -44,10 +44,7 @@ public class BioBizzService {
 	public Integer getActualWeek() {
 		
 		Integer week=phaseService.getNumberOfDays()/7;
-		/*TODO hardcode*/
-		if(phaseService.getActualPhase().getId().equals(1) && week>2) {
-			week=2;
-		}
+		
 		return week;
 	}	
 	

@@ -17,18 +17,25 @@ class BioBizz extends React.Component {
 	    super(props)
 	    this.state = {
 	    	bioBizzData: BioBizzStore.getBioBizz(),	    	
-	    	weeks: [{'nr':'1'},{'nr':'2'},{'nr':'3'},{'nr':'4'},{'nr':'5'},{'nr':'6'},{'nr':'7'},{'nr':'8'},{'nr':'9'},{'nr':'10'}]
+	    	weeks: [{'nr':'1'},{'nr':'2'},{'nr':'3'},{'nr':'4'},{'nr':'5'},{'nr':'6'},{'nr':'7'},{'nr':'8'},{'nr':'9'},{'nr':'10'}],
+	    	selectedWeek: 0,
+	    	selectedPhase: 0
 	    	};
 	 }  	    
 	     
 	  componentWillMount(){
-		
+		  BioBizzStore.addChangeListener('STORE_BIO_BIZZ_DATA_LOADED', this.bioBizzDataChanged.bind(this));
 		  
 	  }
 	  componentWillUnmount(){
 		  
 	  }
-	  
+	  bioBizzDataChanged(){
+		  console.log("Podmiana w store ");
+		  this.setState({bioBizzData: BioBizzStore.getBioBizz()});
+		  this.setState({selectedWeek: BioBizzStore.getBioBizz().actualWeek});
+		  this.setState({selectedPhase: BioBizzStore.getBioBizz().actualPhase.id});
+	  }
 	  renderOneRow(key, element){
 			return (
 		  			<tr className="logTableTr">  			
@@ -58,8 +65,12 @@ class BioBizz extends React.Component {
 	}
 	  createWeeksOptions() {
 		     let items = [];         
-		     this.state.weeks.map((e, key) => {             
-		          items.push(<option key={e.nr} value={e.nr}>{e.nr}</option>);
+		     this.state.weeks.map((e, key) => {     
+		    	 if(e.nr==this.state.selectedWeek){
+		    		 items.push(<option key={e.nr} value={e.nr} selected>{e.nr}</option>);
+		    	 }else{
+		    		 items.push(<option key={e.nr} value={e.nr}>{e.nr}</option>);
+		    	 }
 		     });
 		     return items;
 		 }    
@@ -70,29 +81,37 @@ class BioBizz extends React.Component {
 		     });
 		     return items;
 		 }  
+	  weekSelectChanged(e){
+		  this.setState({selectedWeek: e.target.value});
+		  AppActions.bioBizzDataChanged({week:  e.target.value, phaseId: this.state.selectedPhase});	 		
+	  }
+	  phaseSelectChanged(e){
+		  this.setState({selectedPhase: e.target.value});
+		  AppActions.bioBizzDataChanged({week: this.state.selectedWeek, phaseId: e.target.value});		
+	  }
 	render(){
 	
 		return (				
 				<div className="grid grid-pad">
 		        	<div className="col-1-1">
-		        		<div className="content">
+		        		<div className="content center_div">
 		        		<table>
 		        			<tr>
-		        				<td className=".switchText_log_on">
+		        				<td className="switchText_log_on">
 		        					Tydzień: 
         						</td>
 		        				<td>
-		        					<Input type="select" label="Tydzień: ">
+		        					<Input type="select" label="Tydzień: " onChange={e => {this.weekSelectChanged(e)}}>
 		        						{this.createWeeksOptions()}
 		        					</Input>
 					        	</td>
 					        </tr>
 					        <tr>
-					    		<td className=".switchText_log_on">
+					    		<td className="switchText_log_on">
         							Faza: 
         								</td>
 					    		<td>
-					    			<Input type="select" label="Faza: ">
+					    			<Input type="select" label="Faza: " onChange={e => {this.phaseSelectChanged(e)}}>
 					    				{this.createPhaseOptions()}
 					    			</Input>
 					    		</td>

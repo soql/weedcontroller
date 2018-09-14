@@ -132,7 +132,10 @@ body {
     padding-left: 4px;
     padding-right: 4px;
 }
-
+.center_div {
+	display: flex;
+	justify-content: center;
+}
 
 .allCostTd{
 	border: 1px solid black;
